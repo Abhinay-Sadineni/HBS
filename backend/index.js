@@ -23,6 +23,7 @@ sequelize.authenticate()
 app.use(LoginRouter);
 app.use(SignupRouter);
 
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
