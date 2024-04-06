@@ -1,12 +1,12 @@
-import express from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import User from '../models/User';
-import auth from '../middlewares/auth'
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const User = require('../models/User');
+const auth = require('../middlewares/auth');
 
-const router = express.Router();
+const LoginRouter = express.Router();
 
-router.post('/login', auth, async(req, res) => {
+LoginRouter.post('/login', auth, async(req, res) => {
     try{
         const { email, password } = req.body;
 
@@ -25,4 +25,4 @@ router.post('/login', auth, async(req, res) => {
     }
 });
 
-export default router;
+module.exports = LoginRouter;
