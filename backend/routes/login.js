@@ -2,11 +2,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
-const auth = require('../middlewares/auth');
 
 const LoginRouter = express.Router();
 
-LoginRouter.post('/login', auth, async(req, res) => {
+LoginRouter.post('/login', async(req, res) => {
     try{
         const { email, password } = req.body;
 
@@ -16,7 +15,8 @@ LoginRouter.post('/login', auth, async(req, res) => {
         }
 
         const token = jwt.sign({user_id: user.user_id}, process.env.SECRET_KEY);
-        res.json({token});
+        res.setHeader('Authorization', `Bearer ${token}`);
+        res.status(200).send();
 
     }
     catch (error) {
