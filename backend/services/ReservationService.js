@@ -46,6 +46,28 @@ class ReservationService {
             return false;
         }
     }
+
+    //cancel reservation
+    static async cancel_reservation(rid){
+        try {
+            const reservation = await RV.findByPk(rid);
+            if (!reservation) {
+                console.error('Reservation not found.');
+                return false; 
+            }
+
+            // Update the status to 'cancelled'
+            await reservation.update({ status: 'cancelled' });
+            return true; 
+
+            
+            }  
+
+            catch (error) {
+            console.error('Error cancelling reservation:', error);
+            return false; 
+        }
+    }
 }
 
 module.exports = ReservationService;

@@ -25,6 +25,10 @@ const Reservation = sequelize.define('Reservation', {
         model: 'Hotel',
         key: 'hotel_id'
       }
+    },
+    status : {
+      type: Sequelize.ENUM('cancelled', 'accepted', 'rejected' , 'pending'),
+      defaultValue: 'accepted'
     }
 }, {
     tableName: 'Reservation'
