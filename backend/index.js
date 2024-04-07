@@ -1,7 +1,6 @@
 const express = require('express');
 const sequelize = require('./config');
-const LoginRouter = require('./routes/login');
-const SignupRouter = require('./routes/signup');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -20,8 +19,7 @@ sequelize.authenticate()
   });
 
 
-app.use(LoginRouter);
-app.use(SignupRouter);
+app.use(userRoutes);
 
 
 const PORT = process.env.PORT || 5000;
