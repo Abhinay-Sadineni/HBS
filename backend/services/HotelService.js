@@ -32,6 +32,12 @@ class HotelService {
         }
     }
 
+    //generate bill
+
+
+    //
+
+
 
 
 
