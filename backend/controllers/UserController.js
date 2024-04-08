@@ -3,12 +3,12 @@ const UserService = require('../services/UserService');
 //Login
 async function login(req, res){
     try{
-        const{email, password} = req.body;
+        const{email, password, role} = req.body;
         const token = req.header('Authorization');
 
         if (email && password) {
             //Login with credentials
-            const result = await UserService.loginWithCredentials(email, password);
+            const result = await UserService.login_with_cred(email, password, role);
             if(result.success){
                 res.setHeader('Authorization', `Bearer ${result.token}`);
                 res.status(200).json({message: "Logged in successfully"});
@@ -20,7 +20,7 @@ async function login(req, res){
         else if(token){
             //Login with token
             console.log(token)
-            const result = await UserService.loginWithToken(token.slice(7));
+            const result = await UserService.login_with_token(token.slice(7));
             if(result.success){
                 res.status(200).json({user: result.user});
             }
@@ -42,8 +42,8 @@ async function login(req, res){
 //Signup
 async function signup(req, res){
     try{
-        const{username, email, password, phone_number, country_code} = req.body;
-        const result = await UserService.saveToDB(username, email, password, phone_number, country_code);
+        const{username, email, password, phone_number, country_code, role} = req.body;
+        const result = await UserService.save_to_DB(username, email, password, phone_number, country_code, role);
         if(result.success){
             res.status(201).json({message: result.message });
         }
@@ -59,11 +59,11 @@ async function signup(req, res){
 
 
 //Edit profile
-async function editProfile(req, res){
+async function edit_profile(req, res){
     try{
         const{user_id} = req.params;
         const newData = req.body;
-        const result = await UserService.editProfile(user_id, newData);
+        const result = await UserService.edit_profile(user_id, newData);
         if(result.success){
             res.json({success: true, message: result.message});
         }
@@ -72,7 +72,7 @@ async function editProfile(req, res){
         }
     }
     catch(error){
-        console.error('Error in editProfile controller:', error);
+        console.error('Error in edit_profile controller:', error);
         res.status(500).json({success: false, message: "Server error"});
     }
 }
@@ -80,5 +80,5 @@ async function editProfile(req, res){
 module.exports ={
     login,
     signup,
-    editProfile
+    edit_profile
 };

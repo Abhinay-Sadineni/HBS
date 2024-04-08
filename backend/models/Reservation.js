@@ -26,6 +26,13 @@ const Reservation = sequelize.define('Reservation', {
         key: 'hotel_id'
       }
     },
+    room_id: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: 'Room',
+            key: 'room_id'
+        }
+    },
     status : {
       type: Sequelize.ENUM('cancelled', 'accepted', 'rejected' , 'pending'),
       defaultValue: 'accepted'

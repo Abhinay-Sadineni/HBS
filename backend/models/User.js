@@ -11,7 +11,8 @@ const User = sequelize.define('User', {
   email: Sequelize.STRING,
   password: Sequelize.STRING,
   phone_number: Sequelize.STRING,
-  country_code: Sequelize.STRING
+  country_code: Sequelize.STRING,
+  role: Sequelize.STRING
 }, {
     tableName: 'User'
 });

@@ -9,6 +9,6 @@ router.post('/login', UserController.login);
 router.post('/signup', UserController.signup);
 
 //Profile route
-router.put('/profile/:user_id', UserController.editProfile);
+router.put('/profile/:user_id', UserController.edit_profile);
 
 module.exports = router;
