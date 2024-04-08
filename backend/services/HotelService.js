@@ -3,8 +3,6 @@ const Hotel = require("../models/Hotel")
 
 
 class HotelService {
-     
-
     //check policy 
     static async check_policy(hotel_id , start_date){
           try {

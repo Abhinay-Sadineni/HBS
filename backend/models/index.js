@@ -4,6 +4,7 @@ const Reservation = require('./Reservation');
 const Room = require('./Room');
 const FAQ = require('./FAQ');
 const Image = require('./Image');
+const ReservationRooms = require("./Reserved_rooms")
 
 // Define associations after all models have been imported
 User.hasMany(Reservation, { foreignKey: 'user_id' });
@@ -24,8 +25,9 @@ FAQ.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 Hotel.hasMany(Image, { foreignKey: 'hotel_id' });
 Image.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 
-Room.hasMany(Reservation, { foreignKey: 'room_id' });
-Reservation.belongsTo(Room, { foreignKey: 'room_id' });
+
+Reservation.belongsToMany(Room, { through: ReservationRooms, foreignKey: 'reservation_id' });
+Room.belongsToMany(Reservation, { through: ReservationRooms, foreignKey: 'room_id' });
 
 module.exports = {
   User,
@@ -33,5 +35,6 @@ module.exports = {
   Reservation,
   Room,
   FAQ,
-  Image
+  Image,
+  ReservationRooms
 };

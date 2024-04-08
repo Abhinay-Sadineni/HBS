@@ -7,6 +7,7 @@ const Room = sequelize.define('Room', {
       primaryKey: true,
       autoIncrement: true
     },
+    room_type: Sequelize.STRING,
     room_no: Sequelize.STRING,
     list_of_amenties: Sequelize.TEXT,
     availability: Sequelize.BOOLEAN,
