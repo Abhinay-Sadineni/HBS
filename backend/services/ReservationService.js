@@ -5,7 +5,7 @@ const Room = require("../models/Room")
 
 class ReservationService {
     // Validate reservation
-    static async validateReservation(hotel_id, start_date, end_date) {
+    static async validateReservation(hotel_id, no_of_rooms ,start_date, end_date) {
         try {
             // Find all rooms associated with the hotel
             const allRooms = await Room.findAll({
@@ -35,9 +35,15 @@ class ReservationService {
     
             // Filter out null values (unavailable rooms) and return only the available room IDs
             const availableRoomIds = availableRooms.filter(roomId => roomId !== null);
-    
-            // Return the list of available room IDs
-            return availableRoomIds;
+
+            if (no_of_rooms > availableRoomIds.length) {
+                // If the requested number of rooms exceeds the available number,
+                console.error('Requested number of rooms exceeds availability.');
+                return false;
+            }
+            else{
+                return availableRoomIds;
+            }
         } catch (error) {
             console.error('Error validating reservation:', error);
             return [];
