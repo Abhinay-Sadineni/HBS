@@ -47,6 +47,50 @@ class ReservationService {
         }
     }
 
+    //get all reservations
+    static async get_all_reservations_user(user_id){
+        try{
+            const RVS = await RV.findAll({
+                where:{
+                    user_id: user_id
+                }
+            })
+            return RVS;
+        }
+        catch(error) {
+            console.error('Error get  all reservation:', error);
+            return false;
+        }
+    }
+
+    //get booked rooms
+    static async get_all_reservations_hotel(hotel_id){
+        try{
+            const RVS = await RV.findAll({
+                where:{
+                    hotel_id : hotel_id
+                }
+            })
+            return RVS;
+        }
+        catch(error) {
+            console.error('Error get  all reservation:', error);
+            return false;
+        }
+    }
+     
+    //get reservation details 
+    static async get_reservation(rid){
+               try{
+                   const RV = await RV.findByPk(rid)
+                   return RV;
+               }
+               catch(error) {
+                console.error('Error get reservation:', error);
+                return false;
+            }
+    }
+
     //cancel reservation
     static async cancel_reservation(rid){
         try {
@@ -68,6 +112,11 @@ class ReservationService {
             return false; 
         }
     }
+
+    
+
+
+    
 }
 
 module.exports = ReservationService;

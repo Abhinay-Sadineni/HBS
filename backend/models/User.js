@@ -12,7 +12,10 @@ const User = sequelize.define('User', {
   password: Sequelize.STRING,
   phone_number: Sequelize.STRING,
   country_code: Sequelize.STRING,
-  role: Sequelize.STRING
+  usertype: {
+    type:  Sequelize.ENUM('guest','HM'),
+    default: 'guest'
+  }
 }, {
     tableName: 'User'
 });
