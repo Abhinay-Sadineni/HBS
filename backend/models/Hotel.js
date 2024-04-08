@@ -7,6 +7,12 @@ const Hotel = sequelize.define('Hotel', {
       primaryKey: true,
       autoIncrement: true
     },
+    manager_id: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'User',
+        key: 'hotel_id'
+      }},
     Hotel_name: Sequelize.STRING,
     Location: Sequelize.STRING,
     register_date: Sequelize.DATE,

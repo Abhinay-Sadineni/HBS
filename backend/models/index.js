@@ -18,6 +18,7 @@ module.exports = {
 User.hasMany(Reservation, { foreignKey: 'user_id' });
 Reservation.belongsTo(User, { foreignKey: 'user_id' });
 
+
 Hotel.hasMany(Reservation, { foreignKey: 'hotel_id' });
 Reservation.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 
