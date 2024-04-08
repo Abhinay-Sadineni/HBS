@@ -3,12 +3,12 @@ const UserService = require('../services/UserService');
 //Login
 async function login(req, res){
     try{
-        const{email, password, role} = req.body;
+        const{email, password, usertype} = req.body;
         const token = req.header('Authorization');
 
         if (email && password) {
             //Login with credentials
-            const result = await UserService.login_with_cred(email, password, role);
+            const result = await UserService.login_with_cred(email, password, usertype);
             if(result.success){
                 res.setHeader('Authorization', `Bearer ${result.token}`);
                 res.status(200).json({message: "Logged in successfully"});
@@ -42,8 +42,8 @@ async function login(req, res){
 //Signup
 async function signup(req, res){
     try{
-        const{username, email, password, phone_number, country_code, role} = req.body;
-        const result = await UserService.save_to_DB(username, email, password, phone_number, country_code, role);
+        const{username, email, password, phone_number, country_code, usertype} = req.body;
+        const result = await UserService.save_to_DB(username, email, password, phone_number, country_code, usertype);
         if(result.success){
             res.status(201).json({message: result.message });
         }

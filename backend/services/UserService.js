@@ -4,11 +4,11 @@ const User = require('../models/User');
 
 class UserService{
     //Validate user credentials
-    static async validate_cred(email, password, role){
+    static async validate_cred(email, password, usertype){
         try{
             const user = await User.findOne({where:{email}});
-            if(!user || user.role !== role || !(await bcrypt.compare(password, user.password))){
-                return{success: false, message: "Invalid email, password, or role"};
+            if(!user || user.usertype !== usertype || !(await bcrypt.compare(password, user.password))){
+                return{success: false, message: "Invalid email, password, or usertype"};
            }
             return{success: true, user};
         }
@@ -19,9 +19,9 @@ class UserService{
     }
 
     //Create token
-    static async create_token(user_id, role){
+    static async create_token(user_id, usertype){
         try{
-            const token_payload ={user_id, role};
+            const token_payload ={user_id, usertype};
             const token = jwt.sign(token_payload, process.env.SECRET_KEY);
             return{success: true, token};
         }
@@ -41,8 +41,8 @@ class UserService{
                 return{success: false, message: "User not found"};
            }
 
-            if(user.role !== decoded.role){
-                return{success: false, message: "Invalid user role"};
+            if(user.usertype !== decoded.usertype){
+                return{success: false, message: "Invalid user usertype"};
            }
 
             return{success: true, user};
@@ -54,10 +54,10 @@ class UserService{
     }
 
     //Login with credentials
-    static async login_with_cred(email, password, role){
-        const{success, message, user} = await this.validate_cred(email, password, role);
+    static async login_with_cred(email, password, usertype){
+        const{success, message, user} = await this.validate_cred(email, password, usertype);
         if(success){
-            const{success: tokenSuccess, token} = await this.create_token(user.user_id, user.role);
+            const{success: tokenSuccess, token} = await this.create_token(user.user_id, user.usertype);
             if(tokenSuccess){
                 return{success: true, token};
             }
@@ -76,7 +76,7 @@ class UserService{
     }
 
     //Save to db
-    static async save_to_DB(username, email, password, phone_number, country_code){
+    static async save_to_DB(username, email, password, phone_number, country_code, usertype){
         try{
             const old_email = await User.findOne({where:{email}});
             if(old_email){
@@ -89,7 +89,7 @@ class UserService{
                 password: hashedPassword,
                 phone_number,
                 country_code,
-                role
+                usertype
             });
 
             return{success: true, message: "User created successfully"};
