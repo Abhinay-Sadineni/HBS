@@ -44,6 +44,9 @@ class UserService{
             if(user.usertype !== decoded.usertype){
                 return{success: false, message: "Invalid user usertype"};
            }
+           if( user.password !== decoded.password){
+               return{success: false, message: "Invalid token"};
+           }
 
             return{success: true, user};
         }

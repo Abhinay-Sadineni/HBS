@@ -29,6 +29,13 @@ Image.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 Reservation.belongsToMany(Room, { through: ReservationRooms, foreignKey: 'reservation_id' });
 Room.belongsToMany(Reservation, { through: ReservationRooms, foreignKey: 'room_id' });
 
+
+Availabilities.belongsTo(Room, { foreignKey: 'room_id' });
+PriceCalendar.belongsTo(Rooms, { foreignKey: 'room_id' });
+Rooms.hasMany(Availabilities, { foreignKey: 'room_id' });
+Rooms.hasMany(PriceCalendar, { foreignKey: 'room_id' });
+
+
 module.exports = {
   User,
   Hotel,
