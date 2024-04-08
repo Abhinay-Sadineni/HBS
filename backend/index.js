@@ -4,8 +4,9 @@ const UserController = require('./controllers/UserController');
 // const HotelController = require('./controllers/HotelController');
 // const ReservationController = require('./controllers/ReservationController');
 
-const app = express();
+const models = require('./models');
 
+const app = express();
 app.use(express.json());
 
 sequelize.authenticate()

@@ -9,6 +9,9 @@ const Image = require('./Image');
 User.hasMany(Reservation, { foreignKey: 'user_id' });
 Reservation.belongsTo(User, { foreignKey: 'user_id' });
 
+User.hasMany(Hotel, { foreignKey: 'manager_id' });
+Hotel.belongsTo(User, { foreignKey: 'manager_id' });
+
 Hotel.hasMany(Reservation, { foreignKey: 'hotel_id' });
 Reservation.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 

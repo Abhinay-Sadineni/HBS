@@ -11,7 +11,7 @@ const Hotel = sequelize.define('Hotel', {
       type: Sequelize.INTEGER,
       references: {
         model: 'User',
-        key: 'hotel_id'
+        key: 'user_id'
       }},
     Hotel_name: Sequelize.STRING,
     Location: Sequelize.STRING,
