@@ -1,19 +1,23 @@
 const Sequelize = require('sequelize');
 const Reservation = require('../models/Reservation'); // Import Reservation model
 const ReservedRoom = require('../models/ReservedRoom'); // Import ReservedRoom model
+const Room = require("../models/Room")
 
 class ReservationService {
     // Validate reservation
-    static async validateReservation(hotel_id, room_ids, start_date, end_date) {
+    static async validateReservation(hotel_id, start_date, end_date) {
         try {
-            // Initialize an array to store conflicts for each room
-            const roomConflicts = [];
+            // Find all rooms associated with the hotel
+            const allRooms = await Room.findAll({
+                where: { hotel_id: hotel_id },
+                attributes: ['room_id'] // Select only the room_id column
+            });
     
-            // Iterate through each room ID and perform validation
-            for (const room_id of room_ids) {
+            // Filter out the rooms that have conflicts during the specified time period
+            const availableRooms = await Promise.all(allRooms.map(async room => {
                 const conflict = await ReservedRoom.findAll({
                     where: {
-                        room_id: room_id,
+                        room_id: room.room_id,
                         [Sequelize.Op.or]: [
                             { start_date: { [Sequelize.Op.between]: [start_date, end_date] } },
                             { end_date: { [Sequelize.Op.between]: [start_date, end_date] } },
@@ -26,19 +30,20 @@ class ReservationService {
                         ]
                     }
                 });
+                return conflict.length === 0 ? room.room_id : null; // Return room_id if available, null otherwise
+            }));
     
-                // Store the conflict result for each room
-                roomConflicts.push(conflict.length === 0);
-            }
+            // Filter out null values (unavailable rooms) and return only the available room IDs
+            const availableRoomIds = availableRooms.filter(roomId => roomId !== null);
     
-            // Check if any of the rooms have conflicts
-            // Return true if all rooms are available, false otherwise
-            return roomConflicts.every(conflict => conflict === true);
+            // Return the list of available room IDs
+            return availableRoomIds;
         } catch (error) {
             console.error('Error validating reservation:', error);
-            return false;
+            return [];
         }
     }
+    
     
 
     // Reserve function
