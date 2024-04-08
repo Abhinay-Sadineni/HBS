@@ -1,7 +1,9 @@
+const express = require('express');
+const router = express.Router();
 const UserService = require('../services/UserService');
 
-//Login
-async function login(req, res){
+// Login
+router.post('/login', async (req, res) => {
     try{
         const{email, password, usertype} = req.body;
         const token = req.header('Authorization');
@@ -36,11 +38,11 @@ async function login(req, res){
         console.error('Error in login controller:', error);
         res.status(500).json({message: "Server error" });
     }
-}
+});
 
 
 //Signup
-async function signup(req, res){
+router.post('/signup', async (req, res) => {
     try{
         const{username, email, password, phone_number, country_code, usertype} = req.body;
         const result = await UserService.save_to_DB(username, email, password, phone_number, country_code, usertype);
@@ -55,11 +57,11 @@ async function signup(req, res){
         console.error('Error in signup controller:', error);
         res.status(500).json({message: "Server error" });
     }
-}
+});
 
 
 //Edit profile
-async function edit_profile(req, res){
+router.put('/profile/:user_id', async (req, res) => {
     try{
         const{user_id} = req.params;
         const newData = req.body;
@@ -75,10 +77,6 @@ async function edit_profile(req, res){
         console.error('Error in edit_profile controller:', error);
         res.status(500).json({success: false, message: "Server error"});
     }
-}
+});
 
-module.exports ={
-    login,
-    signup,
-    edit_profile
-};
+module.exports = router;

@@ -1,6 +1,8 @@
 const express = require('express');
 const sequelize = require('./config');
-const userRoutes = require('./routes/userRoutes');
+const UserController = require('./controllers/UserController');
+// const HotelController = require('./controllers/HotelController');
+// const ReservationController = require('./controllers/ReservationController');
 
 const app = express();
 
@@ -18,9 +20,9 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-
-app.use(userRoutes);
-
+app.use(UserController);
+// app.use(HotelController);
+// app.use(ReservationController);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
