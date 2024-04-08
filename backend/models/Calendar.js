@@ -1,9 +1,9 @@
-// models/PriceCalendar.js
+// models/Availabilities.js
 
 const Sequelize = require('sequelize');
 const sequelize = require('../config/database');
 
-const PriceCalendar = sequelize.define('PriceCalendar', {
+const Calendar = sequelize.define('Calendar', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -19,14 +19,14 @@ const PriceCalendar = sequelize.define('PriceCalendar', {
     },
     date: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: true 
     },
     price: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false
     }
 }, {
-    tableName: 'price_calendar'
+    tableName: 'Calendar'
 });
 
-module.exports = PriceCalendar;
+module.exports = Calendar;
