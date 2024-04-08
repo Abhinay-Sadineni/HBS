@@ -20,14 +20,6 @@ const Availabilities = sequelize.define('Availabilities', {
     date: {
         type: Sequelize.DATE,
         allowNull: true 
-    },
-    start_period: {
-        type: Sequelize.DATE,
-        allowNull: true 
-    },
-    end_period: {
-        type: Sequelize.DATE,
-        allowNull: true 
     }
 }, {
     tableName: 'availabilities'

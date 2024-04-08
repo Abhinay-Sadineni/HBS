@@ -17,11 +17,7 @@ const PriceCalendar = sequelize.define('PriceCalendar', {
             key: 'id'
         }
     },
-    start_date: {
-        type: Sequelize.DATE,
-        allowNull: false
-    },
-    end_date: {
+    date: {
         type: Sequelize.DATE,
         allowNull: false
     },
