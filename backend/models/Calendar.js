@@ -1,7 +1,7 @@
 // models/Availabilities.js
 
 const Sequelize = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../config.js');
 
 const Calendar = sequelize.define('Calendar', {
     id: {
@@ -9,22 +9,23 @@ const Calendar = sequelize.define('Calendar', {
         primaryKey: true,
         autoIncrement: true
     },
-    room_id: {
+    room_type_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-            model: 'Rooms',
-            key: 'id'
+            model: 'RoomType',
+            key: 'room_type_id'
         }
     },
     date: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true 
     },
     price: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false
-    }
+    },
+    no_of_avail_rooms: Sequelize.INTEGER
 }, {
     tableName: 'Calendar'
 });

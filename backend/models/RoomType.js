@@ -1,15 +1,16 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config.js');
 
-const Room = sequelize.define('Room', {
-    room_id: {
+const RoomType = sequelize.define('RoomType', {
+    room_type_id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    room_type: Sequelize.STRING,
-    room_no: Sequelize.STRING,
+    room_type_name: Sequelize.STRING,
+    no_of_rooms: Sequelize.INTEGER,
     list_of_amenties: Sequelize.TEXT,
+    max_guests: Sequelize.INTEGER,
     hotel_id: {
       type: Sequelize.INTEGER,
       references: {
@@ -18,7 +19,7 @@ const Room = sequelize.define('Room', {
       }
     }
 }, {
-    tableName: 'Room'
+    tableName: 'RoomType'
 });
 
-module.exports = Room;
+module.exports = RoomType;

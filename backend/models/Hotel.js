@@ -15,10 +15,15 @@ const Hotel = sequelize.define('Hotel', {
       }},
     Hotel_name: Sequelize.STRING,
     Location: Sequelize.STRING,
-    register_date: Sequelize.DATE,
+    register_date: Sequelize.DATEONLY,
     Description: Sequelize.TEXT,
+    Address: Sequelize.TEXT,
+    latitude: Sequelize.STRING,
+    longitude: Sequelize.STRING,
     list_of_amenities: Sequelize.TEXT,
-    cancellation_policy: Sequelize.DATE
+    cancellation_policy: Sequelize.DATE,
+    check_in: Sequelize.STRING,
+    check_out: Sequelize.STRING
 }, {
     tableName: 'Hotel'
 });
