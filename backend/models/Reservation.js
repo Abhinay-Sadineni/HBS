@@ -7,8 +7,8 @@ const Reservation = sequelize.define('Reservation', {
       primaryKey: true,
       autoIncrement: true
     },
-    booked_date: Sequelize.DATE,
-    start_date: Sequelize.DATE,
+    booked_date: Sequelize.DATEONLY,
+    start_date: Sequelize.DATEONLY,
     end_date: Sequelize.DATE,
     Review: Sequelize.TEXT,
     Rating: Sequelize.INTEGER,
@@ -26,6 +26,15 @@ const Reservation = sequelize.define('Reservation', {
         key: 'hotel_id'
       }
     },
+    room_type_id: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'RoomType',
+        key: 'room_type_id'
+      }
+    },
+    No_of_rooms: Sequelize.INTEGER,
+    payment: Sequelize.INTEGER,
     status : {
       type: Sequelize.ENUM('cancelled', 'accepted', 'rejected' , 'pending'),
       defaultValue: 'accepted'
