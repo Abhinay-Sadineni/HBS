@@ -25,7 +25,7 @@ function NavBar() {
   return (
     <div className="flex justify-between items-center bg-gray-800 text-white p-4">
       <div className="flex items-center">
-        <img src="https://cdn1.vectorstock.com/i/1000x1000/97/95/hotel-booking-round-design-template-line-icon-vector-18199795.jpg" alt="Logo" className="h-10 w-10 mr-2" />
+        <img src="../images/HBSLogo" alt="Logo" className="h-10 w-10 mr-2" />
         <h1 className="text-2xl">HBS</h1>
       </div>
       <div className="flex space-x-4">
