@@ -1,12 +1,12 @@
 // Dashboard.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 function Dashboard() {
   return (
-    <div className="container">
-      <h1>Welcome to the Dashboard</h1>
-      <p>You are logged in!</p>
+    <div className="HI">
+      <NavBar />  
       <Link to="/" className="btn btn-primary">Logout</Link>
     </div>
   );
