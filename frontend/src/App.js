@@ -1,7 +1,7 @@
-import Login from './components/Login';
-import Home from './components/Home';
-import Signup from './components/Signup';
-import Dashboard from './components/Dashboard';
+import Login from './pages/Login';
+import Home from './pages/Guest_home';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Guest_Dashboard';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import Dashboard from './components/Dashboard';
 

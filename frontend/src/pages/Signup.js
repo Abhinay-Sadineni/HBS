@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import backgroundImage from '../images/signup.jpg';
 
 function Signup() {
   const navigate = useNavigate();
@@ -26,13 +27,11 @@ function Signup() {
   };
 
   return (
-    <div className="App">
-      <div className="min-h-screen py-40 from-mycolour to-mycolour2 bg-gradient-115">
-        <div className="container mx-auto">
-          <div className="flex w-8/12 bg-white rounded-xl mx-auto shadow-lg overflow-hidden">
-            <div className="w-1/2 bg-register-image">
-              <h1 className="text-white text-3xl text-center mt-4">Welcome</h1>
-            </div>
+    <div className="App flex justify-center items-center min-h-screen py-40 from-mycolour to-mycolour2 bg-gradient-115">
+      <div className="container">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="flex">
+          <div className="w-1/2 bg-register-image" style={{ backgroundImage: `url(${backgroundImage})` }}></div>
             <div className="w-1/2 py-16 px-12">
               <h2 className="text-3xl text-center mb-4">Register</h2>
               <p className="mb-4 text-center">Create your account</p>
