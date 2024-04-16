@@ -7,7 +7,7 @@ import SearchBar from '../components/SearchBar';
 function Dashboard() {
   return (
     <div className="HI">
-      <NavBar />  
+      <NavBar /> 
       <SearchBar />
       <Link to="/" className="btn btn-primary">Logout</Link>
     </div>
