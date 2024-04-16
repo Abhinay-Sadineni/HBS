@@ -4,6 +4,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Guest_Dashboard';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HotelList from './pages/Hotel_list';
+import History from './pages/Guest_History';
 // import Dashboard from './components/Dashboard';
 
 
@@ -21,6 +22,7 @@ function App() {
           <Route exact path="/signup" element={<Signup />}></Route>
           <Route exact path = "/guest-dashboard" element = {<Dashboard/>}></Route>
           <Route exact path = "/list" element = {<HotelList/>}></Route>
+          <Route exact path = "/guest-dashboard/history" element = {<History/>}></Route>
         </Routes>
       </div>
     </Router>

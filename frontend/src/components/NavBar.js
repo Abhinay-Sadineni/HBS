@@ -31,8 +31,12 @@ function NavBar() {
         <h1 className="text-2xl">HBS</h1>
       </div>
       <div className="flex space-x-4">
-        <a href="#home" className="hover:text-gray-300">Home</a>
-        <a href="#history" className="hover:text-gray-300">History</a>
+        {/* <a href="#home" className="hover:text-gray-300">Home</a> */}
+        <Link to="/guest-dashboard" className="hover:text-gray-300">Home</Link>
+
+        <Link to="/guest-dashboard/history" className="hover:text-gray-300">History</Link>
+
+        {/* <a href="#history" className="hover:text-gray-300">History</a> */}
       </div>
       <div className="relative">
         <button onClick={toggleDropdown} className="focus:outline-none">
