@@ -48,7 +48,7 @@ async function generateHashedPassword(password) {
 async function generateUsers() {
   const users = [];
   for (let i = 0; i < 500; i++) {
-    const userType = i < 100 ? 'HM' : 'guest';
+    const userType = i < 50 ? 'HM' : 'guest';
     const user = {
       username: faker.internet.userName(),
       email: faker.internet.email(),
@@ -64,7 +64,7 @@ async function generateUsers() {
 
 async function generateHotels() {
   const hotels = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 30; i++) {
     const managerUserId = await getRandomUserIdForManager();
     const hotel = {
       manager_id: managerUserId,
@@ -89,7 +89,7 @@ async function generateRoomTypes() {
   const roomTypes = [];
   const hotels = await Hotel.findAll();
   for (let hotel of hotels) {
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 3; i++) {
       const roomType = {
         room_type_name: faker.lorem.word(),
         no_of_rooms: Math.floor(Math.random() * 10) + 1,
@@ -134,7 +134,7 @@ async function generateFAQs() {
   const faqs = [];
   const hotels = await Hotel.findAll();
   for (let hotel of hotels) {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 5; i++) {
       const faq = {
         Q: faker.lorem.sentence(),
         A: faker.lorem.paragraph(),
@@ -161,7 +161,7 @@ async function generateCalendars() {
         const calendar = {
           room_type_id: roomType.room_type_id,
           date: currentDateIterator,
-          price: faker.random.number({ min: 50, max: 500 }),
+          price: faker.random.number({ min: 500, max: 5000 }),
           no_of_avail_rooms: Math.floor(Math.random() * 10) + 1
         };
         calendars.push(calendar);
