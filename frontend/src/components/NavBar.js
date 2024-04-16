@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/images/HBSLogo.jpg';
+
 
 function NavBar() {
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -25,7 +27,7 @@ function NavBar() {
   return (
     <div className="flex justify-between items-center bg-gray-800 text-white p-4">
       <div className="flex items-center">
-        <img src="../images/HBSLogo" alt="Logo" className="h-10 w-10 mr-2" />
+        <img src= {logo} alt="Logo" className="h-10 w-10 mr-2" />
         <h1 className="text-2xl">HBS</h1>
       </div>
       <div className="flex space-x-4">
