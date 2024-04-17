@@ -1,7 +1,7 @@
 const express = require('express');
 const sequelize = require('./config');
 const UserController = require('./controllers/UserController');
-// const HotelController = require('./controllers/HotelController');
+const HotelController = require('./controllers/HotelController');
 // const ReservationController = require('./controllers/ReservationController');
 
 const models = require('./models');
