@@ -5,7 +5,7 @@ import SearchBar from '../components/SearchBar';
 import Card from '../components/List_card';
 import hotelsList from '../components/hotels';
 
-function Dashboard() {
+function Hotelpage() {
   return (
     <div className="HI">
       <div className="fixed top-0 w-full z-10 mb-20">
@@ -33,4 +33,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Hotelpage;
