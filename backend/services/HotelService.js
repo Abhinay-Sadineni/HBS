@@ -29,9 +29,10 @@ class HotelService {
         ]
       });
 
+      // Filter hotels where requested no_of_rooms is less than or equal to no_of_avail_rooms using calendar
       
 
-      return Hotel_list; 
+      return Hotel_list;
 
 
     }
