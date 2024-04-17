@@ -22,7 +22,7 @@ sequelize.authenticate()
   });
 
 app.use(UserController);
-// app.use(HotelController);
+app.use(HotelController);
 // app.use(ReservationController);
 
 const PORT = process.env.PORT || 5000;
