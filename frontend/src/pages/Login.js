@@ -1,17 +1,48 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import Loading from '../components/Loading';
+import axios from 'axios'
 
 function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('guest'); // Default user type is guest
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
+  const [sucess, setSucess] = useState(0);
 
-  const handleLogin = () => {
-    if (username !== '' && password !== '') {
-      // Assuming you have different routes for guest and manager dashboards
-      const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
-      navigate(dashboardRoute);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    console.log({
+      email: email,
+      password: password,
+      userType: userType
+
+    })
+
+    if (email !== '' && password !== '') {
+      axios.post('http://localhost:5000/login', {
+        email: email,
+        password: password,
+        userType: userType
+      }).then((res) => {
+        setSucess(1);
+        if (sucess == 1) {
+          setCookie('token', res.data.token, { path: '/' })
+
+          setTimeout(() => {
+            <Loading />
+          }, 1000)
+
+
+          const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
+          navigate(dashboardRoute);
+        }
+      })
+
+
     }
   };
 
@@ -34,9 +65,9 @@ function Login() {
             <div>
               <input
                 type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="email"
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               />
             </div>

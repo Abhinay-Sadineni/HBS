@@ -9,7 +9,7 @@ const { Op } = require('sequelize');
 
 class HotelService {
 
-  //search hotels
+  // search hotels
   static async search_hotels(location, no_of_rooms, no_of_guests, duration) {
     try {
       const Hotel_list = await Hotel.findAll({
@@ -29,7 +29,8 @@ class HotelService {
         ]
       });
 
-      // Filter hotels where requested no_of_rooms is less than or equal to no_of_avail_rooms using calendar
+      
+
       
 
       return Hotel_list;
