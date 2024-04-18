@@ -5,7 +5,6 @@ import backgroundImage from '../assets/images/signup.jpg';
 function Signup() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
-  const [dispName, setDispName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [phone, setPhone] = useState('');
@@ -44,14 +43,7 @@ function Signup() {
                   required
                   onChange={(e) => setUserName(e.target.value)}
                 />
-                <input
-                  type="text"
-                  value={dispName}
-                  className="border w-full border-gray-400 py-1 px-2 mb-5"
-                  placeholder="Display name"
-                  required
-                  onChange={(e) => setDispName(e.target.value)}
-                />
+          
                 <input
                   type="email"
                   value={email}
