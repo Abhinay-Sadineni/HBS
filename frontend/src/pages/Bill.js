@@ -13,7 +13,7 @@ function BillPage() {
       </div>
       <div className="m-10"> <p>h</p> </div>
       <h1>Hi</h1>
-      <div className = "bg-white shadow-lg"> 
+      <div className = "bg-white shadow-lg border-gray-900"> 
         <div className="flex">
             <div>
             <h1 className="text-3xl font-bold">Booking Id</h1>
