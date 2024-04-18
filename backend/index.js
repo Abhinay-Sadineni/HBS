@@ -8,6 +8,8 @@ const models = require('./models');
 
 const app = express();
 app.use(express.json());
+const cors = require('cors')
+app.use(cors())
 
 sequelize.authenticate()
   .then(() => {
