@@ -6,7 +6,11 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HotelList from './pages/Hotel_list';
 import History from './pages/Guest_History';
 import Hotelpage from './pages/Hotelpage';
-// import Dashboard from './components/Dashboard';
+import TestPage from './pages/TestPage';
+
+// function Fr(){
+//   return(<h1>HI</h1>);
+// }
 
 
 function App() {
@@ -25,6 +29,7 @@ function App() {
           <Route exact path = "/list" element = {<HotelList/>}></Route>
           <Route exact path = "/guest-dashboard/history" element = {<History/>}></Route>
           <Route exact path = "/hotel-page" element = {<Hotelpage />}></Route>
+          <Route exact path = "/abc" element = {<TestPage />}></Route>
         </Routes>
       </div>
     </Router>
