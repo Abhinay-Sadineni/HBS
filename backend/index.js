@@ -1,13 +1,15 @@
 const express = require('express');
+const cors = require('cors')
 const sequelize = require('./config');
 const UserController = require('./controllers/UserController');
-// const HotelController = require('./controllers/HotelController');
+const HotelController = require('./controllers/HotelController');
 // const ReservationController = require('./controllers/ReservationController');
 
 const models = require('./models');
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 sequelize.authenticate()
   .then(() => {
@@ -22,7 +24,7 @@ sequelize.authenticate()
   });
 
 app.use(UserController);
-// app.use(HotelController);
+app.use(HotelController);
 // app.use(ReservationController);
 
 const PORT = process.env.PORT || 5000;

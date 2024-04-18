@@ -6,14 +6,13 @@ const UserService = require('../services/UserService');
 router.post('/login', async (req, res) => {
     try{
         const{email, password, usertype} = req.body;
-        const token = req.header('Authorization');
 
         if (email && password) {
             //Login with credentials
             const result = await UserService.login_with_cred(email, password, usertype);
             if(result.success){
                 res.setHeader('Authorization', `Bearer ${result.token}`);
-                res.status(200).json({message: "Logged in successfully"});
+                res.status(200).json({token : result.token});
             }
             else{
                 res.status(401).json({message: result.message});

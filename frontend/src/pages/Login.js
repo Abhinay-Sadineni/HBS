@@ -1,19 +1,56 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import Loading from '../components/Loading';
+import axios from 'axios'
 
 function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('guest'); // Default user type is guest
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
+  const [sucess, setSucess] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (username !== '' && password !== '') {
-      // Assuming you have different routes for guest and manager dashboards
-      const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
-      navigate(dashboardRoute);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (email !== '' && password !== '') {
+      try {
+        const response = await axios.post('http://localhost:5000/login', {
+          email: email,
+          password: password,
+          usertype: userType
+        });
+  
+        const token = response.data.token;
+  
+        if (token) {
+          setCookie('token', token, { path: '/' });
+
+          setLoading(true);
+  
+          setTimeout(() => {
+            
+            const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
+            navigate(dashboardRoute);
+
+            }, 3000);
+  
+          setLoading(false);
+
+        } else {
+          console.error('No token received in response headers');
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
+      }
+    } else {
+      console.error('Email or password is empty');
     }
   };
+  
 
   const handleSignup = () => {
     navigate('/signup');
@@ -25,6 +62,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {loading && <Loading />}
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login</h2>
@@ -34,9 +72,9 @@ function Login() {
             <div>
               <input
                 type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="email"
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               />
             </div>

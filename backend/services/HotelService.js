@@ -1,45 +1,46 @@
-const { where } = require("sequelize");
 const Hotel = require("../models/Hotel")
-
+const RoomType = require("../models/RoomType")
+const Calendar = require("../models/Calendar")
+const Image = require("../models/Image");
+const { Op } = require('sequelize');
+/* 
+  Class which holds all functions related to hotel Data
+*/
 
 class HotelService {
-    //check policy 
-    static async check_policy(hotel_id , start_date){
-          try {
-            current = new Date();
-            const policy = await Hotel.findByPk(hotel_id)
-            if( start_date - policy > current ){
-                return true;
-            }
-            return false;
+
+  // search hotels
+  static async search_hotels(location, no_of_rooms, no_of_guests, duration) {
+    try {
+      const Hotel_list = await Hotel.findAll({
+        where: {
+          Location: location
+        },
+        include: [
+          {
+            model: RoomType,
+            where: {
+              max_guests: {
+                [Op.gte]: no_of_guests
+              }
+            },
+            required: true
           }
-          catch(error){
-            console.error('Error checking policy:', error);
-            return {success: false, message: "Server error"};
-          }
+        ]
+      });
+
+      
+
+      
+
+      return Hotel_list;
+
+
     }
-
-    //get hotel info
-    static async get_hotel_info(hotel_id){
-        try {
-
-        }
-        catch(error){
-            console.error('Error get hotel info :', error);
-            return {success: false, message: "Server error"};
-        }
+    catch (error) {
+      console.error('Error searching hotels by location :', error);
     }
-
-    //generate bill
-
-
-    //
-
-
-
-
-
-
+  }
 
 }
 
