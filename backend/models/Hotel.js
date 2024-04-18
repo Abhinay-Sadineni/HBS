@@ -21,7 +21,7 @@ const Hotel = sequelize.define('Hotel', {
     latitude: Sequelize.STRING,
     longitude: Sequelize.STRING,
     list_of_amenities: Sequelize.TEXT,
-    cancellation_policy: Sequelize.DATE,
+    cancellation_policy: Sequelize.TEXT,
     check_in: Sequelize.STRING,
     check_out: Sequelize.STRING
 }, {

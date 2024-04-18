@@ -8,11 +8,16 @@ import hotelsList from '../components/hotels';
 function Dashboard() {
   return (
     <div className="HI">
+      <div className="fixed top-0 w-full z-10 mb-20">
       <NavBar /> 
       <SearchBar />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      </div>
+      <div className="m-10"> <p>h</p></div>
+      <div className="m-10"> <p>h</p></div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4">
         {hotelsList.map(hotel => (
-          <Card
+          <div className='m-4'>
+          <Card 
             key={hotel.id}
             imgURL={hotel.imgURL}
             name={hotel.name}
@@ -20,13 +25,12 @@ function Dashboard() {
             rating={hotel.rating}
             price={hotel.price}
           />
+          </div>
         ))}
       </div>
-      <Link to="/" className="btn btn-primary">Logout</Link>
+      <Link to="/hotel-page" className="btn btn-primary">Logout</Link>
     </div>
   );
 }
 
 export default Dashboard;
-
-

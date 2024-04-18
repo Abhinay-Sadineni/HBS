@@ -38,5 +38,6 @@ module.exports = {
   Reservation,
   RoomType,
   FAQ,
-  Image
+  Image,
+  Calendar
 };
