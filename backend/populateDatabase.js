@@ -62,10 +62,33 @@ async function generateUsers() {
   await User.bulkCreate(users);
 }
 
+const hotelAmenities = [
+  'Wifi', 'TV', 'Kitchen', 'Washing machine', 'Free parking on premises',
+  'Paid parking on premises', 'Air conditioning', 'Dedicated workspace', 'Pool',
+  'Hot tub', 'Patio', 'BBQ grill', 'Outdoor dining area', 'Firepit',
+  'Pool table', 'Indoor fireplace', 'Piano', 'Exercise Equipment',
+  'Lake access', 'Beach access', 'Ski-in/out', 'Outdoor shower',
+  'Smoke alarm', 'First aid kit', 'Fire extinguisher', 'Carbon monoxide alarm'
+];
+
+const roomAmenities = [
+  'Wifi', 'TV', 'Kitchen', 'Washing machine', 'Free parking on premises',
+  'Paid parking on premises', 'Air conditioning', 'Dedicated workspace', 'Pool',
+  'Hot tub', 'Patio', 'BBQ grill', 'Outdoor dining area', 'Firepit',
+  'Pool table', 'Indoor fireplace', 'Piano', 'Exercise Equipment',
+  'Lake access', 'Beach access', 'Ski-in/out', 'Outdoor shower',
+  'Smoke alarm', 'First aid kit', 'Fire extinguisher', 'Carbon monoxide alarm'
+];
+
+function getRandomAmenities(amenities, probability) {
+  return amenities.filter(() => Math.random() < probability);
+}
+
 async function generateHotels() {
   const hotels = [];
   for (let i = 0; i < 5; i++) {
     const managerUserId = await getRandomUserIdForManager();
+    const selectedHotelAmenities = getRandomAmenities(hotelAmenities, 0.3);
     const hotel = {
       manager_id: managerUserId,
       Hotel_name: faker.company.companyName(),
@@ -75,7 +98,7 @@ async function generateHotels() {
       Address: faker.address.streetAddress(),
       latitude: faker.address.latitude(),
       longitude: faker.address.longitude(),
-      list_of_amenities: faker.random.words(),
+      list_of_amenities: selectedHotelAmenities.join(', '),
       cancellation_policy: faker.lorem.paragraph(),
       check_in: faker.random.arrayElement(['12:00 PM', '2:00 PM', '3:00 PM']),
       check_out: faker.random.arrayElement(['10:00 AM', '11:00 AM', '12:00 PM'])
@@ -90,10 +113,11 @@ async function generateRoomTypes() {
   const hotels = await Hotel.findAll();
   for (let hotel of hotels) {
     for (let i = 0; i < 3; i++) {
+      const selectedRoomAmenities = getRandomAmenities(roomAmenities, 0.3);
       const roomType = {
         room_type_name: faker.lorem.word(),
         no_of_rooms: Math.floor(Math.random() * 10) + 1,
-        list_of_amenties: faker.random.words(),
+        list_of_amenties: selectedRoomAmenities.join(', '),
         max_guests: Math.floor(Math.random() * 4) + 1,
         hotel_id: hotel.hotel_id
       };
@@ -102,6 +126,7 @@ async function generateRoomTypes() {
   }
   await RoomType.bulkCreate(roomTypes);
 }
+
 
 async function generateReservations() {
   const reservations = [];
@@ -183,24 +208,9 @@ async function generateCalendars() {
       let currentDateIterator = new Date(currentDate);
       while (currentDateIterator <= endDate) {
         const date = new Date(currentDateIterator);
-        const reservations = await Reservation.findAll({
-          where: {
-            hotel_id: hotel.hotel_id,
-            room_type_id: roomType.room_type_id,
-          }
-        });
 
-        let totalRoomsBooked = 0;
-        for (let reservation of reservations) {
-          if (
-            reservation.start_date <= date &&
-            reservation.end_date >= date
-          ) {
-            totalRoomsBooked += reservation.No_of_rooms;
-          }
-        }
+        const availableRooms = roomType.no_of_rooms;
 
-        const availableRooms = roomType.no_of_rooms - totalRoomsBooked;
         const calendar = {
           room_type_id: roomType.room_type_id,
           date: date,
@@ -214,7 +224,6 @@ async function generateCalendars() {
   }
   await Calendar.bulkCreate(calendars);
 }
-
 
 
 async function populateDatabase() {
