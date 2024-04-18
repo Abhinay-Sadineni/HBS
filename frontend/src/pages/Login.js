@@ -11,40 +11,46 @@ function Login() {
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [sucess, setSucess] = useState(0);
+  const [loading, setLoading] = useState(false);
 
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log({
-      email: email,
-      password: password,
-      userType: userType
-
-    })
-
     if (email !== '' && password !== '') {
-      axios.post('http://localhost:5000/login', {
-        email: email,
-        password: password,
-        userType: userType
-      }).then((res) => {
-        setSucess(1);
-        if (sucess == 1) {
-          setCookie('token', res.data.token, { path: '/' })
+      try {
+        const response = await axios.post('http://localhost:5000/login', {
+          email: email,
+          password: password,
+          usertype: userType
+        });
+  
+        const token = response.data.token;
+  
+        if (token) {
+          setCookie('token', token, { path: '/' });
 
+          setLoading(true);
+  
           setTimeout(() => {
-            <Loading />
-          }, 1000)
+            
+            const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
+            navigate(dashboardRoute);
 
+            }, 3000);
+  
+          setLoading(false);
 
-          const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
-          navigate(dashboardRoute);
+        } else {
+          console.error('No token received in response headers');
         }
-      })
-
-
+      } catch (error) {
+        console.error('Error during login:', error);
+      }
+    } else {
+      console.error('Email or password is empty');
     }
   };
+  
 
   const handleSignup = () => {
     navigate('/signup');
@@ -56,6 +62,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {loading && <Loading />}
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login</h2>
