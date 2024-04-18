@@ -98,7 +98,7 @@ function Hotelpage() {
           </div>
           {!showPopup && (
             <div className="ml-auto mt-5 md:mt-0">
-              <ReserveCard price="10000" /> 
+              <ReserveCard price="10000" rout = "/bill" /> 
             </div>
           )}
         </div>

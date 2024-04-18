@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Link } from 'react-router-dom';
 
 function ReserveCard(props) {
     const [startDate, setStartDate] = useState(null);
@@ -9,6 +10,7 @@ function ReserveCard(props) {
     const [numGuests, setNumGuests] = useState('');
 
     const handleReserve = () => {
+        
         console.log('Reserving...');
     };
 
@@ -57,6 +59,7 @@ function ReserveCard(props) {
             </div>
             <div className="mt-4">
                 <button onClick={handleReserve} className="bg-pink-500 text-white px-4 py-2 rounded-md w-full">Reserve</button>
+                <Link to="/bill" className="btn btn-primary bg-pink-500 text-white px-4 py-2 rounded-md w-full"> Reserve</Link>
             </div>
             <div className="flex justify-between mt-4">
                 <h2 className="font-bold">Total before taxes</h2>
