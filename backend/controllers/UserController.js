@@ -6,14 +6,13 @@ const UserService = require('../services/UserService');
 router.post('/login', async (req, res) => {
     try{
         const{email, password, usertype} = req.body;
-        const token = req.header('Authorization');
 
         if (email && password) {
             //Login with credentials
             const result = await UserService.login_with_cred(email, password, usertype);
             if(result.success){
                 res.setHeader('Authorization', `Bearer ${result.token}`);
-                res.status(200).json({message: "Logged in successfully"});
+                res.status(200).json({token : result.token});
             }
             else{
                 res.status(401).json({message: result.message});
@@ -45,6 +44,8 @@ router.post('/login', async (req, res) => {
 router.post('/signup', async (req, res) => {
     try{
         const{username, email, password, phone_number, country_code, usertype} = req.body;
+        console.log(req.body)
+         
         const result = await UserService.save_to_DB(username, email, password, phone_number, country_code, usertype);
         if(result.success){
             res.status(201).json({message: result.message });

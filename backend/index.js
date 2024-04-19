@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const sequelize = require('./config');
 const UserController = require('./controllers/UserController');
 const HotelController = require('./controllers/HotelController');
@@ -8,7 +9,6 @@ const models = require('./models');
 
 const app = express();
 app.use(express.json());
-const cors = require('cors')
 app.use(cors())
 
 sequelize.authenticate()
