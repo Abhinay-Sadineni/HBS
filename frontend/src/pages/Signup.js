@@ -3,15 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import backgroundImage from '../assets/images/signup.jpg'; // Replace with the actual path to your image
-
+import axios from 'axios'
 function Signup() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
-  const [phone, setPhone] = useState('');
   const [userType, setUserType] = useState('guest');
   const [error, setError] = useState('');
+  const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('');
+
+  const handleChange = (phone, country) => {
+    setPhone(phone);
+    setCountryCode(country.dialCode);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,16 +28,44 @@ function Signup() {
       return;
     }
 
-    // Simulating form submission and response
-    setTimeout(() => {
-      const success = Math.random() < 0.5; // Random success or failure
-      if (success) {
-        alert('Registration successful');
-        navigate('/login');
-      } else {
-        setError('Username already taken');
-      }
-    }, 1000);
+
+    try {
+
+      console.log({
+        username: userName,
+        email: email,
+        password: pass,
+        phone_number: phone,
+        country_code: countryCode,
+        usertype: userType
+      })
+      const response = await axios.post('http://localhost:5000/signup', {
+        username: userName,
+        email: email,
+        password: pass,
+        phone_number: phone,
+        country_code: countryCode,
+        usertype: userType
+      });
+
+
+      if (response.status === 201) {
+        // Prompt the user with a confirmation dialog
+        const confirmed = window.confirm('Registration successful! Proceed to login?');
+        // If user confirms, redirect to login page
+        if (confirmed) {
+          navigate('/login');
+        }
+      } 
+      
+    }
+
+
+    catch (error) {
+      console.error({error: error})
+    }
+
+
   };
 
   return (
@@ -77,7 +111,7 @@ function Signup() {
                     }}
                     country={'in'}
                     value={phone}
-                    onChange={(phone) => setPhone(phone)}
+                    onChange={handleChange}
                     inputClass="border w-full border-gray-400 py-1 px-2"
                   />
                 </div>

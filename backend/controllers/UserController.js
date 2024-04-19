@@ -44,6 +44,8 @@ router.post('/login', async (req, res) => {
 router.post('/signup', async (req, res) => {
     try{
         const{username, email, password, phone_number, country_code, usertype} = req.body;
+        console.log(req.body)
+         
         const result = await UserService.save_to_DB(username, email, password, phone_number, country_code, usertype);
         if(result.success){
             res.status(201).json({message: result.message });

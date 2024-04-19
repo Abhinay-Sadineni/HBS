@@ -86,9 +86,9 @@ class UserService {
     //Save to db
     static async save_to_DB(username, email, password, phone_number, country_code, usertype) {
         try {
-            const old_email = await User.findOne({ where: { email } });
+            const old_email = await User.findOne({ where: { email } }); 
             if (old_email) {
-                return { success: false, message: "Email already in use" };
+                return { success: false, message: "Email already in use" }; 
             }
             const hashedPassword = await bcrypt.hash(password, 10);
             await User.create({

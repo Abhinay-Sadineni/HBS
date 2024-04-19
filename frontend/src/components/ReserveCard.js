@@ -15,7 +15,7 @@ function ReserveCard(props) {
     };
 
     return (
-        <div className="max-w-10em mx-auto bg-white p-6 rounded-md shadow-md border border-gray-300">
+        <div className="max-w-10em mx-auto bg-white p-6 rounded-md mt-4 shadow-md border border-gray-300">
             <h1 className="font-bold">{props.price} Rs for Night</h1>
             <div className="flex flex-col md:flex-row md:space-x-4">
                 <div className="flex-grow">
@@ -28,12 +28,6 @@ function ReserveCard(props) {
                         maxDate={endDate}
                         placeholderText="Check in"
                         className="w-full rounded-md px-4 py-2 border border-gray-300"
-                        // popperModifiers={{
-                        //     zIndex: {
-                        //         enabled: true,
-                        //         zIndex: 1100, 
-                        //     },
-                        // }}
                     />
                 </div>
                 <div className="flex-grow">
@@ -58,8 +52,8 @@ function ReserveCard(props) {
                 </div>
             </div>
             <div className="mt-4">
-                <button onClick={handleReserve} className="bg-pink-500 text-white px-4 py-2 rounded-md w-full">Reserve</button>
-                <Link to="/bill" className="btn btn-primary bg-pink-500 text-white px-4 py-2 rounded-md w-full"> Reserve</Link>
+                {/* <button onClick={handleReserve} className="bg-pink-500 text-white px-4 py-2 rounded-md w-full">Reserve</button> */}
+                <Link to="/bill" className="bg-pink-500 text-white px-4 py-2 rounded-md block w-full"> Reserve</Link>
             </div>
             <div className="flex justify-between mt-4">
                 <h2 className="font-bold">Total before taxes</h2>
