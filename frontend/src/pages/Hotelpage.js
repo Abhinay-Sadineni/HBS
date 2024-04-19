@@ -7,6 +7,7 @@ import ReserveCard from '../components/ReserveCard';
 import RatingBar from '../components/RatingBar';
 import reviewList from '../components/reviews';
 
+import { useParams } from 'react-router-dom';
 const rating = [1000, 1000, 1000, 1000, 1000];
 
 function ReviewCard(props){
@@ -20,6 +21,8 @@ function ReviewCard(props){
 }
 
 function Hotelpage() {
+
+  const { hotelId } = useParams();
   const [showPopup, setShowPopup] = useState(false);
 
   const togglePopup = () => {
