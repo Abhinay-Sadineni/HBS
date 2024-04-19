@@ -7,11 +7,10 @@ const router = express.Router();
 router.get('/search', async(req , res) =>{
     try{
 
-         const { location ,  no_of_rooms , no_of_guests ,  duration} = req.body
+         const { location ,  no_of_rooms , no_of_guests ,  start_date, end_date} = req.body
         
-         const List = await HotelService.search_hotels(location,no_of_rooms,no_of_guests,duration);
-
-         res.json({SearchList : List});
+         const List = await HotelService.BookedRooms(location, no_of_rooms, no_of_guests, start_date, end_date);
+         res.json({List : List} );
 
     }
 
