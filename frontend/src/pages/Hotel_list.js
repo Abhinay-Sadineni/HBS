@@ -2,6 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
 import SearchBar from '../components/SearchBar';
+import logo from '../../src/assets/images/HBSLogo.jpg';
+
+/* Material UI */
+import {
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+} from "@material-tailwind/react";
+
+import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
+import { FiAlignJustify } from "react-icons/fi";
+
+// Import all amenity images
+import amenity1 from '../../src/assets/images/amenity1.png';
+import amenity2 from '../../src/assets/images/amenity2.png';
+import amenity3 from '../../src/assets/images/amenity3.png';
+import amenity4 from '../../src/assets/images/amenity4.png';
+import amenity5 from '../../src/assets/images/amenity5.png';
 
 // Dummy data with prices as an array
 const dummyHotels = [
@@ -79,8 +98,34 @@ function HotelList() {
 
   return (
     <div>
-      <SearchBar />
-      <div class ="absolute right-1 " style={{ marginBottom: '5px', marginTop: '5px', }}>
+      {/* Navbar */}
+      <nav className='mb-4'>
+        <div className='flex flex-row items-center'>
+          <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
+          <SearchBar />
+          <div className='mx-4'>
+            <Menu>
+              <MenuHandler>
+                <button className='flex px-4 py-4'>
+                  <FiAlignJustify className='mx-2' /> Menu
+                </button>
+              </MenuHandler>
+              <MenuList className='w-max'>
+                <MenuItem className='flex px-4 py-4'>
+                  <FaUser className='mr-2' /> Profile
+                </MenuItem>
+                <MenuItem className='flex px-4 py-4'>
+                  <FaSignOutAlt className='mr-2' /> Sign Out
+                </MenuItem>
+                <MenuItem className='flex px-4 py-4'>
+                  <FaQuestionCircle className='mr-2' /> Help Center
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </div>
+        </div>
+      </nav>
+      <div className="absolute right-1 " style={{ marginBottom: '5px', marginTop: '5px' }}>
         <label style={{ marginRight: '10px' }}>Sort By:</label>
         <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ marginLeft: '10px' }}>
           {sortOptions.map((option) => (
@@ -110,7 +155,7 @@ function HotelList() {
                   }}
                 />
                 <label htmlFor={`amenity-${amenity}`} style={{ marginLeft: '5px', display: 'flex', alignItems: 'center' }}>
-                  <img src={`../assets/images/amenity${index + 1}.png`} alt={`Icon for ${amenity}`} style={{ marginRight: '5px', height: '20px', width: '20px' }} />
+                  <img src={require(`../../src/assets/images/amenity${index + 1}.png`).default} alt={`Icon for ${amenity}`} style={{ marginRight: '5px', height: '20px', width: '20px' }} />
                   {amenity}
                 </label>
               </div>
@@ -118,11 +163,11 @@ function HotelList() {
           </div>
           <div style={{ marginTop: '20px', marginBottom: '10px' }}>
             <label style={{ marginRight: '10px' }}>Low Price:</label>
-            <input type="number" value={lowPrice} onChange={(e) => setLowPrice(e.target.value)} style={{ width: '70px' }} />
+            <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
           </div>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ marginRight: '10px' }}>High Price:</label>
-            <input type="number" value={highPrice} onChange={(e) => setHighPrice(e.target.value)} style={{ width: '70px' }} />
+            <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
           </div>
         </div>
         {/* Hotel List */}
@@ -141,3 +186,4 @@ function HotelList() {
 }
 
 export default HotelList;
+
