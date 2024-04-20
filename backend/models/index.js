@@ -4,11 +4,15 @@ const Reservation = require('./Reservation');
 const RoomType = require('./RoomType');
 const FAQ = require('./FAQ');
 const Image = require('./Image');
-const Calendar = require("./Calendar")
+const Calendar = require("./Calendar");
+const GroupRoom = require("./GroupRoom");
 
 // Define associations after all models have been imported
-User.hasMany(Reservation, { foreignKey: 'user_id' });
-Reservation.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(GroupRoom, { foreignKey: 'user_id' });
+GroupRoom.belongsTo(User, { foreignKey: 'user_id' });
+
+GroupRoom.hasMany(Reservation, { foreignKey: 'gid' });
+Reservation.belongsTo(GroupRoom, { foreignKey: 'gid' });
 
 User.hasMany(Hotel, { foreignKey: 'manager_id' });
 Hotel.belongsTo(User, { foreignKey: 'manager_id' });
@@ -39,5 +43,6 @@ module.exports = {
   RoomType,
   FAQ,
   Image,
-  Calendar
+  Calendar,
+  GroupRoom
 };

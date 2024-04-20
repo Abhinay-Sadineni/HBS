@@ -12,11 +12,11 @@ const Reservation = sequelize.define('Reservation', {
     end_date: Sequelize.DATEONLY,
     Review: Sequelize.TEXT,
     Rating: Sequelize.INTEGER,
-    user_id: {
+    gid: {
       type: Sequelize.INTEGER,
       references: {
-        model: 'User',
-        key: 'user_id'
+        model: 'GroupRoom',
+        key: 'gid'
       }
     },
     hotel_id: {
