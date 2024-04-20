@@ -129,7 +129,7 @@ function HotelList() {
   return (
     <div>
       {/* Navbar */}
-      <nav className='mb-4'>
+      <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
         <div className='flex flex-row items-center'>
           <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
           <SearchBar />
@@ -155,7 +155,11 @@ function HotelList() {
           </div>
         </div>
       </nav>
-      <div className="absolute right-1 " style={{ marginBottom: '5px', marginTop: '5px' }}>
+
+     <div className='flex flex-col gap-2'>
+
+
+     <div className="text-right  	">
         <label style={{ marginRight: '10px' }}>Sort By:</label>
         <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ marginLeft: '10px' }}>
           {sortOptions.map((option) => (
@@ -163,9 +167,12 @@ function HotelList() {
           ))}
         </select>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 5fr', gap: '10px' }}>
-        {/* Amenities Selection */}
-        <div style={{ width: '100%', padding: '10px',  }}>
+
+
+
+      <div className='border-t-2 border-b-2 border-zinc-950 ' style={{ display: 'grid', gridTemplateColumns: '1fr 5fr', gap: '10px' }}>
+
+        <div id ='Amenties' className= 'pt-2 px-10 w-100 border-r-2 border-zinc-950 my-2 '>
           <h3 style={{ marginBottom: '10px' }}>Amenities:</h3>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
@@ -199,9 +206,10 @@ function HotelList() {
             <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
           </div>
         </div>
-      </div>
-      <div style={{ flex: '5', overflowY: 'auto' }}>
-        <div className="grid grid-cols-1 gap-4" style={{ marginTop: '0px' }}>
+
+
+      <div id='Listings' className='py-2 border-r-2 border-zinc-950	  px-10 my-2 overflow-scroll max-h-[790px]'  >
+        <div className="grid grid-cols-1 gap-4 " >
           {filteredHotels.map((hotel) => (
             <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
               <HotelCard {...hotel} />
@@ -209,8 +217,16 @@ function HotelList() {
           ))}
         </div>
       </div>
+
+      </div>
+     </div>
+
+
+
+
+
     </div>
-    </div>
+    
   );
 }
 
