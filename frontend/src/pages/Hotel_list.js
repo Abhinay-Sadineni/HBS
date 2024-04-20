@@ -34,6 +34,36 @@ const dummyHotels = [
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
     popularity: 8 // Example popularity
+  },
+  {
+    id: 4,
+    name: 'Example Hotel 1',
+    ratings: '4.5/5',
+    location: 'City A, Country X',
+    priceRange: '$$$',
+    amenities: ['Wifi', 'Parking', 'Pool'],
+    prices: [250, 350], // Min and Max prices
+    popularity: 10 // Example popularity
+  },
+  {
+    id: 5,
+    name: 'Example Hotel 2',
+    ratings: '4.2/5',
+    location: 'City B, Country Y',
+    priceRange: '$$',
+    amenities: ['Wifi', 'Gym'],
+    prices: [150, 550], // Min and Max prices
+    popularity: 5 // Example popularity
+  },
+  {
+    id: 6,
+    name: 'Example Hotel 3',
+    ratings: '4.7/5',
+    location: 'City C, Country Z',
+    priceRange: '$$$',
+    amenities: ['Parking', 'Restaurant'],
+    prices: [350, 450], // Min and Max prices
+    popularity: 8 // Example popularity
   }
 ];
 
@@ -80,17 +110,19 @@ function HotelList() {
   return (
     <div>
       <SearchBar />
-      <div class ="absolute right-1 " style={{ marginBottom: '5px', marginTop: '5px', }}>
-        <label style={{ marginRight: '10px' }}>Sort By:</label>
-        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ marginLeft: '10px' }}>
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 5fr', gap: '10px' }}>
+        <div style={{ marginBottom: '20px', marginTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <label style={{ marginRight: '10px' }}>Sort By:</label>
+          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ marginLeft: '10px' }}>
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </div>
+    <div style={{ display: 'flex' }}>
+      <div style={{ flex: '1', marginRight: '10px', maxHeight: 'calc(100vh - 80px)', overflowY: 'auto' }}>
+        
         {/* Amenities Selection */}
-        <div style={{ width: '100%', padding: '10px', borderRight: '5px solid #ccc', backgroundColor: '#f7f7f7' }}>
+        <div style={{ width: '100%', padding: '10px',  }}>
           <h3 style={{ marginBottom: '10px' }}>Amenities:</h3>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
@@ -109,14 +141,13 @@ function HotelList() {
                     }
                   }}
                 />
-                <label htmlFor={`amenity-${amenity}`} style={{ marginLeft: '5px', display: 'flex', alignItems: 'center' }}>
-                  <img src={`../assets/images/amenity${index + 1}.png`} alt={`Icon for ${amenity}`} style={{ marginRight: '5px', height: '20px', width: '20px' }} />
+                <label htmlFor={`amenity-${amenity}`} style={{ marginLeft: '10px' }}>
                   {amenity}
                 </label>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: '20px', marginBottom: '10px' }}>
+          <div  style={{ marginTop: '20px', marginBottom: '10px' }}>
             <label style={{ marginRight: '10px' }}>Low Price:</label>
             <input type="number" value={lowPrice} onChange={(e) => setLowPrice(e.target.value)} style={{ width: '70px' }} />
           </div>
@@ -125,17 +156,17 @@ function HotelList() {
             <input type="number" value={highPrice} onChange={(e) => setHighPrice(e.target.value)} style={{ width: '70px' }} />
           </div>
         </div>
-        {/* Hotel List */}
-        <div style={{ overflowY: 'auto' }}>
-          <div className="grid grid-cols-1 gap-4" style={{ marginTop: '30px', }}>
-            {filteredHotels.map((hotel) => (
-              <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
-                <HotelCard {...hotel} />
-              </div>
-            ))}
-          </div>
+      </div>
+      <div style={{ flex: '5', overflowY: 'auto' }}>
+        <div className="grid grid-cols-1 gap-4" style={{ marginTop: '0px' }}>
+          {filteredHotels.map((hotel) => (
+            <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
+              <HotelCard {...hotel} />
+            </div>
+          ))}
         </div>
       </div>
+    </div>
     </div>
   );
 }
