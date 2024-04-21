@@ -1,15 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import NavBar from '../components/NavBar';
-import SearchBar from '../components/SearchBar';
+import Manager_NavBar from '../components/Manager_navbar';
 import Card from '../components/List_card';
 import hotelsList from '../components/hotels';
 
-function Guest_Dashboard() {
+function Manager_Dashboard() {
   return (
     <div className="HI">
       <div className="fixed top-0 w-full z-10 mb-20">
-      <NavBar /> 
+        <Manager_NavBar /> 
       </div>
       <div className="m-10 mb-5" > <p>h</p></div>
       
@@ -33,4 +32,4 @@ function Guest_Dashboard() {
   );
 }
 
-export default Guest_Dashboard;
+export default Manager_Dashboard;
