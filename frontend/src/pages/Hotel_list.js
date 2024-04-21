@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
 import SearchBar from '../components/SearchBar';
 import logo from '../../src/assets/images/HBSLogo.jpg';
@@ -141,8 +141,10 @@ function HotelList() {
                 </button>
               </MenuHandler>
               <MenuList className='w-max'>
-                <MenuItem className='flex px-4 py-4'>
+                <MenuItem >
+                <Link to="/profile" className="flex items-center px-4 py-4" >
                   <FaUser className='mr-2' /> Profile
+                </Link>
                 </MenuItem>
                 <MenuItem className='flex px-4 py-4'>
                   <FaSignOutAlt className='mr-2' /> Sign Out
