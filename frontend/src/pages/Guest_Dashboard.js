@@ -10,10 +10,11 @@ function Dashboard() {
     <div className="HI">
       <div className="fixed top-0 w-full z-10 mb-20">
       <NavBar /> 
-      <SearchBar />
       </div>
       <div className="m-10"> <p>h</p></div>
-      <div className="m-10"> <p>h</p></div>
+      <SearchBar />
+      
+      {/* <div className="m-10"> <p>h</p></div> */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4">
         {hotelsList.map(hotel => (
           <div className='m-4'>
