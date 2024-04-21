@@ -128,105 +128,96 @@ function HotelList() {
 
   return (
     <div>
-      {/* Navbar */}
-      <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
-        <div className='flex flex-row items-center'>
-          <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
-          <SearchBar />
-          <div className='mx-4'>
-            <Menu>
-              <MenuHandler>
-                <button className='flex px-4 py-4'>
-                  <FiAlignJustify className='mx-2' /> Menu
-                </button>
-              </MenuHandler>
-              <MenuList className='w-max'>
-                <MenuItem className='flex px-4 py-4'>
-                  <FaUser className='mr-2' /> Profile
-                </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
-                  <FaSignOutAlt className='mr-2' /> Sign Out
-                </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
-                  <FaQuestionCircle className='mr-2' /> Help Center
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </div>
-        </div>
-      </nav>
+  {/* Navbar */}
+  <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
+    <div className='flex flex-row items-center'>
+      <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
+      <SearchBar />
+      <div className='mx-4'>
+        <Menu>
+          <MenuHandler>
+            <button className='flex px-4 py-4'>
+              <FiAlignJustify className='mx-2' /> Menu
+            </button>
+          </MenuHandler>
+          <MenuList className='w-max'>
+            <MenuItem className='flex px-4 py-4'>
+              <FaUser className='mr-2' /> Profile
+            </MenuItem>
+            <MenuItem className='flex px-4 py-4'>
+              <FaSignOutAlt className='mr-2' /> Sign Out
+            </MenuItem>
+            <MenuItem className='flex px-4 py-4'>
+              <FaQuestionCircle className='mr-2' /> Help Center
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </div>
+    </div>
+  </nav>
 
-     <div className='flex flex-col gap-2'>
-
-
-     <div className="text-right  	">
-        <label style={{ marginRight: '10px' }}>Sort By:</label>
-        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ marginLeft: '10px' }}>
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
+  <aside id="default-sidebar" className="fixed border left-0 z-40 w-[350px] h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+    <div className="h-full px-3 py-4 bg-gray-50">
+      {/* Heading for filters */}
+      <div className="grid grid-cols-2 gap-4 items-center">
+        <h2 className="text-3xl font-sans">Filters</h2>
+        <button className="text-red-300">Clear All</button>
       </div>
 
-
-
-      <div className='border-t-2 border-b-2 border-zinc-950 ' style={{ display: 'grid', gridTemplateColumns: '1fr 5fr', gap: '10px' }}>
-
-        <div id ='Amenties' className= 'pt-2 px-10 w-100 border-r-2 border-zinc-950 my-2 '>
-          <h3 style={{ marginBottom: '10px' }}>Amenities:</h3>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
-              <div key={amenity} style={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
-                <input
-                  type="checkbox"
-                  id={`amenity-${amenity}`}
-                  value={amenity}
-                  checked={selectedAmenities.includes(amenity)}
-                  onChange={(e) => {
-                    const amenityName = e.target.value;
-                    if (e.target.checked) {
-                      setSelectedAmenities([...selectedAmenities, amenityName]);
-                    } else {
-                      setSelectedAmenities(selectedAmenities.filter((amenity) => amenity !== amenityName));
-                    }
-                  }}
-                />
-                <label htmlFor={`amenity-${amenity}`} style={{ marginLeft: '10px' }}>
-                  {amenity}
-                </label>
-              </div>
-            ))}
-          </div>
-          <div  style={{ marginTop: '20px', marginBottom: '10px' }}>
-            <label style={{ marginRight: '10px' }}>Low Price:</label>
-            <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ marginRight: '10px' }}>High Price:</label>
-            <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
-          </div>
+      {/* Price Filter */}
+      <div className="flex flex-col border-4  p-4 mt-5">
+        <h3 className='text-2xl'>Price </h3>
+        <div className="flex items-center mb-2 mt-3">
+          <label className="mr-2">Low Price:</label>
+          <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
         </div>
+        <div className="flex items-center">
+          <label className="mr-2">High Price:</label>
+          <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
+        </div>
+      </div>
 
-
-      <div id='Listings' className='py-2 border-r-2 border-zinc-950	  px-10 my-2 overflow-scroll max-h-[790px]'  >
-        <div className="grid grid-cols-1 gap-4 " >
-          {filteredHotels.map((hotel) => (
-            <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
-              <HotelCard {...hotel} />
+      {/* Amenities Filter */}
+      <div id="Amenties" className="pt-2 px-10 w-100 border-4 my-2">
+        <h3 className="mb-4">Amenities:</h3>
+        <div className="flex flex-col">
+          {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
+            <div key={amenity} className="mb-2 flex items-center">
+              <input
+                type="checkbox"
+                id={`amenity-${amenity}`}
+                value={amenity}
+                checked={selectedAmenities.includes(amenity)}
+                onChange={(e) => {
+                  const amenityName = e.target.value;
+                  if (e.target.checked) {
+                    setSelectedAmenities([...selectedAmenities, amenityName]);
+                  } else {
+                    setSelectedAmenities(selectedAmenities.filter((amenity) => amenity !== amenityName));
+                  }
+                }}
+                className="mr-2"
+              />
+              <label htmlFor={`amenity-${amenity}`}>{amenity}</label>
             </div>
           ))}
         </div>
       </div>
-
-      </div>
-     </div>
-
-
-
-
-
     </div>
-    
+  </aside>
+
+  <div id='Listings' className='py-2 border-r-2 border-zinc-950 px-10 my-2 overflow-scroll max-h-[790px] ml-[350px]'>
+    <div className="grid grid-cols-1 gap-4 ">
+      {filteredHotels.map((hotel) => (
+        <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
+          <HotelCard {...hotel} />
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
   );
 }
 
