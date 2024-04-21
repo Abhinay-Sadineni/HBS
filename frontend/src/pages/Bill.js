@@ -28,7 +28,7 @@ function BillPage() {
             <p>Hotel Location</p>
           </div>
           <div className="ml-auto">
-            <img src={hotelsList[0].imgURL} className="w-72 h-auto" />
+            <img src={hotelsList[0].imgURL[0]} className="w-72 h-auto" />
           </div>
         </div>
         <div className="flex justify-between border-b border-gray-300 p-4 items-center">
