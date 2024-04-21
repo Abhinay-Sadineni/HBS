@@ -22,6 +22,7 @@ function App() {
           <Route exact path="/guest-dashboard/history" element={<History />} />
           <Route exact path="/hotel/:hotelId" element={<HotelPage />} /> {/* Update the route for HotelPage */}
           <Route exact path="/bill" element={<BillPage />} />
+          <Route exact path="/hotel-page" element={<HotelPage />} />
         </Routes>
       </div>
     </Router>

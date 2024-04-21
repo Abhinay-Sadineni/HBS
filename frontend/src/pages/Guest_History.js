@@ -12,11 +12,11 @@ function History() {
     <div>
         <div className="fixed top-0 w-full z-10 mb-20">
             <NavBar   />
-            <SearchBar />
         </div>
+        {/* <div className="m-10"> <p>h</p></div> */}
         <div className="m-10"> <p>h</p></div>
-        <div className="m-10"> <p>h</p></div>
-        <div className="mt-20"> 
+        <SearchBar />
+        <div className="mt-10"> 
                 {reservationList.map(reservation => (
                     // <div className="mt-20">
                      <ReservationCard

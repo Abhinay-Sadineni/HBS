@@ -11,7 +11,7 @@ function Dashboard() {
       <div className="fixed top-0 w-full z-10 mb-20">
       <NavBar /> 
       </div>
-      <div className="m-10"> <p>h</p></div>
+      <div className="m-10 mb-5"> <p>h</p></div>
       <SearchBar />
       
       {/* <div className="m-10"> <p>h</p></div> */}
