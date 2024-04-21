@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
 import SearchBar from '../components/SearchBar';
@@ -32,7 +32,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Wifi', 'Parking', 'Pool'],
     prices: [250, 350], // Min and Max prices
-    popularity: 10 // Example popularity
+    popularity: 10 ,// Example popularity
+    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 2,
@@ -42,7 +43,8 @@ const dummyHotels = [
     priceRange: '$$',
     amenities: ['Wifi', 'Gym'],
     prices: [150, 550], // Min and Max prices
-    popularity: 5 // Example popularity
+    popularity: 5 ,// Example popularity
+    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 3,
@@ -52,7 +54,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
-    popularity: 8 // Example popularity
+    popularity: 8 ,// Example popularity
+    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720"
   },
   {
     id: 4,
@@ -62,7 +65,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Wifi', 'Parking', 'Pool'],
     prices: [250, 350], // Min and Max prices
-    popularity: 10 // Example popularity
+    popularity: 10 ,// Example popularity
+    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 5,
@@ -72,7 +76,8 @@ const dummyHotels = [
     priceRange: '$$',
     amenities: ['Wifi', 'Gym'],
     prices: [150, 550], // Min and Max prices
-    popularity: 5 // Example popularity
+    popularity: 5 ,// Example popularity
+    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 6,
@@ -82,7 +87,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
-    popularity: 8 // Example popularity
+    popularity: 8 ,// Example popularity
+    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   }
 ];
 
@@ -93,6 +99,15 @@ function HotelList() {
   const [lowPrice, setLowPrice] = useState(Math.min(...dummyHotels.flatMap((hotel) => hotel.prices)));
   const [highPrice, setHighPrice] = useState(Math.max(...dummyHotels.flatMap((hotel) => hotel.prices)));
   const [sortOption, setSortOption] = useState('popularity'); // Default sort option
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 5000); // 5000 milliseconds = 5 seconds
+
+  //   return () => clearTimeout(timer); // Clear the timer on component unmount
+  // }, []);
 
   const handleHotelClick = (hotelId) => {
     navigate(`/hotel/${hotelId}`);
@@ -129,14 +144,14 @@ function HotelList() {
   return (
     <div>
       {/* Navbar */}
-      <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
-        <div className='flex flex-row items-center'>
+      <nav className='fixed top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white-800 opacity-100'>
+        <div className='flex flex-row items-center justify-between'>
           <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
           <SearchBar />
           <div className='mx-4'>
             <Menu>
               <MenuHandler>
-                <button className='flex px-4 py-4'>
+                <button className='flex px-4 py-4 items-center'>
                   <FiAlignJustify className='mx-2' /> Menu
                 </button>
               </MenuHandler>
@@ -146,10 +161,10 @@ function HotelList() {
                   <FaUser className='mr-2' /> Profile
                 </Link>
                 </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
+                <MenuItem className='flex px-4 py-4 items-center'>
                   <FaSignOutAlt className='mr-2' /> Sign Out
                 </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
+                <MenuItem className='flex px-4 py-4 items-center '>
                   <FaQuestionCircle className='mr-2' /> Help Center
                 </MenuItem>
               </MenuList>
@@ -158,7 +173,7 @@ function HotelList() {
         </div>
       </nav>
 
-  <aside id="default-sidebar" className="fixed border left-0 z-40 w-[350px] h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+  <aside id="default-sidebar" className="fixed border top-[78px] left-0 z-40 w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
     <div className="h-full px-3 py-4 bg-gray-50">
       {/* Heading for filters */}
       <div className="grid grid-cols-2 gap-4 items-center">
@@ -208,7 +223,7 @@ function HotelList() {
     </div>
   </aside>
 
-  <div id='Listings' className='py-2 border-r-2 border-zinc-950 px-10 my-2 overflow-scroll max-h-[790px] ml-[350px]'>
+  <div id='Listings' className='py-2 border-r-2 border-zinc-950 px-10 my-2 overflow-scroll max-h-[790px] ml-[350px] mt-[78px]'>
     <div className="grid grid-cols-1 gap-4 ">
       {filteredHotels.map((hotel) => (
         <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
@@ -216,6 +231,21 @@ function HotelList() {
         </div>
       ))}
     </div>
+    {/* <div className="grid grid-cols-1 gap-4 ">
+          {loading ? (
+            // Show loading message or spinner while loading
+            <div className="flex justify-center items-center h-full">
+              <p>Loading...</p>
+            </div>
+          ) : (
+            // Render hotel listings once loading is complete
+            filteredHotels.map((hotel) => (
+              <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
+                <HotelCard {...hotel} />
+              </div>
+            ))
+          )}
+        </div> */}
   </div>
 </div>
 
