@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/images/HBSLogo.jpg';
+import logo from '../assets/images/HBSLogo.jpeg';
 
 
 function NavBar() {
