@@ -15,7 +15,6 @@ function History() {
         </div>
         {/* <div className="m-10"> <p>h</p></div> */}
         <div className="m-10"> <p>h</p></div>
-        <SearchBar />
         <div className="mt-10"> 
                 {reservationList.map(reservation => (
                     // <div className="mt-20">

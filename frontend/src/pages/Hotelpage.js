@@ -63,7 +63,6 @@ function Hotelpage() {
   return (
     <div className="HI">
       <NavBar /> 
-      <SearchBar />
       <div className='flex flex-col md:flex-row items-start  justify-between ml-10 mr-10'>
         <div className="md:w-1/2 md:mr-5">
           <h1 className="text-xl font-bold mt-8">Hotel Name</h1>
