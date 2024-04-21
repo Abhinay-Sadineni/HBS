@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
     const [startDate, setStartDate] = useState(null);
@@ -8,10 +9,22 @@ const SearchBar = () => {
     const [location, setLocation] = useState('');
     const [numRooms, setNumRooms] = useState('');
     const [numGuests, setNumGuests] = useState('');
+    const navigate = useNavigate();
+
 
     const handleSearch = () => {
-        // Handle search functionality here
         console.log('Searching...');
+
+
+        setTimeout(() => {
+            navigate('/list',
+                     {state :
+                         {location: location ,
+                          startDate : startDate,
+                          endDate : endDate ,
+                          numGuests: numGuests,
+                          numRooms : numRooms}})
+        }, 500);
     };
 
     return (

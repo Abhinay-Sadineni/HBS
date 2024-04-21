@@ -2,23 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
 import NavBar from '../components/NavBar';
-/* Material UI */
-import {
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-} from "@material-tailwind/react";
-
-import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
-import { FiAlignJustify } from "react-icons/fi";
-
-// Import all amenity images
-import amenity1 from '../../src/assets/images/amenity1.png';
-import amenity2 from '../../src/assets/images/amenity2.png';
-import amenity3 from '../../src/assets/images/amenity3.png';
-import amenity4 from '../../src/assets/images/amenity4.png';
-import amenity5 from '../../src/assets/images/amenity5.png';
+import { useLocation } from 'react-router-dom';
 
 // Dummy data with prices as an array
 const dummyHotels = [
@@ -96,16 +80,13 @@ function HotelList() {
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [lowPrice, setLowPrice] = useState(Math.min(...dummyHotels.flatMap((hotel) => hotel.prices)));
   const [highPrice, setHighPrice] = useState(Math.max(...dummyHotels.flatMap((hotel) => hotel.prices)));
-  const [sortOption, setSortOption] = useState('popularity'); // Default sort option
-  // const [loading, setLoading] = useState(true);
+  const [sortOption, setSortOption] = useState('popularity');
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setLoading(false);
-  //   }, 5000); // 5000 milliseconds = 5 seconds
 
-  //   return () => clearTimeout(timer); // Clear the timer on component unmount
-  // }, []);
+  const {state} = useLocation();
+  console.log(state);
+
+ 
 
   const handleHotelClick = (hotelId) => {
     navigate(`/hotel/${hotelId}`);
