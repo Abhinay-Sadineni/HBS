@@ -213,6 +213,7 @@ async function generateCalendars() {
 
         const calendar = {
           room_type_id: roomType.room_type_id,
+          hotel_id: hotel.hotel_id, // Add hotel_id
           date: date,
           price: faker.random.number({ min: 500, max: 5000 }),
           no_of_avail_rooms: Math.floor(Math.random() * availableRooms) + 1
@@ -224,6 +225,7 @@ async function generateCalendars() {
   }
   await Calendar.bulkCreate(calendars);
 }
+
 
 
 async function populateDatabase() {

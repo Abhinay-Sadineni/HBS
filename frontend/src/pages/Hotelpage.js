@@ -9,7 +9,8 @@ import reviewList from '../components/reviews';
 import StarIcon from '@mui/icons-material/Star';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 
-const rating = [100, 128, 764, 299, 312];
+import { useParams } from 'react-router-dom';
+const rating = [1000, 1000, 1000, 1000, 1000];
 
 function ReviewCard(props){
   const stars = [];
@@ -29,6 +30,8 @@ function ReviewCard(props){
 }
 
 function Hotelpage() {
+
+  const { hotelId } = useParams();
   // console.log(hotelsList[0].imgURL.length)
   const [showPopup, setShowPopup] = useState(false);
   const [imagePopup, setImagePopup] = useState(false);
