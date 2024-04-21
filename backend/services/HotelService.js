@@ -5,7 +5,7 @@ const sequelize = require('../config.js');
 class HotelService {
   static async get_booked_rooms(location, no_of_guests, startDate, endDate) {
         try {
-            const bookedRooms = await sequelize.query(
+            const bookedRooms = await sequelize.query( 
                 `
                 WITH date_range AS (
                     SELECT generate_series(:startDate::date, :endDate::date, INTERVAL '1 DAY') AS date
@@ -66,7 +66,6 @@ class HotelService {
                     "Location",
                     "list_of_amenities",
                     "date",
-                    rating,
                     SUM("no_of_avail_rooms") as no_of_avail_rooms
                     FROM
                     "Hotel"

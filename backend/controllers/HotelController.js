@@ -6,10 +6,10 @@ const router = express.Router();
 
 router.get('/search', async(req , res) =>{
     try{
+        console.log( req.query)
+        const { location ,  no_of_rooms , no_of_guests ,  start_date, end_date} = req.query
 
-        const { location ,  no_of_rooms , no_of_guests ,  start_date, end_date} = req.body
-
-        const start_Date = new Date(start_date);
+        const start_Date = new Date(start_date); 
         const end_Date = new Date(end_date);
         const diff_ms = end_Date.getTime() - start_Date.getTime();
         const diff = diff_ms / (1000 * 3600 * 24) + 1;

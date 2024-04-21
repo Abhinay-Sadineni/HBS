@@ -8,8 +8,10 @@ import RatingBar from '../components/RatingBar';
 import reviewList from '../components/reviews';
 import StarIcon from '@mui/icons-material/Star';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
-
+import axiosInstance from '../helpers/axios';
 import { useParams } from 'react-router-dom';
+
+
 const rating = [1000, 1000, 1000, 1000, 1000];
 
 function ReviewCard(props){

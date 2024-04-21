@@ -1,7 +1,6 @@
 import React from 'react';
 
 function HotelCard(props) {
-  console.log(props)
   return (
     <div className="flex items-center border border-gray-200 rounded-lg p-4 shadow-md">
       <div className="flex-shrink-0 mr-4">

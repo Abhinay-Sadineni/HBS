@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
 import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios'
 
 // Dummy data with prices as an array
 const dummyHotels = [
@@ -14,8 +15,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Wifi', 'Parking', 'Pool'],
     prices: [250, 350], // Min and Max prices
-    popularity: 10 ,// Example popularity
-    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+    popularity: 10,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 2,
@@ -25,8 +26,8 @@ const dummyHotels = [
     priceRange: '$$',
     amenities: ['Wifi', 'Gym'],
     prices: [150, 550], // Min and Max prices
-    popularity: 5 ,// Example popularity
-    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+    popularity: 5,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 3,
@@ -36,8 +37,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
-    popularity: 8 ,// Example popularity
-    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720"
+    popularity: 8,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720"
   },
   {
     id: 4,
@@ -47,8 +48,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Wifi', 'Parking', 'Pool'],
     prices: [250, 350], // Min and Max prices
-    popularity: 10 ,// Example popularity
-    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+    popularity: 10,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 5,
@@ -58,8 +59,8 @@ const dummyHotels = [
     priceRange: '$$',
     amenities: ['Wifi', 'Gym'],
     prices: [150, 550], // Min and Max prices
-    popularity: 5 ,// Example popularity
-    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+    popularity: 5,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 6,
@@ -69,13 +70,17 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
-    popularity: 8 ,// Example popularity
-    imgURL : "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+    popularity: 8,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   }
 ];
 
+
+
+
 function HotelList() {
   const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [lowPrice, setLowPrice] = useState(Math.min(...dummyHotels.flatMap((hotel) => hotel.prices)));
@@ -83,10 +88,35 @@ function HotelList() {
   const [sortOption, setSortOption] = useState('popularity');
 
 
-  const {state} = useLocation();
-  console.log(state);
+  const { state } = useLocation();
 
- 
+
+  useEffect(() => {
+    if (state) {
+      console.log(state);
+      axios.get('http://localhost:5000/search', 
+      {params: {
+        location: state.location,
+        no_of_rooms: state.numRooms,
+        no_of_guests: state.numGuests,
+        start_date: state.startDate,
+        end_date: state.endDate
+      }
+    }
+    
+    )
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching hotels:', error);
+        });
+    } else {
+      
+    }
+  }, []);
+
+
 
   const handleHotelClick = (hotelId) => {
     navigate(`/hotel/${hotelId}`);
@@ -123,74 +153,74 @@ function HotelList() {
   return (
     <div className='h-screen'>
       {/* Navbar */}
-      <NavBar/>
-    
+      <NavBar />
 
-    <div className='flex flex-col'>
-    <aside id="default-sidebar" className="fixed border top-[78px] left-0 z-40 w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-    <div className="h-full px-3 py-4 bg-gray-50">
-      {/* Heading for filters */}
-      <div className="grid grid-cols-2 gap-4 items-center">
-        <h2 className="text-3xl font-sans">Filters</h2>
-        <button className="text-red-300">Clear All</button>
-      </div>
 
-      {/* Price Filter */}
-      <div className="flex flex-col border-4  p-4 mt-5">
-        <h3 className='text-2xl'>Price </h3>
-        <div className="flex items-center mb-2 mt-3">
-          <label className="mr-2">Low Price:</label>
-          <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
-        </div>
-        <div className="flex items-center">
-          <label className="mr-2">High Price:</label>
-          <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
-        </div>
-      </div>
-
-      {/* Amenities Filter */}
-      <div id="Amenties" className="pt-2 px-10 w-100 border-4 my-2">
-        <h3 className="mb-4">Amenities:</h3>
-        <div className="flex flex-col">
-          {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
-            <div key={amenity} className="mb-2 flex items-center">
-              <input
-                type="checkbox"
-                id={`amenity-${amenity}`}
-                value={amenity}
-                checked={selectedAmenities.includes(amenity)}
-                onChange={(e) => {
-                  const amenityName = e.target.value;
-                  if (e.target.checked) {
-                    setSelectedAmenities([...selectedAmenities, amenityName]);
-                  } else {
-                    setSelectedAmenities(selectedAmenities.filter((amenity) => amenity !== amenityName));
-                  }
-                }}
-                className="mr-2"
-              />
-              <label htmlFor={`amenity-${amenity}`}>{amenity}</label>
+      <div className=' z-[-6] flex flex-col'>
+        <aside id="default-sidebar" className="fixed border top-[78px] left-0  w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+          <div className="h-full px-3 py-4 bg-gray-50">
+            {/* Heading for filters */}
+            <div className="grid grid-cols-2 gap-4 items-center">
+              <h2 className="text-3xl font-sans">Filters</h2>
+              <button className="text-red-300">Clear All</button>
             </div>
-          ))}
+
+            {/* Price Filter */}
+            <div className="flex flex-col border-4  p-4 mt-5">
+              <h3 className='text-2xl'>Price </h3>
+              <div className="flex items-center mb-2 mt-3">
+                <label className="mr-2">Low Price:</label>
+                <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
+              </div>
+              <div className="flex items-center">
+                <label className="mr-2">High Price:</label>
+                <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
+              </div>
+            </div>
+
+            {/* Amenities Filter */}
+            <div id="Amenties" className="pt-2 px-10 w-100 border-4 my-2">
+              <h3 className="mb-4">Amenities:</h3>
+              <div className="flex flex-col">
+                {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
+                  <div key={amenity} className="mb-2 flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`amenity-${amenity}`}
+                      value={amenity}
+                      checked={selectedAmenities.includes(amenity)}
+                      onChange={(e) => {
+                        const amenityName = e.target.value;
+                        if (e.target.checked) {
+                          setSelectedAmenities([...selectedAmenities, amenityName]);
+                        } else {
+                          setSelectedAmenities(selectedAmenities.filter((amenity) => amenity !== amenityName));
+                        }
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`amenity-${amenity}`}>{amenity}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div id='Listings' className=' border top-[78px] right-0 py-2 border-r-2 px-10 overflow-scroll no-scrollbar max-h-[720px] ml-[350px] mt-[78px]'>
+          <div className="grid grid-cols-1 gap-4 ">
+            {filteredHotels.map((hotel) => (
+              <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
+                <HotelCard {...hotel} />
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
-    </div>
-  </aside>
-
-  <div id='Listings' className=' border top-[78px] right-0 z-40 py-2 border-r-2 px-10 overflow-scroll no-scrollbar max-h-[720px] ml-[350px] mt-[78px]'>
-    <div className="grid grid-cols-1 gap-4 ">
-      {filteredHotels.map((hotel) => (
-        <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
-          <HotelCard {...hotel} />
-        </div>
-      ))}
-    </div>
-   
-  </div>
-    </div>
 
 
-</div>
+    </div>
 
 
   );
