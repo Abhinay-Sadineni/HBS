@@ -128,33 +128,33 @@ function HotelList() {
 
   return (
     <div>
-  {/* Navbar */}
-  <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
-    <div className='flex flex-row items-center'>
-      <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
-      <SearchBar />
-      <div className='mx-4'>
-        <Menu>
-          <MenuHandler>
-            <button className='flex px-4 py-4'>
-              <FiAlignJustify className='mx-2' /> Menu
-            </button>
-          </MenuHandler>
-          <MenuList className='w-max'>
-            <MenuItem className='flex px-4 py-4'>
-              <FaUser className='mr-2' /> Profile
-            </MenuItem>
-            <MenuItem className='flex px-4 py-4'>
-              <FaSignOutAlt className='mr-2' /> Sign Out
-            </MenuItem>
-            <MenuItem className='flex px-4 py-4'>
-              <FaQuestionCircle className='mr-2' /> Help Center
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </div>
-    </div>
-  </nav>
+      {/* Navbar */}
+      <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
+        <div className='flex flex-row items-center'>
+          <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
+          <SearchBar />
+          <div className='mx-4'>
+            <Menu>
+              <MenuHandler>
+                <button className='flex px-4 py-4'>
+                  <FiAlignJustify className='mx-2' /> Menu
+                </button>
+              </MenuHandler>
+              <MenuList className='w-max'>
+                <MenuItem className='flex px-4 py-4'>
+                  <FaUser className='mr-2' /> Profile
+                </MenuItem>
+                <MenuItem className='flex px-4 py-4'>
+                  <FaSignOutAlt className='mr-2' /> Sign Out
+                </MenuItem>
+                <MenuItem className='flex px-4 py-4'>
+                  <FaQuestionCircle className='mr-2' /> Help Center
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </div>
+        </div>
+      </nav>
 
   <aside id="default-sidebar" className="fixed border left-0 z-40 w-[350px] h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
     <div className="h-full px-3 py-4 bg-gray-50">

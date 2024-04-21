@@ -7,6 +7,7 @@ const SearchBar = () => {
     const [endDate, setEndDate] = useState(null);
     const [location, setLocation] = useState('');
     const [numRooms, setNumRooms] = useState('');
+    const [numGuests, setNumGuests] = useState('');
 
     const handleSearch = () => {
         // Handle search functionality here
@@ -14,11 +15,12 @@ const SearchBar = () => {
     };
 
     return (
-        <div className="max-w-10em mx-auto bg-white p-6 rounded-md shadow-md flex flex-col md:flex-row md:space-x-4 border border-gray-300">
-            <div className="flex-grow border-r border-gray-300">
-                <input type="text" id="location" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full rounded-md px-4 py-2 mb-4 md:mb-0 border border-gray-300" />
+        <div className='flex justify-center'>
+        <div className="max-w-10em mx-auto bg-white pt-4 pb-4 pl-6 pr-6 rounded-md shadow-md flex flex-col md:flex-row md:space-x-4 border border-gray-300">
+            <div >
+                <input type="text" id="location" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full rounded-md px-2 py-2 mb-4 md:mb-0 border border-gray-300" />
             </div>
-            <div className="flex-grow border-r border-gray-300">
+            <div >
                 <DatePicker
                     selected={startDate}
                     onChange={date => setStartDate(date)}
@@ -27,10 +29,10 @@ const SearchBar = () => {
                     endDate={endDate}
                     maxDate={endDate}
                     placeholderText="Check in"
-                    className="w-full rounded-md px-4 py-2 mb-4 md:mb-0 border border-gray-300"
+                    className="w-full rounded-md px-2 py-2 mb-4 md:mb-0 border border-gray-300"
                 />
             </div>
-            <div className="flex-grow border-r border-gray-300">
+            <div >
                 <DatePicker
                     selected={endDate}
                     onChange={date => setEndDate(date)}
@@ -39,15 +41,19 @@ const SearchBar = () => {
                     endDate={endDate}
                     minDate={startDate}
                     placeholderText="Check Out"
-                    className="w-full rounded-md px-4 py-2 mb-4 md:mb-0 border border-gray-300"
+                    className="w-full rounded-md px-2 py-2 mb-4 md:mb-0 border border-gray-300"
                 />
             </div>
-            <div className="flex-grow">
-                <input type="number" id="num_rooms" placeholder="Rooms" value={numRooms} onChange={(e) => setNumRooms(e.target.value)} className="w-full rounded-md px-4 py-2 mb-4 md:mb-0 border border-gray-300" />
+            <div >
+                <input type="number" id="num_rooms" placeholder="Rooms" value={numRooms} onChange={(e) => setNumRooms(e.target.value)} className="w-full rounded-md px-2 py-2 mb-4 md:mb-0 border border-gray-300" />
+            </div>
+            <div >
+                <input type="number" id="num_guests" placeholder="Guests" value={numGuests} onChange={(e) => setNumGuests(e.target.value)} className="w-full rounded-md px-2 py-2 mb-4 md:mb-0 border border-gray-300" />
             </div>
             <div>
                 <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 md:mt-0">Search</button>
             </div>
+        </div>
         </div>
     );
 };
