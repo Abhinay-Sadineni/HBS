@@ -140,12 +140,13 @@ function HotelList() {
   });
 
   return (
-    <div>
+    <div className='h-screen'>
       {/* Navbar */}
       <NavBar/>
     
 
-  <aside id="default-sidebar" className="fixed border top-[78px] left-0 z-40 w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+    <div className='flex flex-col'>
+    <aside id="default-sidebar" className="fixed border top-[78px] left-0 z-40 w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
     <div className="h-full px-3 py-4 bg-gray-50">
       {/* Heading for filters */}
       <div className="grid grid-cols-2 gap-4 items-center">
@@ -195,7 +196,7 @@ function HotelList() {
     </div>
   </aside>
 
-  <div id='Listings' className='py-2 border-r-2 border-zinc-950 px-10 my-2 overflow-scroll max-h-[790px] ml-[350px] mt-[78px]'>
+  <div id='Listings' className=' border top-[78px] right-0 z-40 py-2 border-r-2 px-10 overflow-scroll max-h-[720px] ml-[350px] mt-[78px]'>
     <div className="grid grid-cols-1 gap-4 ">
       {filteredHotels.map((hotel) => (
         <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
@@ -203,22 +204,11 @@ function HotelList() {
         </div>
       ))}
     </div>
-    {/* <div className="grid grid-cols-1 gap-4 ">
-          {loading ? (
-            // Show loading message or spinner while loading
-            <div className="flex justify-center items-center h-full">
-              <p>Loading...</p>
-            </div>
-          ) : (
-            // Render hotel listings once loading is complete
-            filteredHotels.map((hotel) => (
-              <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
-                <HotelCard {...hotel} />
-              </div>
-            ))
-          )}
-        </div> */}
+   
   </div>
+    </div>
+
+
 </div>
 
 
