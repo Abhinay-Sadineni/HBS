@@ -19,7 +19,7 @@ function Dashboard() {
           <div className='m-4'>
           <Card 
             key={hotel.id}
-            imgURL={hotel.imgURL}
+            imgURL={hotel.imgURL[0]}
             name={hotel.name}
             location={hotel.location}
             rating={hotel.rating}
