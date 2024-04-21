@@ -6,25 +6,28 @@ import hotelsList from '../components/hotels';
 
 function Dashboard() {
   return (
-    <div className="grid grid-row-2 gap-14 h-screen">
-      <NavBar />
-
-      <div className="flex-1 overflow-y-auto">
-        <div id='pop hotels'className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-          {hotelsList.map(hotel => (
-            <div className="m-4" key={hotel.id}>
-              <Card 
-                imgURL={hotel.imgURL[0]}
-                name={hotel.name}
-                location={hotel.location}
-                rating={hotel.rating}
-                price={hotel.price}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="HI">
+      <div className="fixed top-0 w-full z-10 mb-20">
+      <NavBar /> 
       </div>
-      <Link to="/hotel-page" className="btn btn-primary fixed bottom-4 right-4">Logout</Link>
+      <div className="m-10 mb-5" > <p>h</p></div>
+      
+      {/* <div className="m-10"> <p>h</p></div> */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-4">
+        {hotelsList.map(hotel => (
+          <div className='m-4'>
+          <Card 
+            key={hotel.id}
+            imgURL={hotel.imgURL[0]}
+            name={hotel.name}
+            location={hotel.location}
+            rating={hotel.rating}
+            price={hotel.price}
+          />
+          </div>
+        ))}
+      </div>
+      <Link to="/hotel-page" className="btn btn-primary">Logout</Link>
     </div>
   );
 }
