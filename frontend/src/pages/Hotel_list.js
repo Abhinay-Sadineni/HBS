@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
 import SearchBar from '../components/SearchBar';
-import logo from '../../src/assets/images/HBSLogo.jpg';
+import logo from '../../src/assets/images/HBSLogo.jpeg';
 
 /* Material UI */
 import {
