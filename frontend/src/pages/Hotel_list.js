@@ -130,24 +130,26 @@ function HotelList() {
     <div>
       {/* Navbar */}
       <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
-        <div className='flex flex-row items-center'>
+        <div className='flex flex-row items-center justify-center'>
           <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
+          <div className='flex-grow'>
           <SearchBar />
-          <div className='mx-4'>
+          </div>
+          <div >
             <Menu>
               <MenuHandler>
-                <button className='flex px-4 py-4'>
+                <button className='flex items-center px-4 py-4'>
                   <FiAlignJustify className='mx-2' /> Menu
                 </button>
               </MenuHandler>
               <MenuList className='w-max'>
-                <MenuItem className='flex px-4 py-4'>
+                <MenuItem className='flex items-center px-4 py-4'>
                   <FaUser className='mr-2' /> Profile
                 </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
+                <MenuItem className='flex items-center px-4 py-4'>
                   <FaSignOutAlt className='mr-2' /> Sign Out
                 </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
+                <MenuItem className='flex items-center px-4 py-4'>
                   <FaQuestionCircle className='mr-2' /> Help Center
                 </MenuItem>
               </MenuList>
