@@ -19,7 +19,7 @@ function Card(props) {
                     </div>
                 </div>
                 <div className="text-gray-700 text-base mb-2">{props.location}</div>
-                <div className="font-bold text-xl">{props.price} Rs</div>
+                <div className="font-bold text-xl">{props.price}</div>
             </div>
         </div>
     );

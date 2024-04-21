@@ -9,7 +9,7 @@ function Guest_Dashboard() {
     <div className="h-screen">
       <NavBar /> 
 
-      <div className="fixed border top-[78px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-scroll max-h-[720px]">
+      <div className="fixed border top-[78px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-scroll no-scrollbar max-h-[720px]">
         {hotelsList.map(hotel => (
           <div key={hotel.id} className='m-4'>
             <Card 

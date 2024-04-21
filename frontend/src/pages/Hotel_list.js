@@ -196,7 +196,7 @@ function HotelList() {
     </div>
   </aside>
 
-  <div id='Listings' className=' border top-[78px] right-0 z-40 py-2 border-r-2 px-10 overflow-scroll max-h-[720px] ml-[350px] mt-[78px]'>
+  <div id='Listings' className=' border top-[78px] right-0 z-40 py-2 border-r-2 px-10 overflow-scroll no-scrollbar max-h-[720px] ml-[350px] mt-[78px]'>
     <div className="grid grid-cols-1 gap-4 ">
       {filteredHotels.map((hotel) => (
         <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
