@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import SearchBar from '../components/SearchBar';
 import Card from '../components/List_card';
 import hotelsList from '../components/hotels';
 
