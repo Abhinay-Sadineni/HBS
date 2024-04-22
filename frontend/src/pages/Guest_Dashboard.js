@@ -1,36 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import SearchBar from '../components/SearchBar';
 import Card from '../components/List_card';
 import hotelsList from '../components/hotels';
 
-function Dashboard() {
+function Guest_Dashboard() {
   return (
-    <div className="HI">
-      <div className="fixed top-0 w-full z-10 mb-20">
+    <div className="h-screen">
       <NavBar /> 
-      <SearchBar />
-      </div>
-      <div className="m-10"> <p>h</p></div>
-      <div className="m-10"> <p>h</p></div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-4">
+
+      <div className="fixed border top-[78px] z-[-1] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-scroll no-scrollbar max-h-[720px]">
         {hotelsList.map(hotel => (
-          <div className='m-4'>
-          <Card 
-            key={hotel.id}
-            imgURL={hotel.imgURL}
-            name={hotel.name}
-            location={hotel.location}
-            rating={hotel.rating}
-            price={hotel.price}
-          />
+          <div key={hotel.id} className='m-4'>
+            <Card 
+              imgURL={hotel.imgURL[0]}
+              name={hotel.name}
+              location={hotel.location}
+              rating={hotel.rating}
+              price={hotel.price}
+            />
           </div>
         ))}
       </div>
-      <Link to="/hotel-page" className="btn btn-primary">Logout</Link>
+      
     </div>
   );
 }
 
-export default Dashboard;
+export default Guest_Dashboard;

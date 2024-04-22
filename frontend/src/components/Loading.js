@@ -10,7 +10,7 @@ const Loading = () => {
             rounded-full 
             animate-spin" role="status"></div>
            
-            <span class="visually-hidden">     Loading...</span>
+            <span className="visually-hidden">     Loading...</span>
         </div>
      );
 }

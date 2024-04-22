@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/images/HBSLogo.jpeg';
-import SearchBar from './SearchBar';
 
 import {
   Menu,
@@ -14,12 +13,17 @@ import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
 import { FiAlignJustify } from "react-icons/fi";
 
 
-function NavBar(props) {
+function Manager_NavBar() {
   return(
-    <nav className='fixed z-1000 top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white-800 opacity-100'>
+    <nav className='fixed top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white-800 opacity-100'>
         <div className='flex flex-row items-center justify-between'>
           <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
-          <SearchBar props={props}/>
+          <div className='flex items-center justify-between'>
+            <Link to="/manager-dashboard" className="btn btn-primary ">Today</Link>
+            <Link to="/manager-calendar" className="btn btn-primary ml-4 ">Calendar</Link>
+            <Link to="/manager-reservations" className="btn btn-primary ml-4">Reservations</Link>
+            <Link to="/manager-hotel" className="btn btn-primary ml-4 ">Hotel</Link>
+          </div>
           <div className='mx-4'>
             <Menu>
               <MenuHandler>
@@ -48,4 +52,4 @@ function NavBar(props) {
   )
 }
 
-export default NavBar;
+export default Manager_NavBar;

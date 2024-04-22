@@ -1,30 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import HotelCard from '../components/Hotel_card';
-import SearchBar from '../components/SearchBar';
-import logo from '../../src/assets/images/HBSLogo.jpg';
-
-/* Material UI */
-import {
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-} from "@material-tailwind/react";
-
-import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
-import { FiAlignJustify } from "react-icons/fi";
-
-// Import all amenity images
-import amenity1 from '../../src/assets/images/amenity1.png';
-import amenity2 from '../../src/assets/images/amenity2.png';
-import amenity3 from '../../src/assets/images/amenity3.png';
-import amenity4 from '../../src/assets/images/amenity4.png';
-import amenity5 from '../../src/assets/images/amenity5.png';
+import NavBar from '../components/NavBar';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios'
+import Loading from '../components/Loading';
 
 // Dummy data with prices as an array
-const dummyHotels = [
-  {
+
+function HotelList() {
+  const navigate = useNavigate();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [sortOption, setSortOption] = useState('popularity');
+  const [hotels, setHotels] = useState([{
     id: 1,
     name: 'Example Hotel 1',
     ratings: '4.5/5',
@@ -32,7 +22,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Wifi', 'Parking', 'Pool'],
     prices: [250, 350], // Min and Max prices
-    popularity: 10 // Example popularity
+    popularity: 10,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 2,
@@ -42,7 +33,8 @@ const dummyHotels = [
     priceRange: '$$',
     amenities: ['Wifi', 'Gym'],
     prices: [150, 550], // Min and Max prices
-    popularity: 5 // Example popularity
+    popularity: 5,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 3,
@@ -52,7 +44,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
-    popularity: 8 // Example popularity
+    popularity: 8,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720"
   },
   {
     id: 4,
@@ -62,7 +55,8 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Wifi', 'Parking', 'Pool'],
     prices: [250, 350], // Min and Max prices
-    popularity: 10 // Example popularity
+    popularity: 10,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 5,
@@ -72,7 +66,8 @@ const dummyHotels = [
     priceRange: '$$',
     amenities: ['Wifi', 'Gym'],
     prices: [150, 550], // Min and Max prices
-    popularity: 5 // Example popularity
+    popularity: 5,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
   },
   {
     id: 6,
@@ -82,17 +77,56 @@ const dummyHotels = [
     priceRange: '$$$',
     amenities: ['Parking', 'Restaurant'],
     prices: [350, 450], // Min and Max prices
-    popularity: 8 // Example popularity
-  }
-];
+    popularity: 8,// Example popularity
+    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+  }]);
 
-function HotelList() {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [lowPrice, setLowPrice] = useState(Math.min(...dummyHotels.flatMap((hotel) => hotel.prices)));
-  const [highPrice, setHighPrice] = useState(Math.max(...dummyHotels.flatMap((hotel) => hotel.prices)));
-  const [sortOption, setSortOption] = useState('popularity'); // Default sort option
+  const [lowPrice, setLowPrice] = useState(Math.min(...hotels.flatMap((hotel) => hotel.prices)));
+  const [highPrice, setHighPrice] = useState(Math.max(...hotels.flatMap((hotel) => hotel.prices)));
+
+  const [loading, setLoading] = useState(true);
+
+  const { state } = useLocation();
+
+
+  useEffect(() => {
+    if (state) {
+      console.log(state);
+      axios.get('http://localhost:5000/search', 
+        {params: {
+          location: state.location,
+          no_of_rooms: state.numRooms,
+          no_of_guests: state.numGuests,
+          start_date: state.startDate,
+          end_date: state.endDate
+        }
+      })
+      .then((response) => {
+        const hotelList = response.data.hotelList.map((hotel) => ({
+          id: hotel.hotel_id,
+          name: hotel.Hotel_name,
+          ratings: hotel.average_rating || '5',
+          imgURL: `http://localhost:5000/${hotel.hotel_image}`,
+          location: hotel.Location || 'Unknown',
+          prices:  [hotel.min_price, hotel.max_price],
+          amenities: hotel.list_of_amenities ? hotel.list_of_amenities.split(', ') : ['Unknown'], 
+          popularity: hotel.reservations || '5',
+        }));
+        setHotels(hotelList);
+        const prices = hotelList.map((hotel) => hotel.prices).flat();
+        setLowPrice(Math.min(...prices));
+        setHighPrice(Math.max(...prices));
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error('Error fetching hotels:', error);
+      });
+    } else {
+      
+    }
+  }, []);
+
+
 
   const handleHotelClick = (hotelId) => {
     navigate(`/hotel/${hotelId}`);
@@ -107,7 +141,7 @@ function HotelList() {
   ];
 
   // Sort hotels based on selected sort option
-  let sortedHotels = [...dummyHotels];
+  let sortedHotels = [...hotels];
   if (sortOption === 'popularity') {
     sortedHotels = sortedHotels.sort((a, b) => b.popularity - a.popularity); // Sort by popularity
   } else if (sortOption === 'ratings') {
@@ -119,116 +153,102 @@ function HotelList() {
   }
 
   // Filter hotels based on search query, selected amenities, and price range
+  console.log('sortedHotels',sortedHotels)
   const filteredHotels = sortedHotels.filter((hotel) => {
     const matchesSearch = hotel.name.toLowerCase().includes(searchQuery.toLowerCase());
+    console.log(matchesSearch)
     const hasSelectedAmenities = selectedAmenities.every((amenity) => hotel.amenities.includes(amenity));
+    console.log(hasSelectedAmenities)
     const priceInRange = hotel.prices.some((price) => price >= lowPrice && price <= highPrice);
+    console.log(priceInRange)
     return matchesSearch && hasSelectedAmenities && priceInRange;
   });
+  console.log('filteredHotels',filteredHotels)
 
   return (
-    <div>
+    <div className='h-screen'>
       {/* Navbar */}
-      <nav className='mb-2 mt-4 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px]'>
-        <div className='flex flex-row items-center'>
-          <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
-          <SearchBar />
-          <div className='mx-4'>
-            <Menu>
-              <MenuHandler>
-                <button className='flex px-4 py-4'>
-                  <FiAlignJustify className='mx-2' /> Menu
-                </button>
-              </MenuHandler>
-              <MenuList className='w-max'>
-                <MenuItem className='flex px-4 py-4'>
-                  <FaUser className='mr-2' /> Profile
-                </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
-                  <FaSignOutAlt className='mr-2' /> Sign Out
-                </MenuItem>
-                <MenuItem className='flex px-4 py-4'>
-                  <FaQuestionCircle className='mr-2' /> Help Center
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </div>
-        </div>
-      </nav>
-
-     <div className='flex flex-col gap-2'>
+      <NavBar props={state}/>
 
 
-     <div className="text-right  	">
-        <label style={{ marginRight: '10px' }}>Sort By:</label>
-        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={{ marginLeft: '10px' }}>
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-      </div>
-
-
-
-      <div className='border-t-2 border-b-2 border-zinc-950 ' style={{ display: 'grid', gridTemplateColumns: '1fr 5fr', gap: '10px' }}>
-
-        <div id ='Amenties' className= 'pt-2 px-10 w-100 border-r-2 border-zinc-950 my-2 '>
-          <h3 style={{ marginBottom: '10px' }}>Amenities:</h3>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
-              <div key={amenity} style={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
-                <input
-                  type="checkbox"
-                  id={`amenity-${amenity}`}
-                  value={amenity}
-                  checked={selectedAmenities.includes(amenity)}
-                  onChange={(e) => {
-                    const amenityName = e.target.value;
-                    if (e.target.checked) {
-                      setSelectedAmenities([...selectedAmenities, amenityName]);
-                    } else {
-                      setSelectedAmenities(selectedAmenities.filter((amenity) => amenity !== amenityName));
-                    }
-                  }}
-                />
-                <label htmlFor={`amenity-${amenity}`} style={{ marginLeft: '10px' }}>
-                  {amenity}
-                </label>
-              </div>
-            ))}
-          </div>
-          <div  style={{ marginTop: '20px', marginBottom: '10px' }}>
-            <label style={{ marginRight: '10px' }}>Low Price:</label>
-            <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ marginRight: '10px' }}>High Price:</label>
-            <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} style={{ width: '70px' }} />
-          </div>
-        </div>
-
-
-      <div id='Listings' className='py-2 border-r-2 border-zinc-950	  px-10 my-2 overflow-scroll max-h-[790px]'  >
-        <div className="grid grid-cols-1 gap-4 " >
-          {filteredHotels.map((hotel) => (
-            <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
-              <HotelCard {...hotel} />
+      <div className=' z-[-6] flex flex-col'>
+        <aside id="default-sidebar" className="fixed border top-[78px] left-0  w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+          <div className="h-full px-3 py-4 bg-gray-50">
+            {/* Heading for filters */}
+            <div className="grid grid-cols-2 gap-4 items-center">
+              <h2 className="text-3xl font-sans">Filters</h2>
+              <button className="text-red-300">Clear All</button>
             </div>
-          ))}
+
+            {/* Price Filter */}
+            <div className="flex flex-col border-4  p-4 mt-5">
+              <h3 className='text-2xl'>Price </h3>
+              <div className="flex items-center mb-2 mt-3">
+                <label className="mr-2">Low Price:</label>
+                <input type="number" value={lowPrice} onChange={(e) => setLowPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
+              </div>
+              <div className="flex items-center">
+                <label className="mr-2">High Price:</label>
+                <input type="number" value={highPrice} onChange={(e) => setHighPrice(parseInt(e.target.value))} className="w-20 border rounded px-2" />
+              </div>
+            </div>
+
+            {/* Amenities Filter */}
+            <div id="Amenties" className="pt-2 px-10 w-100 border-4 my-2">
+              <h3 className="mb-4">Amenities:</h3>
+              <div className="flex flex-col">
+                {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
+                  <div key={amenity} className="mb-2 flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`amenity-${amenity}`}
+                      value={amenity}
+                      checked={selectedAmenities.includes(amenity)}
+                      onChange={(e) => {
+                        const amenityName = e.target.value;
+                        if (e.target.checked) {
+                          setSelectedAmenities([...selectedAmenities, amenityName]);
+                        } else {
+                          setSelectedAmenities(selectedAmenities.filter((amenity) => amenity !== amenityName));
+                        }
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`amenity-${amenity}`}>{amenity}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div id='Listings' className=' border top-[78px] right-0 py-2 border-r-2 px-10 overflow-scroll no-scrollbar max-h-[720px] ml-[350px] mt-[78px]'>
+          {loading ? (
+            <Loading/>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 ">
+              {filteredHotels.map((hotel) => (
+                <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
+                  <HotelCard {...hotel} />
+                </div>
+              ))}
+            </div>
+          )}
+
         </div>
       </div>
-
-      </div>
-     </div>
-
-
-
 
 
     </div>
-    
+
+
   );
 }
 
 export default HotelList;
+
+
+
+
+
 
