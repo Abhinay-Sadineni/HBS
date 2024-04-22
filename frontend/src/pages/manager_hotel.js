@@ -169,7 +169,7 @@ function Hotelpage() {
             <div className="relative">
               <img src={photos[currentImageIndex]} onClick={() => toggleImagePopup(currentImageIndex)} className="w-full h-48 md:h-96" alt="Main Image" />
               {editMode &&
-                    <button onClick={() => deletePhoto(currentImageIndex)} className="absolute top-1 right-1 p-2 text-red-600 hover:text-red-800" style={{ fontSize: '24px' }}>
+                    <button onClick={() => deletePhoto(currentImageIndex)} className="absolute top-1 right-1 p-2 text-neutral-50 text-neutral-100" style={{ fontSize: '24px' }}>
                       &#x2715;
                     </button>
               }
@@ -195,7 +195,7 @@ function Hotelpage() {
                 <div key={index} className="relative">
                   <img src={photo} onClick={() => toggleImagePopup(index)} className="w-full h-24 md:h-48" alt={`Image ${index + 1}`} />
                   {editMode &&
-                    <button onClick={() => deletePhoto(index)} className="absolute top-1 right-1 p-2 text-red-600 hover:text-red-800">
+                    <button onClick={() => deletePhoto(index)} className="absolute top-1 right-1 p-2 text-neutral-50 hover:text-neutral-100">
                       &#x2715;
                     </button>
                   }
