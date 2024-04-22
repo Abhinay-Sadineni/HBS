@@ -105,12 +105,12 @@ function HotelList() {
         const hotelList = response.data.hotelList.map((hotel) => ({
           id: hotel.hotel_id,
           name: hotel.Hotel_name,
-          ratings: hotel.reservations || '5', // If reservations is not present, adding dummy data
+          ratings: hotel.average_rating || '5',
+          imgURL: `http://localhost:5000/${hotel.hotel_image}`,
           location: hotel.Location || 'Unknown',
-          prices:  [150, 550], // Dummy value for price range
-          amenities: hotel.list_of_amenities ? hotel.list_of_amenities.split(', ') : ['Unknown'], // Dummy value for amenities
-          popularity: hotel.reservations || '5', // Dummy value for popularity
-          imgURL: 'https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720'
+          prices:  [hotel.min_price, hotel.max_price],
+          amenities: hotel.list_of_amenities ? hotel.list_of_amenities.split(', ') : ['Unknown'], 
+          popularity: hotel.reservations || '5',
         }));
         setHotels(hotelList);
         const prices = hotelList.map((hotel) => hotel.prices).flat();
