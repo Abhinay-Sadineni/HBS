@@ -66,20 +66,33 @@ class HotelService {
                     "Location",
                     "list_of_amenities",
                     "date",
-                    rating,
-                    SUM("no_of_avail_rooms") as no_of_avail_rooms
-                    FROM
+                    "average_rating",
+                    SUM("no_of_avail_rooms") as no_of_avail_rooms,
+                    "Image"."image" as hotel_image,
+                    MIN("price") as min_price,
+                    MAX("price") as max_price
+                FROM
                     "Hotel"
-                    JOIN "RoomType" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
-                    LEFT JOIN "Calendar" ON "RoomType"."room_type_id" = "Calendar"."room_type_id"
+                JOIN 
+                    "hotel_average_rating_mv" ON "hotel_average_rating_mv"."hotel_id" = "Hotel"."hotel_id"
+                JOIN 
+                    "RoomType" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
+                LEFT JOIN 
+                    "Calendar" ON "RoomType"."room_type_id" = "Calendar"."room_type_id"
                         AND ("Calendar"."date" BETWEEN :startDate AND :endDate)
-                    WHERE
-                        "Location" = :location
-                        AND "max_guests" >= :no_of_guests
-                    GROUP BY
+                LEFT JOIN 
+                    (SELECT DISTINCT ON ("hotel_id") "hotel_id", "image"
+                    FROM "Image"
+                    ORDER BY "hotel_id", RANDOM()) as "Image" ON "Hotel"."hotel_id" = "Image"."hotel_id"
+                WHERE
+                    "Location" = :location
+                    AND "max_guests" >= :no_of_guests
+                GROUP BY
                     "Hotel"."hotel_id",
-                    "date"
-            `,
+                    "date",
+                    "hotel_average_rating_mv"."average_rating",
+                    "Image"."image";
+                `,
                 {
                     replacements: {
                         location: location,
@@ -187,19 +200,22 @@ class HotelService {
         }
     }
 
-    static async get_vacant_rooms_and_rr(hotel_id) {
+    static async get_vacant_rooms_and_rr(hotel_id, no_of_guests, startDate, endDate) {
         try {
-            // const VacantRooms = await sequelize.query(
-            //     `          
-
-            //     `,
-            //     {
-            //         replacements: {
-            //             hotel_id: hotel_id
-            //         },
-            //         type: Sequelize.QueryTypes.SELECT
-            //     }
-            // );
+            const VacantRooms = await sequelize.query(
+                `          
+                    
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id,
+                        no_of_guests: no_of_guests,
+                        startDate: startDate,
+                        endDate: endDate
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
             const Ratings = await sequelize.query(
                 `
                 SELECT 

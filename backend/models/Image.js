@@ -7,7 +7,7 @@ const Image = sequelize.define('Image', {
       primaryKey: true,
       autoIncrement: true
     },
-    image_url: Sequelize.STRING,
+    image: Sequelize.STRING,
     hotel_id: {
       type: Sequelize.INTEGER,
       references: {

@@ -39,6 +39,10 @@ router.get('/search', async(req , res) =>{
                     Hotel_name: room.Hotel_name,
                     Location: room.Location,
                     list_of_amenities: room.list_of_amenities,
+                    average_rating: room.average_rating,
+                    hotel_image: room.hotel_image,
+                    min_price: room.min_price,
+                    max_price: room.max_price,
                     count: 1
                 };
             }
