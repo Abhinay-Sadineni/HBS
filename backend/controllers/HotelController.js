@@ -76,7 +76,7 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
     try{
         const hotel_id = req.params.hotel_id;        
         const Hotel = await HotelService.get_hotel_info(hotel_id)
-        const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id)
+        const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id, '2', '2024-05-10', '2024-05-10')
         res.json({HotelInfo: Hotel, VacantRoomsandRR: VacantRoomsandRR} );  
     }
 

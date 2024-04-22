@@ -75,7 +75,7 @@ class HotelService {
                     "Hotel"
                 JOIN 
                     "hotel_average_rating_mv" ON "hotel_average_rating_mv"."hotel_id" = "Hotel"."hotel_id"
-                JOIN 
+                JOIN
                     "RoomType" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
                 LEFT JOIN 
                     "Calendar" ON "RoomType"."room_type_id" = "Calendar"."room_type_id"
@@ -166,7 +166,7 @@ class HotelService {
 
             const Images = await sequelize.query(
                 `
-                SELECT "image_url" FROM "Image" WHERE "hotel_id" = :hotel_id            
+                SELECT "image" FROM "Image" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -204,7 +204,76 @@ class HotelService {
         try {
             const VacantRooms = await sequelize.query(
                 `          
-                    
+                WITH date_range AS (
+                    SELECT generate_series(:startDate::date, :endDate::date, INTERVAL '1 DAY') AS date
+                ),
+                booked_rooms AS (
+                    SELECT
+                        to_char(dr.date, 'YYYY-MM-DD')::date AS date, 
+                        r."hotel_id",
+                        r."room_type_id",
+                        SUM(r."No_of_rooms") as no_of_booked_rooms
+                    FROM
+                        date_range dr
+                    JOIN
+                    (
+                        SELECT 
+                            res."hotel_id",
+                            res."room_type_id",
+                            res."No_of_rooms",
+                            res."start_date",
+                            res."end_date"
+                        FROM 
+                            (SELECT * FROM "Reservation" WHERE "Reservation"."status" <> 'cancelled' AND "Reservation"."status" <> 'rejected') res
+                        JOIN
+                            "RoomType" rt ON res."room_type_id" = rt."room_type_id"
+                        JOIN 
+                            "Hotel" h ON res."hotel_id" = h."hotel_id"
+                        WHERE 
+                            h."hotel_id" = :hotel_id AND rt."max_guests" >= :no_of_guests
+                    ) AS r ON dr.date BETWEEN r."start_date" AND r."end_date"
+                    GROUP BY
+                        dr.date,
+                        r."hotel_id",
+                        r."room_type_id"
+                ),
+                available_rooms AS (
+                    SELECT
+                        "Hotel"."hotel_id",
+                        "RoomType"."room_type_id",
+                        "Calendar"."date",
+                        "no_of_avail_rooms",
+                        MIN("price") as min_price,
+                        MAX("price") as max_price
+                    FROM
+                        "Hotel"
+                    JOIN
+                        "RoomType" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
+                    LEFT JOIN 
+                        "Calendar" ON "RoomType"."room_type_id" = "Calendar"."room_type_id"
+                            AND ("Calendar"."date" BETWEEN :startDate::date AND :endDate::date)
+                    WHERE
+                        "Hotel"."hotel_id" = :hotel_id
+                        AND "max_guests" >= :no_of_guests
+                    GROUP BY
+                        "Hotel"."hotel_id",
+                        "date",
+                        "RoomType"."room_type_id",
+                        "no_of_avail_rooms"
+                )
+                SELECT
+                    ar."hotel_id",
+                    ar."room_type_id",
+                    MIN(ar."no_of_avail_rooms" - COALESCE(br."no_of_booked_rooms", 0)) AS min_vacant_rooms,
+                    MIN(ar.min_price),
+                    MAX(ar.max_price)
+                FROM
+                    available_rooms ar
+                LEFT JOIN
+                    booked_rooms br ON ar."date" = br."date" AND ar."hotel_id" = br."hotel_id" AND ar."room_type_id" = br."room_type_id"
+                GROUP BY
+                    ar."hotel_id",
+                    ar."room_type_id";   
                 `,
                 {
                     replacements: {
@@ -225,7 +294,7 @@ class HotelService {
                     COUNT(CASE WHEN "Rating" = '4' THEN 1 END) AS count_rating_4,
                     COUNT(CASE WHEN "Rating" = '5' THEN 1 END) AS count_rating_5,
                     COUNT(*) AS total_ratings
-                FROM "Reservation"
+                FROM "GroupRoom"
                 WHERE "hotel_id" = :hotel_id
                 AND "Rating" IS NOT NULL
                 `,
@@ -239,7 +308,7 @@ class HotelService {
             const Reviews = await sequelize.query(
                 `          
                 SELECT "Review"
-                FROM "Reservation"
+                FROM "GroupRoom"
                 WHERE "hotel_id" = :hotel_id
                 AND "Review" IS NOT NULL
                 GROUP BY
@@ -254,7 +323,7 @@ class HotelService {
             );
 
             return {
-                // VacantRooms: VacantRooms,
+                VacantRooms: VacantRooms,
                 Ratings: Ratings,
                 Reviews: Reviews
             };
