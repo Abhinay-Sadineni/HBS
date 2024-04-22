@@ -20,7 +20,7 @@ function Manager_NavBar() {
           <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
           <div className='flex items-center justify-between'>
             <Link to="/manager-dashboard" className="btn btn-primary ">Today</Link>
-            <Link to="/manager-Calendar" className="btn btn-primary ml-4 ">Calendar</Link>
+            <Link to="/manager-calendar" className="btn btn-primary ml-4 ">Calendar</Link>
             <Link to="/manager-reservations" className="btn btn-primary ml-4">Reservations</Link>
             <Link to="/manager-hotel" className="btn btn-primary ml-4 ">Hotel</Link>
           </div>
