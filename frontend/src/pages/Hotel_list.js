@@ -4,10 +4,17 @@ import HotelCard from '../components/Hotel_card';
 import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios'
+import Loading from '../components/Loading';
 
 // Dummy data with prices as an array
-const dummyHotels = [
-  {
+
+function HotelList() {
+  const navigate = useNavigate();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [sortOption, setSortOption] = useState('popularity');
+  const [hotels, setHotels] = useState([{
     id: 1,
     name: 'Example Hotel 1',
     ratings: '4.5/5',
@@ -72,21 +79,12 @@ const dummyHotels = [
     prices: [350, 450], // Min and Max prices
     popularity: 8,// Example popularity
     imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
-  }
-];
+  }]);
 
+  const [lowPrice, setLowPrice] = useState(Math.min(...hotels.flatMap((hotel) => hotel.prices)));
+  const [highPrice, setHighPrice] = useState(Math.max(...hotels.flatMap((hotel) => hotel.prices)));
 
-
-
-function HotelList() {
-  const navigate = useNavigate();
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [lowPrice, setLowPrice] = useState(Math.min(...dummyHotels.flatMap((hotel) => hotel.prices)));
-  const [highPrice, setHighPrice] = useState(Math.max(...dummyHotels.flatMap((hotel) => hotel.prices)));
-  const [sortOption, setSortOption] = useState('popularity');
-
+  const [loading, setLoading] = useState(true);
 
   const { state } = useLocation();
 
@@ -95,22 +93,34 @@ function HotelList() {
     if (state) {
       console.log(state);
       axios.get('http://localhost:5000/search', 
-      {params: {
-        location: state.location,
-        no_of_rooms: state.numRooms,
-        no_of_guests: state.numGuests,
-        start_date: state.startDate,
-        end_date: state.endDate
-      }
-    }
-    
-    )
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching hotels:', error);
-        });
+        {params: {
+          location: state.location,
+          no_of_rooms: state.numRooms,
+          no_of_guests: state.numGuests,
+          start_date: state.startDate,
+          end_date: state.endDate
+        }
+      })
+      .then((response) => {
+        const hotelList = response.data.hotelList.map((hotel) => ({
+          id: hotel.hotel_id,
+          name: hotel.Hotel_name,
+          ratings: hotel.reservations || '5', // If reservations is not present, adding dummy data
+          location: hotel.Location || 'Unknown',
+          prices:  [150, 550], // Dummy value for price range
+          amenities: hotel.list_of_amenities ? hotel.list_of_amenities.split(', ') : ['Unknown'], // Dummy value for amenities
+          popularity: hotel.reservations || '5', // Dummy value for popularity
+          imgURL: 'https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720'
+        }));
+        setHotels(hotelList);
+        const prices = hotelList.map((hotel) => hotel.prices).flat();
+        setLowPrice(Math.min(...prices));
+        setHighPrice(Math.max(...prices));
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error('Error fetching hotels:', error);
+      });
     } else {
       
     }
@@ -131,7 +141,7 @@ function HotelList() {
   ];
 
   // Sort hotels based on selected sort option
-  let sortedHotels = [...dummyHotels];
+  let sortedHotels = [...hotels];
   if (sortOption === 'popularity') {
     sortedHotels = sortedHotels.sort((a, b) => b.popularity - a.popularity); // Sort by popularity
   } else if (sortOption === 'ratings') {
@@ -143,12 +153,17 @@ function HotelList() {
   }
 
   // Filter hotels based on search query, selected amenities, and price range
+  console.log('sortedHotels',sortedHotels)
   const filteredHotels = sortedHotels.filter((hotel) => {
     const matchesSearch = hotel.name.toLowerCase().includes(searchQuery.toLowerCase());
+    console.log(matchesSearch)
     const hasSelectedAmenities = selectedAmenities.every((amenity) => hotel.amenities.includes(amenity));
+    console.log(hasSelectedAmenities)
     const priceInRange = hotel.prices.some((price) => price >= lowPrice && price <= highPrice);
+    console.log(priceInRange)
     return matchesSearch && hasSelectedAmenities && priceInRange;
   });
+  console.log('filteredHotels',filteredHotels)
 
   return (
     <div className='h-screen'>
@@ -208,13 +223,17 @@ function HotelList() {
         </aside>
 
         <div id='Listings' className=' border top-[78px] right-0 py-2 border-r-2 px-10 overflow-scroll no-scrollbar max-h-[720px] ml-[350px] mt-[78px]'>
-          <div className="grid grid-cols-1 gap-4 ">
-            {filteredHotels.map((hotel) => (
-              <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
-                <HotelCard {...hotel} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <Loading/>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 ">
+              {filteredHotels.map((hotel) => (
+                <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
+                  <HotelCard {...hotel} />
+                </div>
+              ))}
+            </div>
+          )}
 
         </div>
       </div>
@@ -227,4 +246,9 @@ function HotelList() {
 }
 
 export default HotelList;
+
+
+
+
+
 
