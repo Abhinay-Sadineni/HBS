@@ -153,7 +153,7 @@ function HotelList() {
   return (
     <div className='h-screen'>
       {/* Navbar */}
-      <NavBar />
+      <NavBar props={state}/>
 
 
       <div className=' z-[-6] flex flex-col'>
