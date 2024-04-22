@@ -9,6 +9,7 @@ import History from './pages/Guest_History';
 import HotelPage from './pages/Hotelpage';
 import BillPage from './pages/Bill';
 import Manager_Dashboard from './pages/Manager_Dashboard';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route exact path="/bill" element={<BillPage />} />
           <Route exact path="/hotel-page" element={<HotelPage />} />
           <Route exact path = "/manager-dashboard" element = {<Manager_Dashboard/>} />
+          <Route exact path ="/Profile" element ={<Profile/>}/>
         </Routes>
       </div>
     </Router>
