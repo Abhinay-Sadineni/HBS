@@ -1,6 +1,6 @@
 const faker = require('faker');
 const bcrypt = require('bcrypt');
-const { User, Hotel, Reservation, RoomType, FAQ, Calendar } = require('./models');
+const { User, Hotel, Reservation, RoomType, FAQ, Calendar, Image, GroupRoom } = require('./models');
 
 function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
@@ -99,13 +99,56 @@ async function generateHotels() {
       latitude: faker.address.latitude(),
       longitude: faker.address.longitude(),
       list_of_amenities: selectedHotelAmenities.join(', '),
-      cancellation_policy: faker.lorem.paragraph(),
+      cancellation_policy: faker.random.number({ min: 1, max: 100 }),
       check_in: faker.random.arrayElement(['12:00 PM', '2:00 PM', '3:00 PM']),
       check_out: faker.random.arrayElement(['10:00 AM', '11:00 AM', '12:00 PM'])
     };
     hotels.push(hotel);
   }
   await Hotel.bulkCreate(hotels);
+}
+
+async function generateImages() {
+  const images = [];
+  const hotelImages = ['hotel1.jpg', 'hotel2.jpg', 'hotel3.jpg', 'hotel4.jpg', 'hotel5.jpg'];
+
+  const hotels = await Hotel.findAll();
+
+  for (let hotel of hotels) {
+    const numImages = Math.floor(Math.random() * 2) + 2;
+    for (let i = 0; i < numImages; i++) {
+      const randomIndex = Math.floor(Math.random() * hotelImages.length);
+      const selectedImage = hotelImages[randomIndex];
+
+      const image = {
+        image: selectedImage,
+        hotel_id: hotel.hotel_id
+      };
+      images.push(image);
+    }
+  }
+
+  await Image.bulkCreate(images);
+}
+
+
+async function generateRoomTypes() {
+  const roomTypes = [];
+  const hotels = await Hotel.findAll();
+  for (let hotel of hotels) {
+    for (let i = 0; i < 3; i++) {
+      const selectedRoomAmenities = getRandomAmenities(roomAmenities, 0.3);
+      const roomType = {
+        room_type_name: faker.lorem.word(),
+        no_of_rooms: Math.floor(Math.random() * 10) + 1,
+        list_of_amenties: selectedRoomAmenities.join(', '),
+        max_guests: Math.floor(Math.random() * 4) + 1,
+        hotel_id: hotel.hotel_id
+      };
+      roomTypes.push(roomType);
+    }
+  }
+  await RoomType.bulkCreate(roomTypes);
 }
 
 async function generateRoomTypes() {
@@ -127,56 +170,68 @@ async function generateRoomTypes() {
   await RoomType.bulkCreate(roomTypes);
 }
 
+async function generateGroupRoom() {
+  const groupRooms = [];
+  const hotels = await Hotel.findAll();
+  
+  for (let hotel of hotels) {
+    const roomTypes = await RoomType.findAll({ where: { hotel_id: hotel.hotel_id } });
+    const numGroup = roomTypes.length;
+    
+    for (let i = 0; i < numGroup; i++) {
+      const groupRoom = {
+        user_id: await getRandomUserIdForGuest(),
+        hotel_id: hotel.hotel_id,
+        Review: faker.lorem.paragraph(),
+        Rating: faker.random.number({ min: 1, max: 5 })
+      };
+      
+      groupRooms.push(groupRoom);
+    }
+  }
+  
+  await GroupRoom.bulkCreate(groupRooms);
+}
+
 
 async function generateReservations() {
-  const reservations = [];
   const currentDate = new Date();
   const reservationEndDate = new Date();
   reservationEndDate.setDate(currentDate.getDate() + 30);
 
-  const hotels = await Hotel.findAll();
-  for (let hotel of hotels) {
-    const roomTypes = await RoomType.findAll({ where: { hotel_id: hotel.hotel_id } });
+  const groupRooms = await GroupRoom.findAll();
+  const reservations = [];
+
+  for (let groupRoom of groupRooms) {
+    const roomTypes = await RoomType.findAll({ where: { hotel_id: groupRoom.hotel_id } });
+    const bookedDate = faker.date.between(currentDate, reservationEndDate);
+    const startDate = faker.date.between(bookedDate, reservationEndDate);
+    const endDate = faker.date.between(startDate, reservationEndDate);
+    const status = faker.random.arrayElement(['cancelled', 'accepted', 'rejected', 'pending'])
+
     for (let roomType of roomTypes) {
       const availableRooms = roomType.no_of_rooms;
-      for (let i = 0; i < 5; i++) {
-        const bookedDate = faker.date.between(currentDate, reservationEndDate);
-        const startDate = faker.date.between(bookedDate, reservationEndDate);
-        const endDate = faker.date.between(startDate, reservationEndDate);
+      const numRooms = Math.floor(Math.random() * availableRooms) + 1;
 
-        const numRooms = Math.floor(Math.random() * availableRooms) + 1;
-
-        let rating = null;
-        let review = null;
-        
-        if (Math.random() < 0.5) {
-          rating = Math.floor(Math.random() * 5) + 1;
-        }
-        
-        if (Math.random() < 0.5) {
-          review = faker.lorem.paragraph();
-        }
-
-        const reservation = {
-          booked_date: bookedDate,
-          start_date: startDate,
-          end_date: endDate,
-          Review: review,
-          Rating: rating,
-          user_id: await getRandomUserIdForGuest(),
-          hotel_id: hotel.hotel_id,
-          room_type_id: roomType.room_type_id,
-          No_of_rooms: numRooms,
-          payment: faker.random.number(),
-          status: faker.random.arrayElement(['cancelled', 'accepted', 'rejected', 'pending'])
-        };
-        reservations.push(reservation);
-      }
+      const reservation = {
+        booked_date: bookedDate,
+        start_date: startDate,
+        end_date: endDate,
+        user_id: groupRoom.user_id,
+        hotel_id: groupRoom.hotel_id,
+        room_type_id: roomType.room_type_id,
+        No_of_rooms: numRooms,
+        payment: faker.random.number(),
+        status: status,
+        gid: groupRoom.gid
+      };
+      
+      reservations.push(reservation);
     }
   }
+  
   await Reservation.bulkCreate(reservations);
 }
-
 
 
 async function generateFAQs() {
@@ -213,7 +268,6 @@ async function generateCalendars() {
 
         const calendar = {
           room_type_id: roomType.room_type_id,
-          hotel_id: hotel.hotel_id, // Add hotel_id
           date: date,
           price: faker.random.number({ min: 500, max: 5000 }),
           no_of_avail_rooms: Math.floor(Math.random() * availableRooms) + 1
@@ -232,7 +286,9 @@ async function populateDatabase() {
   try {
     await generateUsers();
     await generateHotels();
+    await generateImages();
     await generateRoomTypes();
+    await generateGroupRoom();
     await generateReservations();
     await generateFAQs();
     await generateCalendars();

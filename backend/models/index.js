@@ -29,6 +29,9 @@ FAQ.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 Hotel.hasMany(Image, { foreignKey: 'hotel_id' });
 Image.belongsTo(Hotel, { foreignKey: 'hotel_id' });
 
+Hotel.hasMany(GroupRoom, { foreignKey: 'hotel_id' });
+GroupRoom.belongsTo(Hotel, { foreignKey: 'hotel_id' });
+
 RoomType.hasMany(Reservation, { foreignKey: 'room_type_id' });
 Reservation.belongsTo(RoomType, { foreignKey: 'room_type_id' });
 

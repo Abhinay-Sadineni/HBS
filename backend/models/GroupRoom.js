@@ -13,7 +13,16 @@ const GroupRoom = sequelize.define('GroupRoom', {
         model: 'User',
         key: 'user_id'
       }
-    }
+    },
+    hotel_id: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Hotel',
+        key: 'hotel_id'
+      }
+    },
+    Review: Sequelize.TEXT,
+    Rating: Sequelize.INTEGER
 }, {
     tableName: 'GroupRoom'
 });

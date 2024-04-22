@@ -23,8 +23,7 @@ const Hotel = sequelize.define('Hotel', {
     list_of_amenities: Sequelize.TEXT,
     cancellation_policy: Sequelize.INTEGER,
     check_in: Sequelize.STRING,
-    check_out: Sequelize.STRING,
-    rating: Sequelize.FLOAT
+    check_out: Sequelize.STRING
 }, {
     tableName: 'Hotel'
 });

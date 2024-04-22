@@ -10,8 +10,6 @@ const Reservation = sequelize.define('Reservation', {
     booked_date: Sequelize.DATEONLY,
     start_date: Sequelize.DATEONLY,
     end_date: Sequelize.DATEONLY,
-    Review: Sequelize.TEXT,
-    Rating: Sequelize.INTEGER,
     gid: {
       type: Sequelize.INTEGER,
       references: {
