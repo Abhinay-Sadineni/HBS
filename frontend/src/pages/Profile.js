@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { Link } from 'react-router-dom';
+import axiosInstance from '../helpers/axios';
 
 function Profile() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,14 @@ function Profile() {
     country_code: '',
     usertype: 'guest',
   });
+
+  
+
+  useEffect(() => {
+       axiosInstance.get('/getprofile').then((response) =>{
+        console.log(response.body)
+       })
+    }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

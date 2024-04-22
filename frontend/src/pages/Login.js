@@ -9,7 +9,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('guest'); // Default user type is guest
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [loading, setLoading] = useState(false);
 
 
@@ -26,7 +25,7 @@ function Login() {
         const token = response.data.token;
   
         if (token) {
-          await setCookie('token', token, { path: '/' });
+          localStorage.setItem('token')
 
           await setLoading(true);
   
