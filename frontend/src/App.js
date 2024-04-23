@@ -25,7 +25,7 @@ function App() {
           <Route exact path="/guest-dashboard" element={<Guest_Dashboard />} />
           <Route exact path="/list" element={<HotelList />} />
           <Route exact path="/guest-dashboard/history" element={<History />} />
-          <Route exact path="/hotel/:hotelId" element={<HotelPage />} /> {/* Update the route for HotelPage */}
+          <Route exact path="/hotel/:hotelId/:no_of_guests/:start_date/:end_date" element={<HotelPage />} />
           <Route exact path="/bill" element={<BillPage />} />
           <Route exact path="/hotel-page" element={<HotelPage />} />
           <Route exact path = "/manager-dashboard" element = {<Manager_Dashboard/>} />

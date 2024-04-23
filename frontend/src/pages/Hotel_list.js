@@ -129,7 +129,7 @@ function HotelList() {
 
 
   const handleHotelClick = (hotelId) => {
-    navigate(`/hotel/${hotelId}`);
+    navigate(`/hotel/${hotelId}/${state.numGuests}/${state.startDate.toISOString().split('T')[0]}/${state.endDate.toISOString().split('T')[0]}`);
   };
 
   // Sort options including ratings

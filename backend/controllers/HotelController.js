@@ -74,9 +74,11 @@ router.get('/search', async(req , res) =>{
 
 router.get('/hotel/:hotel_id', async(req , res) =>{
     try{
-        const hotel_id = req.params.hotel_id;        
+        const hotel_id = req.params.hotel_id;  
+        const {no_of_guests, start_date, end_date} = req.query   
+        console.log(start_date)
         const Hotel = await HotelService.get_hotel_info(hotel_id)
-        const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id, '2', '2024-05-10', '2024-05-10')
+        const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id, no_of_guests, start_date, end_date)
         res.json({HotelInfo: Hotel, VacantRoomsandRR: VacantRoomsandRR} );  
     }
 

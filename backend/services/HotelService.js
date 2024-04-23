@@ -202,6 +202,7 @@ class HotelService {
 
     static async get_vacant_rooms_and_rr(hotel_id, no_of_guests, startDate, endDate) {
         try {
+            console.log(startDate)
             const VacantRooms = await sequelize.query(
                 `          
                 WITH date_range AS (

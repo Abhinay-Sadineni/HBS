@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import SearchBar from '../components/SearchBar';
@@ -8,127 +8,8 @@ import StarIcon from '@mui/icons-material/Star';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import axiosInstance from '../helpers/axios';
 import { useParams } from 'react-router-dom';
-
-
-const rating = [1000, 1000, 1000, 1000, 1000];
-
-const hotel = {
-  "HotelInfo": {
-  "Hotel": {
-  "hotel_id": 1,
-  "manager_id": 9,
-  "Hotel_name": "Ruecker, Yundt and Williamson",
-  "Location": "Hyderabad",
-  "register_date": "2024-04-18",
-  "Description": "Sunt neque expedita. Voluptatum at ea et distinctio harum nam aut. Cum ut ipsa deserunt vitae debitis et. Placeat odit similique et cum distinctio et doloremque.",
-  "Address": "1138 Volkman Loaf",
-  "latitude": "-52.5463",
-  "longitude": "-31.0554",
-  "list_of_amenities": "TV, Air conditioning, Hot tub, Indoor fireplace, Beach access, Outdoor shower, First aid kit",
-  "cancellation_policy": 72,
-  "check_in": "2:00 PM",
-  "check_out": "11:00 AM",
-  "createdAt": "2024-04-22T18:43:05.012Z",
-  "updatedAt": "2024-04-22T18:43:05.012Z"
-  },
-  "RoomTypes": [
-  {
-  "room_type_name": "dolores",
-  "room_type_id": 1,
-  "list_of_amenties": "Wifi, Dedicated workspace, Pool, Outdoor dining area, Lake access, Smoke alarm",
-  "max_guests": 2
-  },
-  {
-  "room_type_name": "sunt",
-  "room_type_id": 2,
-  "list_of_amenties": "Air conditioning, Dedicated workspace, Pool, Hot tub, Firepit, Pool table, Indoor fireplace, Piano, First aid kit",
-  "max_guests": 1
-  },
-  {
-  "room_type_name": "vero",
-  "room_type_id": 3,
-  "list_of_amenties": "Wifi, Free parking on premises, Dedicated workspace, Hot tub, BBQ grill, Lake access, Outdoor shower",
-  "max_guests": 4
-  }
-  ],
-  "Images": [
-  {
-  "image": "hotel2.jpg"
-  },
-  {
-  "image": "hotel4.jpg"
-  }
-  ],
-  "FAQs": [
-  {
-  "Q": "Totam delectus voluptatibus aliquid ipsum omnis deleniti cumque perspiciatis.",
-  "A": "Sit totam quibusdam quo nihil est nihil dolor ipsum. Nisi adipisci officiis vero consequatur ipsa et laboriosam quia. Aut voluptas tenetur. Earum iure magnam dolorem placeat. Assumenda qui omnis quod vero quia ut voluptatem ut."
-  },
-  {
-  "Q": "Voluptas quisquam nihil cumque harum tempora.",
-  "A": "Molestias consectetur distinctio est corporis dolore. Aut aspernatur asperiores fugiat hic eaque corrupti sequi et. Unde excepturi voluptates laudantium reiciendis consequuntur enim. Voluptatem eaque ad officia consequuntur dolorem alias dolores est. Voluptas temporibus eaque ipsum libero."
-  },
-  {
-  "Q": "Quis fugit est quos quod optio labore.",
-  "A": "Quos dolorum maxime deserunt dolores non veniam atque eum. Molestiae sunt modi quia iure laborum sit omnis. Voluptates assumenda cupiditate. Sed qui vero et sit ducimus sint. Vel consequatur delectus eum atque et inventore quia et. Accusamus autem est occaecati."
-  },
-  {
-  "Q": "Ipsam delectus dolor aut aut nam.",
-  "A": "Dolores beatae et. Corrupti aut ipsum quas. Saepe voluptatem alias illum non dolorum. Fugit aut ut repellendus et sed. Dicta aut tenetur omnis. Aut atque laboriosam deleniti qui iusto ipsum sit velit."
-  },
-  {
-  "Q": "Non rerum doloribus et aut minus odio.",
-  "A": "Doloribus omnis cupiditate officia. Aut hic aut adipisci maiores amet iure doloremque est. Et voluptate voluptatem cum assumenda. Ut fugit consequatur sit omnis rerum qui autem. Animi at quia voluptatem. Ducimus et autem aut sequi sunt dolorem."
-  }
-  ]
-  },
-  "VacantRoomsandRR": {
-  "VacantRooms": [
-  {
-  "hotel_id": 1,
-  "room_type_id": 1,
-  "min_vacant_rooms": "3",
-  "min": "2665.00",
-  "max": "2665.00"
-  },
-  {
-  "hotel_id": 1,
-  "room_type_id": 3,
-  "min_vacant_rooms": "4",
-  "min": "828.00",
-  "max": "828.00"
-  }
-  ],
-  "Ratings": [
-  {
-  "count_rating_1": "0",
-  "count_rating_2": "0",
-  "count_rating_3": "0",
-  "count_rating_4": "2",
-  "count_rating_5": "1",
-  "total_ratings": "3"
-  }
-  ],
-  "Reviews": [
-  {
-  "Review": "Et dolores quo illo ipsam dignissimos dolore praesentium. Aspernatur et fugiat quas. Commodi ipsa excepturi. Ipsum iure sint.",
-  "Rating": 4,
-  "name": "Henry_Auer"
-  },
-  {
-  "Review": "Similique molestias ex ratione doloremque. Et numquam et quia dignissimos autem nulla qui. Cupiditate aut voluptas.",
-  "Rating": 5,
-  "name": "Ted35"
-  },
-  {
-  "Review": "Voluptatibus cum explicabo aut quas odit vel. Sunt maxime et beatae quo deleniti qui est tenetur iure. Facere molestiae veritatis consectetur praesentium quas corporis nobis quaerat laboriosam.",
-  "Rating": 4,
-  "name": "Aurelio.Runolfsson91"
-  }
-  ]
-  }
-}
-  
+import axios from 'axios';
+import Loading from '../components/Loading';
 
 function ReviewCard(props) {
   const stars = [];
@@ -148,12 +29,32 @@ function ReviewCard(props) {
 }
 
 function Hotelpage() {
-
-  const { hotelId } = useParams();
-  // console.log(hotelsList[0].imgURL.length)
+  const { hotelId ,no_of_guests ,start_date ,end_date } = useParams();
+  const [hotel ,setHotel] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [imagePopup, setImagePopup] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+        try {
+            console.log({ hotelId ,no_of_guests ,start_date ,end_date })
+            const response = await axios.get(`http://localhost:5000/hotel/${hotelId}`,{params: {
+               no_of_guests : no_of_guests,
+               start_date: start_date,
+               end_date: end_date
+            }});
+            console.log(response)
+            setHotel(response.data);
+        } catch (error) {
+            console.error('Error fetching hotel data:', error);
+        } finally {
+          setLoading(false);
+        }
+    }
+    fetchData();
+  }, [hotelId]);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -177,6 +78,9 @@ function Hotelpage() {
     console.log(currentImageIndex);
   };
 
+  if (loading) {
+    return <Loading/>;
+  }
 
   return (
     <div className="h-screen">
@@ -197,7 +101,6 @@ function Hotelpage() {
               <p>Dedicated work space</p>
             </div>
           </div>
-          {/* <h1 className="text-xl font-bold" >Ratings and Reviews</h1> */}
           <div className="border-b border-gray-400 py-4 mb-4">
             <RatingBar ratings={Object.values(hotel.VacantRoomsandRR.Ratings[0])} />
           </div>
