@@ -154,7 +154,7 @@ class HotelService {
             );
             const RoomTypes = await sequelize.query(
                 `
-                SELECT "room_type_name", "list_of_amenties", "max_guests" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
+                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -307,12 +307,17 @@ class HotelService {
             );
             const Reviews = await sequelize.query(
                 `          
-                SELECT "Review"
+                SELECT "GroupRoom"."Review",
+                "GroupRoom"."Rating",
+                "User"."username" as name
                 FROM "GroupRoom"
-                WHERE "hotel_id" = :hotel_id
-                AND "Review" IS NOT NULL
+                JOIN "User" ON "GroupRoom"."user_id"="User"."user_id"
+                WHERE "GroupRoom"."hotel_id" = :hotel_id
+                AND "GroupRoom"."Review" IS NOT NULL
                 GROUP BY
-                    "Review"
+                "GroupRoom"."Review",
+                "GroupRoom"."Rating",
+                "User"."username"
                 `,
                 {
                     replacements: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
@@ -8,10 +8,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 function ReserveCard(props) {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [numRooms, setNumRooms] = useState(0);
-    const [numLuxuryRooms, setNumLuxuryRooms] = useState(0);
-    const [numDeluxeRooms, setNumDeluxeRooms] = useState(0);
-    const [numStandardRooms, setNumStandardRooms] = useState(0);
+    const [roomTypes, setRoomTypes] = useState([]);
     const [numGuests, setNumGuests] = useState('');
     const [isRoomSelectionVisible, setIsRoomSelectionVisible] = useState(false);
     const roomSelectionRef = useRef(null);
@@ -24,7 +21,7 @@ function ReserveCard(props) {
         }
 
         // Attach event listener when the component mounts
-        if(isRoomSelectionVisible){
+        if (isRoomSelectionVisible) {
             document.addEventListener('click', handleClickOutside);
         }
 
@@ -33,61 +30,81 @@ function ReserveCard(props) {
         };
     }, [isRoomSelectionVisible]); // Empty dependency array ensures that this effect runs only once
 
+    useEffect(() => {
+        const combinedRoomTypes = props.RoomTypes.map(roomType => ({
+            ...roomType,
+            count: 0,
+            min_vacant_rooms: 0
+        }));
+
+        props.VacantRooms.forEach(vacantRoom => {
+            const index = combinedRoomTypes.findIndex(roomType => roomType.room_type_id === vacantRoom.room_type_id);
+            if (index !== -1) {
+                combinedRoomTypes[index].min_vacant_rooms = vacantRoom.min_vacant_rooms;
+            }
+        });
+
+        setRoomTypes(combinedRoomTypes);
+    }, [props.RoomTypes, props.VacantRooms]);
+
     const handleReserve = () => {
         console.log('Reserving...');
     };
 
     const handleIncrement = (roomType) => {
-        switch (roomType) {
-            case 'Luxury':
-                setNumLuxuryRooms(numLuxuryRooms + 1);
-                break;
-            case 'Deluxe':
-                setNumDeluxeRooms(numDeluxeRooms + 1);
-                break;
-            case 'Standard':
-                setNumStandardRooms(numStandardRooms + 1);
-                break;
-            default:
-                break;
-        }
-        setNumRooms(numRooms + 1);
+        const updatedRoomTypes = roomTypes.map(room => {
+            if (room.room_type_name === roomType.room_type_name && room.count + 1 <room.min_vacant_rooms) {
+                return {
+                    ...room,
+                    count: room.count + 1
+                };
+            }
+            return room;
+        });
+
+        setRoomTypes(updatedRoomTypes);
     };
 
     const handleDecrement = (roomType) => {
-        switch (roomType) {
-            case 'Luxury':
-                if (numLuxuryRooms > 0) {
-                    setNumLuxuryRooms(numLuxuryRooms - 1);
-                    setNumRooms(numRooms - 1);
-                }
-                break;
-            case 'Deluxe':
-                if (numDeluxeRooms > 0) {
-                    setNumDeluxeRooms(numDeluxeRooms - 1);
-                    setNumRooms(numRooms - 1);
-                }
-                break;
-            case 'Standard':
-                if (numStandardRooms > 0) {
-                    setNumStandardRooms(numStandardRooms - 1);
-                    setNumRooms(numRooms - 1);
-                }
-                break;
-            default:
-                break;
-        }
-        
+        const updatedRoomTypes = roomTypes.map(room => {
+            if (room.room_type_name === roomType.room_type_name && room.count > 0) {
+                return {
+                    ...room,
+                    count: room.count - 1
+                };
+            }
+            return room;
+        });
+
+        setRoomTypes(updatedRoomTypes);
     };
 
     const handleRoomsInputFocus = () => {
-        // setIsRoomsInputFocused(true);
         setIsRoomSelectionVisible(true);
     };
 
     const handleRoomsInputBlur = () => {
-        // setIsRoomsInputFocused(false);
         setIsRoomSelectionVisible(false);
+    };
+
+    const renderRoomTypes = () => {
+        return roomTypes.map((room, index) => (
+            <div key={index} className="room-type flex justify-between items-center">{room.room_type_name}
+                <div className="flex justify-center">
+                    <button onClick={() => handleDecrement(room)} className={`minus-button m-2 rounded-full border border-gray-300 ${room.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={room.count === 0}><RemoveIcon /></button>
+                    <div className="room-count m-2">{room.count}</div>
+                    <button onClick={() => handleIncrement(room)} className="plus-button m-2 rounded-full border border-gray-300"> <AddIcon /></button>
+                </div>
+            </div>
+        ));
+    };
+
+    const calculateTotalBeforeTaxes = () => {
+        let totalBeforeTaxes = 0;
+        roomTypes.forEach(roomType => {
+            totalBeforeTaxes += roomType.count * roomType.min_vacant_rooms;
+        });
+        return totalBeforeTaxes;
     };
 
     return (
@@ -120,46 +137,18 @@ function ReserveCard(props) {
                 </div>
             </div>
             <div className="flex flex-col md:flex-row md:space-x-4 mt-4">
-                <div className="flex-grow relative"
-                ref = {roomSelectionRef}
-                >
+                <div className="flex-grow relative" ref={roomSelectionRef}>
                     <input
                         id="num_rooms"
                         placeholder="Rooms"
-                        value={numRooms}
-                        onChange={(e) => setNumRooms(e.target.value)}
-                        onClick = {handleRoomsInputFocus}
+                        value=""
+                        onClick={handleRoomsInputFocus}
                         className="w-full rounded-md px-4 py-2 border border-gray-300"
+                        readOnly
                     />
                     {isRoomSelectionVisible && (
-                        <div 
-                        className="room-container shadow-lg border border-gray-200 rounded-lg mt-2 p-4">
-                            
-                            <div className="room-type flex justify-between items-center">Luxury
-                                <div className="flex justify-center">
-                                    <button onClick={() => handleDecrement('Luxury')}  className={`minus-button m-2 rounded-full border border-gray-300 ${numLuxuryRooms === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    disabled={numLuxuryRooms === 0}> <RemoveIcon /> </button>    
-                                    <div className="room-count m-2">{numLuxuryRooms}</div>
-                                    <button onClick={() => handleIncrement('Luxury')} className="plus-button m-2 border border-gray-300 rounded-full">
-                                    <AddIcon/></button>                                   
-                                    
-                                </div>
-                            </div>
-                            <div className="room-type flex justify-between items-center">Deluxe
-                                <div className="flex justify-center">
-                                    <button onClick={() => handleDecrement('Deluxe')} className={`minus-button m-2 rounded-full border border-gray-300 ${numDeluxeRooms === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={numDeluxeRooms === 0}> <RemoveIcon /> </button>
-                                    <div className="room-count m-2">{numDeluxeRooms}</div>
-                                    <button onClick={() => handleIncrement('Deluxe')} className="plus-button m-2 rounded-full border border-gray-300"> <AddIcon/></button>
-                                    
-                                </div>
-                            </div>
-                            <div className="room-type flex justify-between items-center">Standard
-                                <div className="flex justify-center">
-                                    <button onClick={() => handleDecrement('Standard')} className={`minus-button m-2 rounded-full border border-gray-300 ${numStandardRooms === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={numStandardRooms === 0}> <RemoveIcon /> </button>
-                                    <div className="room-count m-2">{numStandardRooms}</div>
-                                    <button onClick={() => handleIncrement('Standard')} className="plus-button m-2 rounded-full border border-gray-300"><AddIcon/></button>                                    
-                                </div>
-                            </div>
+                        <div className="room-container shadow-lg border border-gray-200 rounded-lg mt-2 p-4">
+                            {renderRoomTypes()}
                         </div>
                     )}
                 </div>
@@ -168,11 +157,11 @@ function ReserveCard(props) {
                 </div>
             </div>
             <div className="mt-4">
-                <Link to={props.rout} className="bg-pink-500 text-white px-4 py-2 rounded-md block w-full"> Reserve</Link>
+                <Link to={props.rout} className="bg-pink-500 text-white px-4 py-2 rounded-md block w-full" onClick={handleReserve}> Reserve</Link>
             </div>
             <div className="flex justify-between mt-4">
                 <h2 className="font-bold">Total before taxes</h2>
-                <h2 className="font-bold">{props.price * (numLuxuryRooms + numDeluxeRooms + numStandardRooms)}Rs</h2>
+                <h2 className="font-bold">{calculateTotalBeforeTaxes()} Rs</h2>
             </div>
         </div>
     );
