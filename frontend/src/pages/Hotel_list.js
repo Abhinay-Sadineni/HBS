@@ -124,7 +124,7 @@ function HotelList() {
     } else {
       
     }
-  }, []);
+  }, [state]);
 
 
 

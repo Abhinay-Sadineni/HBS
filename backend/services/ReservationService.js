@@ -129,32 +129,28 @@ class ReservationService {
             throw new Error(error.message);
         }
     }
-    static async confirm_reservation(gid, status) {
+    static async confirm_reservation(gid, status ,user_id) {
         try {
             let message;
-            if(status === 'cancelled'){
-                await Reservation.update(
-                    { status: 'cancelled' },
-                    { where: { gid: gid } }
-                );
-                message = "Reservations cancelled successfully";
-            }
-            else if (status === 'confirmed') {
+            if (status === 'cancelled') {
+                await Reservation.destroy({ where: { gid: gid } });
+                await GroupRoom.destroy({where : {gid: gid , user_id: user_id}})
+                message = "Reservation cancelled successfully";
+            } else if (status === 'confirmed') {
                 await Reservation.update(
                     { status: 'pending' },
                     { where: { gid: gid } }
                 );
-                message = "Reservations confirmed successfully";
-            }
-            else {
+                message = "Reservation confirmed successfully";
+            } else {
                 throw new Error("Invalid status provided");
             }
             return { message };
-        }
-        catch (error) {
+        } catch (error) {
             throw new Error(error.message);
         }
     }
+    
 }
 
 module.exports = ReservationService;

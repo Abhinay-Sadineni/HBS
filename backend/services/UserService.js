@@ -7,9 +7,9 @@ class UserService {
     static async validate_cred(email, password, usertype) {
         try {
             const user = await User.findOne({ where: { email } });
-            console.log("!user:", !user);
+            console.log("!user:", user);
             console.log("user.usertype !== usertype:", usertype);
-            console.log("!(await bcrypt.compare(password, user.password)):", !(await bcrypt.compare(password, user.password)));
+            console.log("!(await bcrypt.compare(password, user.password)):", (await bcrypt.compare(password, user.password)));
 
             if (!user || user.usertype !== usertype || !(await bcrypt.compare(password, user.password))) {
                 console.log('fail')

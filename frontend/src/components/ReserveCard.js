@@ -4,14 +4,19 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { useParams } from 'react-router-dom';
+import axiosInstance from '../helpers/axios';
 
 function ReserveCard(props) {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [start_Date, setStart_Date] = useState(null);
+    const [end_Date, setEnd_Date] = useState(null);
     const [roomTypes, setRoomTypes] = useState([]);
     const [numGuests, setNumGuests] = useState('');
     const [isRoomSelectionVisible, setIsRoomSelectionVisible] = useState(false);
+    const [reservationDetails, setReservationDetails] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const roomSelectionRef = useRef(null);
+    const { hotelId, no_of_guests, start_date, end_date } = useParams();
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -30,6 +35,13 @@ function ReserveCard(props) {
         };
     }, [isRoomSelectionVisible]); // Empty dependency array ensures that this effect runs only once
 
+
+    useEffect(() =>{
+        setEnd_Date(end_date);
+        setStart_Date(start_date);
+        setNumGuests(no_of_guests);
+    },[no_of_guests])
+
     useEffect(() => {
         const combinedRoomTypes = props.RoomTypes.map(roomType => ({
             ...roomType,
@@ -47,13 +59,35 @@ function ReserveCard(props) {
         setRoomTypes(combinedRoomTypes);
     }, [props.RoomTypes, props.VacantRooms]);
 
-    const handleReserve = () => {
-        console.log('Reserving...');
+    const handleReserve = (e) => {
+        e.preventDefault();
+        let token = localStorage.getItem('token');
+        if (roomTypes) {
+            axiosInstance.post('/reserve', {
+                room_types: roomTypes,
+                hotel_id: hotelId,
+                no_of_guests: numGuests,
+                start_date: start_Date,
+                end_date: end_Date
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+                .then((response) => {
+                    console.log(response.data)
+                    setReservationDetails(response.data);
+                    setShowModal(true);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     };
 
     const handleIncrement = (roomType) => {
         const updatedRoomTypes = roomTypes.map(room => {
-            if (room.room_type_name === roomType.room_type_name && room.count + 1 <room.min_vacant_rooms) {
+            if (room.room_type_name === roomType.room_type_name && room.count + 1 < room.min_vacant_rooms) {
                 return {
                     ...room,
                     count: room.count + 1
@@ -99,13 +133,39 @@ function ReserveCard(props) {
         ));
     };
 
-    const calculateTotalBeforeTaxes = () => {
-        let totalBeforeTaxes = 0;
-        roomTypes.forEach(roomType => {
-            totalBeforeTaxes += roomType.count * roomType.min_vacant_rooms;
-        });
-        return totalBeforeTaxes;
+    const closeModal = () => {
+        setShowModal(false);
+        setReservationDetails(null);
     };
+
+
+    const handleCancel = (e) =>{
+        e.preventDefault()
+        setShowModal(false);
+        if(reservationDetails.gid){
+           axiosInstance.post('/confirm',{
+               gid : reservationDetails.gid.gid,
+               status: "cancelled"
+           }).then((response)=>{
+               window.confirm(response.data.message.message)
+           })
+        }
+        setReservationDetails(null)
+    }
+
+    const handleConfirm = (e) =>{
+        e.preventDefault()
+        setShowModal(false);
+        if(reservationDetails.gid){
+           axiosInstance.post('/confirm',{
+               gid : reservationDetails.gid.gid,
+               status: "confirmed"
+           }).then((response)=>{
+            window.confirm(response.data.message.message)
+        })
+        }
+        setReservationDetails(null)
+    }
 
     return (
         <div className="max-w-10em mx-auto bg-white p-6 rounded-md mt-4 shadow-md border border-gray-300">
@@ -113,24 +173,20 @@ function ReserveCard(props) {
             <div className="flex flex-col md:flex-row md:space-x-4">
                 <div className="flex-grow">
                     <DatePicker
-                        selected={startDate}
-                        onChange={date => setStartDate(date)}
+                        selected={start_Date}
+                        onChange={date => setStart_Date(date)}
                         selectsStart
-                        startDate={startDate}
-                        endDate={endDate}
-                        maxDate={endDate}
+                        maxDate={end_Date}
                         placeholderText="Check in"
                         className="w-full rounded-md px-4 py-2 border border-gray-300"
                     />
                 </div>
                 <div className="flex-grow">
                     <DatePicker
-                        selected={endDate}
-                        onChange={date => setEndDate(date)}
+                        selected={end_Date}
+                        onChange={date => setEnd_Date(date)}
                         selectsEnd
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={startDate}
+                        minDate={start_Date}
                         placeholderText="Check Out"
                         className="w-full rounded-md px-4 py-2 border border-gray-300"
                     />
@@ -157,12 +213,37 @@ function ReserveCard(props) {
                 </div>
             </div>
             <div className="mt-4">
-                <Link to={props.rout} className="bg-pink-500 text-white px-4 py-2 rounded-md block w-full" onClick={handleReserve}> Reserve</Link>
+                <a className="bg-pink-500 text-white px-4 py-2 rounded-md block w-full" onClick={(e) => handleReserve(e)}>Reserve</a>
             </div>
-            <div className="flex justify-between mt-4">
-                <h2 className="font-bold">Total before taxes</h2>
-                <h2 className="font-bold">{calculateTotalBeforeTaxes()} Rs</h2>
-            </div>
+
+            {showModal && (
+                <div className="fixed inset-0 flex justify-center items-center z-50">
+                    <div className="absolute inset-0 bg-black opacity-50" onClick={closeModal}></div>
+                    <div className="bg-white p-6 rounded-md max-w-2xl z-10">
+                        <h2 className="text-xl font-semibold mb-4">Reservation Details</h2>
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room Type</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.keys(reservationDetails.totalPrice).map((key, index) => (
+                                    <tr key={index} className="bg-white">
+                                        <td className="px-6 py-4 whitespace-nowrap">{reservationDetails.totalPrice[key].room_type_name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{reservationDetails.totalPrice[key].total_price}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div className="mt-4 flex justify-end">
+                            <button onClick={(e)=>handleCancel(e)} className="mr-2 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
+                            <button onClick={(e)=>handleConfirm(e)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

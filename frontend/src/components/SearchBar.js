@@ -41,7 +41,7 @@ const SearchBar = () => {
         console.log('Searching...');
 
         setTimeout(() => {
-            navigate('/list', {
+            navigate(`/list/:${location}/:${numGuests}/:${numRooms}/:${startDate}/:${endDate}`, {
                 state: {
                     location,
                     startDate,
