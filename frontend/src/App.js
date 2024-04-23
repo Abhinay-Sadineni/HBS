@@ -12,6 +12,7 @@ import Manager_Dashboard from './pages/Manager_Dashboard';
 import Profile from './pages/Profile';
 import Manager_hotel from './pages/manager_hotel';
 import Manager_reg_1 from './pages/manager_reg_1';
+import Manager_calendar from './pages/Manager_calendar';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route exact path ="/Profile" element ={<Profile/>}/>
           <Route exact path = "/manager-hotel" element = {<Manager_hotel/>} />
           <Route exact path = "/manager-reg-1" element = {<Manager_reg_1/>} />
+          <Route exact path = "/manager-calendar" element = {<Manager_calendar/>} />
         </Routes>
       </div>
     </Router>
