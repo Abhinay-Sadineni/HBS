@@ -132,12 +132,9 @@ class ReservationService {
     static async confirm_reservation(gid, status) {
         try {
             let message;
-            if(status === 'cancelled'){
-                await Reservation.update(
-                    { status: 'cancelled' },
-                    { where: { gid: gid } }
-                );
-                message = "Reservations cancelled successfully";
+            if (status === 'cancelled') {
+                await Reservation.destroy({ where: { gid: gid } });
+                message = "Reservation cancelled successfully";
             }
             else if (status === 'confirmed') {
                 await Reservation.update(
