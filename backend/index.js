@@ -3,6 +3,7 @@ const cors = require('cors')
 const sequelize = require('./config');
 const UserController = require('./controllers/UserController');
 const HotelController = require('./controllers/HotelController');
+const ReservationController = require('./controllers/ReservationController');
 const multer = require('multer');
 const path = require('path');
 // const ReservationController = require('./controllers/ReservationController');
@@ -64,7 +65,7 @@ sequelize.authenticate()
 
 app.use(UserController);
 app.use(HotelController);
-// app.use(ReservationController);
+app.use(ReservationController);
 
 const storage = multer.diskStorage({
   destination: './uploads/', // Folder where images will be stored
