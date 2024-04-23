@@ -136,7 +136,8 @@ class ReservationService {
                 await Reservation.destroy({ where: { gid: gid } });
                 await GroupRoom.destroy({where : {gid: gid , user_id: user_id}})
                 message = "Reservation cancelled successfully";
-            } else if (status === 'confirmed') {
+            }
+            else if (status === 'confirmed') {
                 await Reservation.update(
                     { status: 'pending' },
                     { where: { gid: gid } }
