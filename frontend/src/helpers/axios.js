@@ -8,7 +8,7 @@ if (localStorage.getItem('token')){
 }
 
 const axiosInstance = axios.create({
-    baseURL: 'https://localhost:5000',
+    baseURL: 'http://localhost:5000',
     headers,
 
 })

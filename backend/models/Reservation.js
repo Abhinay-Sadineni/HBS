@@ -34,7 +34,7 @@ const Reservation = sequelize.define('Reservation', {
     No_of_rooms: Sequelize.INTEGER,
     payment: Sequelize.INTEGER,
     status : {
-      type: Sequelize.ENUM('cancelled', 'accepted', 'rejected' , 'pending'),
+      type: Sequelize.ENUM('cancelled', 'accepted', 'rejected' , 'pending', 'temporary'),
       defaultValue: 'accepted'
     }
 }, {

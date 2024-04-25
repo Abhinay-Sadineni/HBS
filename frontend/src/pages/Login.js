@@ -25,7 +25,7 @@ function Login() {
         const token = response.data.token;
   
         if (token) {
-          localStorage.setItem('token')
+          localStorage.setItem('token',token)
 
           await setLoading(true);
   
