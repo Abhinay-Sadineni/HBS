@@ -2,88 +2,365 @@ import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Manager_NavBar from "../components/Manager_navbar";
+// import prices from "./prices.js"
+
+var prices = {
+    "Tue Apr 23 2024": 1000,
+    "Wed Apr 24 2024": 1000,
+    "Thu Apr 25 2024": 1000,
+    "Fri Apr 26 2024": 1000,
+    "Sat Apr 27 2024": 1000,
+    "Sun Apr 28 2024": 1000,
+    "Mon Apr 29 2024": 1000,
+    "Tue Apr 30 2024": 1000,
+    "Wed May 01 2024": 1000,
+    "Thu May 02 2024": 1000,
+    "Fri May 03 2024": 1000,
+    "Sat May 04 2024": 1000,
+    "Sun May 05 2024": 1000,
+    "Mon May 06 2024": 1000,
+    "Tue May 07 2024": 1000,
+    "Wed May 08 2024": 1000,
+    "Thu May 09 2024": 1000,
+    "Fri May 10 2024": 1000,
+    "Sat May 11 2024": 1000,
+    "Sun May 12 2024": 1000,
+    "Mon May 13 2024": 1000,
+    "Tue May 14 2024": 1000,
+    "Wed May 15 2024": 1000,
+    "Thu May 16 2024": 1000,
+    "Fri May 17 2024": 1000,
+    "Sat May 18 2024": 1000,
+    "Sun May 19 2024": 1000,
+    "Mon May 20 2024": 1000,
+    "Tue May 21 2024": 1000,
+    "Wed May 22 2024": 1016,
+    "Thu May 23 2024": 1000,
+    "Fri May 24 2024": 1000,
+    "Sat May 25 2024": 2000,
+    "Sun May 26 2024": 1000,
+    "Mon May 27 2024": 1000,
+    "Tue May 28 2024": 1000,
+    "Wed May 29 2024": 1000,
+    "Thu May 30 2024": 1000,
+    "Fri May 31 2024": 1000,
+    "Sat Jun 01 2024": 1000,
+    "Sun Jun 02 2024": 1000,
+    "Mon Jun 03 2024": 1000,
+    "Tue Jun 04 2024": 1000,
+    "Wed Jun 05 2024": 1000,
+    "Thu Jun 06 2024": 1000,
+    "Fri Jun 07 2024": 1000,
+    "Sat Jun 08 2024": 1000,
+    "Sun Jun 09 2024": 1000,
+    "Mon Jun 10 2024": 1000,
+    "Tue Jun 11 2024": 1000,
+    "Wed Jun 12 2024": 1000,
+    "Thu Jun 13 2024": 1000,
+    "Fri Jun 14 2024": 1000,
+    "Sat Jun 15 2024": 1000,
+    "Sun Jun 16 2024": 1000,
+    "Mon Jun 17 2024": 1000,
+    "Tue Jun 18 2024": 1000,
+    "Wed Jun 19 2024": 1000,
+    "Thu Jun 20 2024": 1000,
+    "Fri Jun 21 2024": 1000,
+    "Sat Jun 22 2024": 1000,
+    "Sun Jun 23 2024": 1000,
+    "Mon Jun 24 2024": 1000,
+    "Tue Jun 25 2024": 1000,
+    "Wed Jun 26 2024": 1000,
+    "Thu Jun 27 2024": 1000,
+    "Fri Jun 28 2024": 1000,
+    "Sat Jun 29 2024": 1000,
+    "Sun Jun 30 2024": 1000,
+    "Mon Jul 01 2024": 1000,
+    "Tue Jul 02 2024": 1000,
+    "Wed Jul 03 2024": 1000,
+    "Thu Jul 04 2024": 1000,
+    "Fri Jul 05 2024": 1000,
+    "Sat Jul 06 2024": 1000,
+    "Sun Jul 07 2024": 1000,
+    "Mon Jul 08 2024": 1000,
+    "Tue Jul 09 2024": 1000,
+    "Wed Jul 10 2024": 1000,
+    "Thu Jul 11 2024": 1000,
+    "Fri Jul 12 2024": 1000,
+    "Sat Jul 13 2024": 1000,
+    "Sun Jul 14 2024": 1000,
+    "Mon Jul 15 2024": 1000,
+    "Tue Jul 16 2024": 1000,
+    "Wed Jul 17 2024": 1000,
+    "Thu Jul 18 2024": 1000,
+    "Fri Jul 19 2024": 1000,
+    "Sat Jul 20 2024": 1000,
+    "Sun Jul 21 2024": 1000,
+    "Mon Jul 22 2024": 1000
+};
+
+var availableRooms = {
+    "Tue Apr 23 2024": 10,
+    "Wed Apr 24 2024": 10,
+    "Thu Apr 25 2024": 10,
+    "Fri Apr 26 2024": 10,
+    "Sat Apr 27 2024": 10,
+    "Sun Apr 28 2024": 10,
+    "Mon Apr 29 2024": 10,
+    "Tue Apr 30 2024": 10,
+    "Wed May 01 2024": 10,
+    "Thu May 02 2024": 10,
+    "Fri May 03 2024": 10,
+    "Sat May 04 2024": 10,
+    "Sun May 05 2024": 10,
+    "Mon May 06 2024": 10,
+    "Tue May 07 2024": 10,
+    "Wed May 08 2024": 10,
+    "Thu May 09 2024": 10,
+    "Fri May 10 2024": 10,
+    "Sat May 11 2024": 10,
+    "Sun May 12 2024": 10,
+    "Mon May 13 2024": 10,
+    "Tue May 14 2024": 10,
+    "Wed May 15 2024": 10,
+    "Thu May 16 2024": 10,
+    "Fri May 17 2024": 10,
+    "Sat May 18 2024": 10,
+    "Sun May 19 2024": 10,
+    "Mon May 20 2024": 10,
+    "Tue May 21 2024": 10,
+    "Wed May 22 2024": 10,
+    "Thu May 23 2024": 10,
+    "Fri May 24 2024": 10,
+    "Sat May 25 2024": 10,
+    "Sun May 26 2024": 10,
+    "Mon May 27 2024": 10,
+    "Tue May 28 2024": 10,
+    "Wed May 29 2024": 10,
+    "Thu May 30 2024": 10,
+    "Fri May 31 2024": 10,
+    "Sat Jun 01 2024": 10,
+    "Sun Jun 02 2024": 10,
+    "Mon Jun 03 2024": 10,
+    "Tue Jun 04 2024": 10,
+    "Wed Jun 05 2024": 10,
+    "Thu Jun 06 2024": 10,
+    "Fri Jun 07 2024": 10,
+    "Sat Jun 08 2024": 10,
+    "Sun Jun 09 2024": 10,
+    "Mon Jun 10 2024": 10,
+    "Tue Jun 11 2024": 10,
+    "Wed Jun 12 2024": 10,
+    "Thu Jun 13 2024": 10,
+    "Fri Jun 14 2024": 10,
+    "Sat Jun 15 2024": 10,
+    "Sun Jun 16 2024": 10,
+    "Mon Jun 17 2024": 10,
+    "Tue Jun 18 2024": 10,
+    "Wed Jun 19 2024": 10,
+    "Thu Jun 20 2024": 10,
+    "Fri Jun 21 2024": 10,
+    "Sat Jun 22 2024": 10,
+    "Sun Jun 23 2024": 10,
+    "Mon Jun 24 2024": 10,
+    "Tue Jun 25 2024": 10,
+    "Wed Jun 26 2024": 10,
+    "Thu Jun 27 2024": 10,
+    "Fri Jun 28 2024": 10,
+    "Sat Jun 29 2024": 10,
+    "Sun Jun 30 2024": 10,
+    "Mon Jul 01 2024": 10,
+    "Tue Jul 02 2024": 10,
+    "Wed Jul 03 2024": 10,
+    "Thu Jul 04 2024": 10,
+    "Fri Jul 05 2024": 10,
+    "Sat Jul 06 2024": 10,
+    "Sun Jul 07 2024": 10,
+    "Mon Jul 08 2024": 10,
+    "Tue Jul 09 2024": 10,
+    "Wed Jul 10 2024": 10,
+    "Thu Jul 11 2024": 10,
+    "Fri Jul 12 2024": 10,
+    "Sat Jul 13 2024": 10,
+    "Sun Jul 14 2024": 10,
+    "Mon Jul 15 2024": 10,
+    "Tue Jul 16 2024": 10,
+    "Wed Jul 17 2024": 10,
+    "Thu Jul 18 2024": 10,
+    "Fri Jul 19 2024": 10,
+    "Sat Jul 20 2024": 10,
+    "Sun Jul 21 2024": 10,
+    "Mon Jul 22 2024": 10
+};
+
+
+
 
 function Manager_calendar() {
     const [selectedDates, setSelectedDates] = useState([]);
-    const [prices, setPrices] = useState({});
+    const [highlightDates, sethighlightDates] = useState([]);
+    const [editMode, setEditMode] = useState(false);
+    const [newPrice, setNewPrice] = useState(0);
+    const [newRooms, setNewRooms] = useState(0);
+    const today = new Date();
+    const nextThreeMonths = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
 
-    // Initialize all prices to 1000 for all days
-    const initializePrices = (dates) => {
-        const initialPrices = {};
-        dates.forEach(date => {
-            initialPrices[date.toDateString()] = 1000;
-        });
-        return initialPrices;
-    };
+    const handleDateChange = (dates) => {
+        sethighlightDates(dates);
 
-    // Handle date selection
-    const handleDateChange = (date) => {
-        if (Array.isArray(date)) {
-            setSelectedDates(date);
-            setPrices(initializePrices(date));
-        } else {
-            const dateIndex = selectedDates.findIndex((selectedDate) => selectedDate.getTime() === date.getTime());
-            if (dateIndex === -1) {
-                setSelectedDates([...selectedDates, date]);
-                setPrices({ ...prices, [date.toDateString()]: 1000 });
-            } else {
-                const updatedSelectedDates = [...selectedDates];
-                updatedSelectedDates.splice(dateIndex, 1);
-                setSelectedDates(updatedSelectedDates);
-                const updatedPrices = { ...prices };
-                delete updatedPrices[date.toDateString()];
-                setPrices(updatedPrices);
-            }
+        const newSelectedDates = [];
+        if (!Array.isArray(dates) || dates.length === 0) return;
+
+        const [startDate, endDate] = dates;
+        const currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            newSelectedDates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1); 
         }
+        setSelectedDates(newSelectedDates);
     };
 
-    // Handle price change
-    const handlePriceChange = (event, date) => {
-        const updatedPrices = { ...prices, [date]: parseInt(event.target.value) || 0 };
-        setPrices(updatedPrices);
+    const selectedPrices = selectedDates.map(date => prices[date.toDateString()]);
+    const minPrice = Math.min(...selectedPrices);
+    const maxPrice = Math.max(...selectedPrices);
+
+    const selectedRooms = selectedDates.map(date => availableRooms[date.toDateString()]);
+    const minRooms = Math.min(...selectedRooms);
+    const maxRooms = Math.max(...selectedRooms);
+
+
+    const tileContent = ({ date }) => {
+        const price = prices[date.toDateString()];
+        const rooms = availableRooms[date.toDateString()];
+        return (
+            <div>
+                {price && <p style={{ marginTop: "5px" }}> {price}</p>}
+                {rooms && <p style={{ marginTop: "5px" }}> {rooms}</p>}
+            </div>
+        );
     };
 
-    // Handle saving changes
+    const handleEditClick = () => {
+        setEditMode(true);
+        setNewPrice(minPrice === maxPrice ? minPrice.toString() : `${minPrice}-${maxPrice}`);
+        setNewRooms(minRooms === maxRooms ? minRooms.toString() : `${minRooms}-${maxRooms}`);
+    };
+
     const handleSaveChanges = () => {
-        // Logic to save changes
-        console.log("Prices:", prices);
+        if (!newPrice || newPrice.trim() === "") {
+            alert("Please enter a valid price.");
+            return;
+        }
+
+        if (!newRooms || newRooms.trim() === "") {
+            alert("Please enter a valid Rooms number.");
+            return;
+        }
+        // const updatedPrices = { ...prices }; // Copy the original prices object
+
+        // selectedDates.forEach(date => {
+        //     updatedPrices[date.toDateString()] = newPrice; // Update the price for each selected date
+        // });
+        const isRangeFormat1 = /^\d+-\d+$/.test(newPrice);
+        const isRangeFormat2 = /^\d+-\d+$/.test(newRooms);
+
+        let updatedPrices = { ...prices };
+        // let pricesChanged = false;
+
+        if (!isRangeFormat1) {
+            selectedDates.forEach(date => {
+                updatedPrices[date.toDateString()] = newPrice;
+            });
+        // pricesChanged = true;
+         }
+        prices = { ...updatedPrices }
+
+
+       let updatedRooms= { ...availableRooms }; // Copy the original prices object
+       if (!isRangeFormat2) { 
+            selectedDates.forEach(date => {
+                updatedRooms[date.toDateString()] = newRooms; // Update the price for each selected date
+            });
+        }
+        availableRooms = { ...updatedRooms }
+
+        setEditMode(false);
     };
+
+
 
     return (
-        <div>
+        <div className="flex flex-col h-screen">
             <Manager_NavBar />
-            <div className="mt-[100px] flex justify-center items-center">
-                <div className="grid grid-cols-2 gap-8 w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
-                    <div>
-                        <h1 className="text-2xl font-bold mb-4">Calendar</h1>
+            <div className="flex flex-1 mt-[100px]">
+                <div className="w-1/2 p-4 border-r border-gray-200">
+                    <h2 className="text-lg font-semibold mb-4">Calendar</h2>
+                    <Calendar
+                        onChange={handleDateChange}
+                        value={highlightDates}
+                        selectRange={true}
+                        minDate={today}
+                        maxDate={nextThreeMonths}
+                        tileContent={tileContent} // Custom tile content
+                    />
+                </div>
+                <div className="w-1/2 p-4">
+                    <h2 className="text-lg font-semibold mb-4">Prices and Available Rooms</h2>
+
+                    {highlightDates.length === 2 && (
+                        <p className="mb-2">
+                            {highlightDates[0].toDateString()} - {highlightDates[1].toDateString()}
+                        </p>
+                    )}
+
+                    {editMode ? (
                         <div>
-                            <Calendar
-                                onChange={handleDateChange}
-                                selectRange
-                                value={selectedDates}
-                                minDate={new Date()}
-                                maxDate={new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)} 
+                            <p>Price: </p>
+                            <input
+                                type="text"
+                                placeholder="Enter new price"
+                                value={newPrice}
+                                onChange={(e) => setNewPrice(e.target.value)}
                             />
+                            <p>Available Rooms: </p>
+                            <input
+                                type="text"
+                                placeholder="Enter new available rooms"
+                                value={newRooms}
+                                onChange={(e) => setNewRooms(e.target.value)}
+                            />
+                            <button className="ml-2 px-3 py-1 bg-blue-500 text-white rounded" onClick={handleSaveChanges}>
+                                Save Changes
+                            </button>
                         </div>
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold mb-4">Selected Dates</h1>
+                        ) : (
                         <div>
-                            {selectedDates.map((date, index) => (
-                                <div key={index} className="mb-2">
-                                    <p>{date.toDateString()}</p>
-                                    <input
-                                        type="number"
-                                        value={prices[date.toDateString()]}
-                                        onChange={(event) => handlePriceChange(event, date.toDateString())}
-                                    />
-                                </div>
-                            ))}
+                            {minPrice !== maxPrice && (
+                                <p className="mb-2">
+                                    Price Range: {minPrice} - {maxPrice}
+                                </p>
+                            )}
+                            {minPrice === maxPrice && (
+                                <p className="mb-2">
+                                    Price: {minPrice}
+                                </p>
+                            )}
+                            {minRooms !== maxRooms && (
+                                <p className="mb-2">
+                                    Available Rooms: {minRooms} - {maxRooms}
+                                </p>
+                            )}
+                            {minRooms === maxRooms && (
+                                <p className="mb-2">
+                                    Rooms: {minRooms}
+                                </p>
+                            )}
+                            <button className="px-3 py-1 bg-blue-500 text-white rounded" onClick={handleEditClick}>
+                                Edit
+                            </button>
                         </div>
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSaveChanges}>
-                            Save Changes
-                        </button>
-                    </div>
+                    )}
+
+
                 </div>
             </div>
         </div>
@@ -91,3 +368,5 @@ function Manager_calendar() {
 }
 
 export default Manager_calendar;
+
+
