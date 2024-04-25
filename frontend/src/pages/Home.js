@@ -4,7 +4,7 @@ import NavBar from '../components/NavBar';
 import Card from '../components/List_card';
 import hotelsList from '../components/hotels';
 
-function Guest_Dashboard() {
+function Home() {
   return (
     <div className="h-screen">
       <NavBar /> 
@@ -27,4 +27,4 @@ function Guest_Dashboard() {
   );
 }
 
-export default Guest_Dashboard;
+export default Home;
