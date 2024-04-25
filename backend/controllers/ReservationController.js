@@ -57,12 +57,12 @@ router.post("/reserve", auth, async (req, res) => {
             totalPrice
           );
           await transaction.commit();
-          res.json({ totalPrice , message: "Reservation created successfully", gid: Reservation});
+          res.status(201).json({ totalPrice , message: "Reservation created successfully", gid: Reservation});
     }
    
 
   } catch (error) {
-    console.error("Error creating reservations:", error);
+    console.error("Error in creating reservations:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -75,8 +75,71 @@ router.post("/confirm", auth, async (req, res) => {
     }
     catch (error) {
       res.status(500).json({ error: "Internal server error" });
-      console.error("Error confirm reservations:", error);
+      console.error("Error in confirming reservation:", error);
     }
   });
+
+
+router.get("/guest_history", auth, async (req, res) => {
+    try {
+      const user_id = req.user_id
+      const List = await ReservationService.get_user_reservations(user_id);  
+      res.json({List: List});
+    }
+    catch (error) {
+      console.error("Error in fetching user reservations:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.get("/cancel", auth, async (req, res) => {
+    try {
+      const user_id = req.user_id
+      const { gid } = req.body
+      const message = await ReservationService.cancel_reservation(gid, user_id);  
+      res.json({message: message})
+    }
+    catch (error) {
+      console.error("Error in cancelling reservation:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.get("/confirm_reject", auth, async (req, res) => {
+    try {
+      const user_id = req.user_id
+      const { gid, status } = req.body
+      const message = await ReservationService.confirm_reject_reservation(gid, status, user_id);  
+      res.json({message: message})
+    }
+    catch (error) {
+      console.error("Error in confirming or rejecting reservation:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.get("/manager_reservations", auth, async (req, res) => {
+    try {
+      const user_id = req.user_id
+      const message = await ReservationService.get_manager_reservations(user_id);  
+      res.json({message: message})
+    }
+    catch (error) {
+      console.error("Error in confirming or rejecting reservation:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// router.get("/calendar", auth, async (req, res) => {
+//     try {
+//       const user_id = req.user_id
+//       const message = await ReservationService.get_calendar(user_id);  
+//       res.json({message: message})
+//     }
+//     catch (error) {
+//       console.error("Error in calendar:", error);
+//       res.status(500).json({ error: "Internal server error" });
+//     }
+// });
 
 module.exports = router;

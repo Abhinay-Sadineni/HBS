@@ -1,5 +1,6 @@
 const express = require('express');
 const HotelService = require('../services/HotelService');
+const auth = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -89,6 +90,32 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
 
 } )
 
+
+router.post("/add_hotel", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id
+      const {Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out} = req.body
+      const Hotel = await HotelService.add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out);  
+      res.json({message: "Hotel added successfully", Hotel: Hotel})
+    }
+    catch (error){
+      console.error("Error in adding hotel:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.post("/update_hotel", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id
+      const {Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out} = req.body
+      const Hotel = await HotelService.edit_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out);  
+      res.json({message: "Hotel details updated successfully", Hotel: Hotel})
+    }
+    catch (error){
+      console.error("Error in editing hotel:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 module.exports = router; 
 
