@@ -169,7 +169,6 @@ function ReserveCard(props) {
 
     return (
         <div className="max-w-10em mx-auto bg-white p-6 rounded-md mt-4 shadow-md border border-gray-300">
-            <h1 className="font-bold mb-4">{props.price} Rs for Night</h1>
             <div className="flex flex-col md:flex-row md:space-x-4">
                 <div className="flex-grow">
                     <DatePicker
