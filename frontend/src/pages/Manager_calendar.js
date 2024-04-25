@@ -98,7 +98,7 @@ var prices = {
     "Mon Jul 22 2024": 1000
 };
 
-const availableRooms = {
+var availableRooms = {
     "Tue Apr 23 2024": 10,
     "Wed Apr 24 2024": 10,
     "Thu Apr 25 2024": 10,
@@ -200,6 +200,7 @@ function Manager_calendar() {
     const [highlightDates, sethighlightDates] = useState([]);
     const [editMode, setEditMode] = useState(false);
     const [newPrice, setNewPrice] = useState(0);
+    const [newRooms, setNewRooms] = useState(0);
     const today = new Date();
     const nextThreeMonths = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
 
@@ -222,15 +223,26 @@ function Manager_calendar() {
     const minPrice = Math.min(...selectedPrices);
     const maxPrice = Math.max(...selectedPrices);
 
+    const selectedRooms = selectedDates.map(date => availableRooms[date.toDateString()]);
+    const minRooms = Math.min(...selectedRooms);
+    const maxRooms = Math.max(...selectedRooms);
+
 
     const tileContent = ({ date }) => {
         const price = prices[date.toDateString()];
-        return price ? <p style={{ marginTop: "5px" }}>{price}</p> : null;
+        const rooms = availableRooms[date.toDateString()];
+        return (
+            <div>
+                {price && <p style={{ marginTop: "5px" }}> {price}</p>}
+                {rooms && <p style={{ marginTop: "5px" }}> {rooms}</p>}
+            </div>
+        );
     };
 
     const handleEditClick = () => {
         setEditMode(true);
         setNewPrice(minPrice === maxPrice ? minPrice.toString() : `${minPrice}-${maxPrice}`);
+        setNewRooms(minRooms === maxRooms ? minRooms.toString() : `${minRooms}-${maxRooms}`);
     };
 
     const handleSaveChanges = () => {
@@ -238,13 +250,38 @@ function Manager_calendar() {
             alert("Please enter a valid price.");
             return;
         }
-        const updatedPrices = { ...prices }; // Copy the original prices object
 
-        selectedDates.forEach(date => {
-            updatedPrices[date.toDateString()] = newPrice; // Update the price for each selected date
-        });
+        if (!newRooms || newRooms.trim() === "") {
+            alert("Please enter a valid Rooms number.");
+            return;
+        }
+        // const updatedPrices = { ...prices }; // Copy the original prices object
 
+        // selectedDates.forEach(date => {
+        //     updatedPrices[date.toDateString()] = newPrice; // Update the price for each selected date
+        // });
+        const isRangeFormat1 = /^\d+-\d+$/.test(newPrice);
+        const isRangeFormat2 = /^\d+-\d+$/.test(newRooms);
+
+        let updatedPrices = { ...prices };
+        // let pricesChanged = false;
+
+        if (!isRangeFormat1) {
+            selectedDates.forEach(date => {
+                updatedPrices[date.toDateString()] = newPrice;
+            });
+        // pricesChanged = true;
+         }
         prices = { ...updatedPrices }
+
+
+       let updatedRooms= { ...availableRooms }; // Copy the original prices object
+       if (!isRangeFormat2) { 
+            selectedDates.forEach(date => {
+                updatedRooms[date.toDateString()] = newRooms; // Update the price for each selected date
+            });
+        }
+        availableRooms = { ...updatedRooms }
 
         setEditMode(false);
     };
@@ -267,7 +304,7 @@ function Manager_calendar() {
                     />
                 </div>
                 <div className="w-1/2 p-4">
-                    <h2 className="text-lg font-semibold mb-4">Prices</h2>
+                    <h2 className="text-lg font-semibold mb-4">Prices and Available Rooms</h2>
 
                     {highlightDates.length === 2 && (
                         <p className="mb-2">
@@ -277,11 +314,19 @@ function Manager_calendar() {
 
                     {editMode ? (
                         <div>
+                            <p>Price: </p>
                             <input
                                 type="text"
                                 placeholder="Enter new price"
                                 value={newPrice}
                                 onChange={(e) => setNewPrice(e.target.value)}
+                            />
+                            <p>Available Rooms: </p>
+                            <input
+                                type="text"
+                                placeholder="Enter new available rooms"
+                                value={newRooms}
+                                onChange={(e) => setNewRooms(e.target.value)}
                             />
                             <button className="ml-2 px-3 py-1 bg-blue-500 text-white rounded" onClick={handleSaveChanges}>
                                 Save Changes
@@ -297,6 +342,16 @@ function Manager_calendar() {
                             {minPrice === maxPrice && (
                                 <p className="mb-2">
                                     Price: {minPrice}
+                                </p>
+                            )}
+                            {minRooms !== maxRooms && (
+                                <p className="mb-2">
+                                    Available Rooms: {minRooms} - {maxRooms}
+                                </p>
+                            )}
+                            {minRooms === maxRooms && (
+                                <p className="mb-2">
+                                    Rooms: {minRooms}
                                 </p>
                             )}
                             <button className="px-3 py-1 bg-blue-500 text-white rounded" onClick={handleEditClick}>
