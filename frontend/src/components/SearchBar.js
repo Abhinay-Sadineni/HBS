@@ -18,11 +18,11 @@ const SearchBar = () => {
         } else {
             const searchQuery = JSON.parse(localStorage.getItem('searchQuery'));
             if (searchQuery) {
-                setLocation(searchQuery.location);
-                setStartDate(new Date(searchQuery.startDate));
-                setEndDate(new Date(searchQuery.endDate));
-                setNumRooms(searchQuery.numRooms);
-                setNumGuests(searchQuery.numGuests);
+                if(searchQuery.location) setLocation(searchQuery.location);
+                if(searchQuery.startDate) setStartDate(new Date(searchQuery.startDate));
+                if(searchQuery.endDate) setEndDate(new Date(searchQuery.endDate));
+                if(searchQuery.numRooms) setNumRooms(searchQuery.numRooms);
+                if(searchQuery.numGuests) setNumGuests(searchQuery.numGuests);
             }
         }
     }, []);
