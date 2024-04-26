@@ -286,6 +286,24 @@ function Manager_calendar() {
         setEditMode(false);
     };
 
+    const getTodayResults = () => {
+        const today = new Date();
+        const todayDateString = today.toDateString();
+        const todayPrice = prices[todayDateString];
+        const todayRooms = availableRooms[todayDateString];
+        return { todayDateString, todayPrice, todayRooms };
+    };
+
+    const renderTodayResults = () => {
+        const { todayDateString, todayPrice, todayRooms } = getTodayResults();
+        return (
+            <div>
+            <h3 className="text-sm font-semibold mb-2"> {todayDateString} </h3>
+                <p>Price: {todayPrice}</p>
+                <p>Available Rooms: {todayRooms}</p>
+            </div>
+        );
+    };
 
 
     return (
@@ -305,14 +323,16 @@ function Manager_calendar() {
                 </div>
                 <div className="w-1/2 p-4">
                     <h2 className="text-lg font-semibold mb-4">Prices and Available Rooms</h2>
+                    {highlightDates.length === 0 && renderTodayResults()}
 
                     {highlightDates.length === 2 && (
                         <p className="mb-2">
                             {highlightDates[0].toDateString()} - {highlightDates[1].toDateString()}
                         </p>
-                    )}
-
-                    {editMode ? (
+                    )}   
+                    
+                    {    
+                    editMode ? (
                         <div>
                             <p>Price: </p>
                             <input
@@ -333,6 +353,7 @@ function Manager_calendar() {
                             </button>
                         </div>
                         ) : (
+                            highlightDates.length === 2 && (    
                         <div>
                             {minPrice !== maxPrice && (
                                 <p className="mb-2">
@@ -358,9 +379,8 @@ function Manager_calendar() {
                                 Edit
                             </button>
                         </div>
+                        )
                     )}
-
-
                 </div>
             </div>
         </div>
