@@ -44,6 +44,11 @@ function NavBar() {
   
     checkToken();
   }, []);
+
+
+  const handleSignout = () =>{
+        localStorage.clear('token');
+  }
   
 
   if (loading) {
@@ -63,7 +68,6 @@ function NavBar() {
               </button>
             </MenuHandler>
             <MenuList className='w-max'>
-              {console.log(isLoggedIn)}
               {isLoggedIn ? (
                 <>
                   <MenuItem>
@@ -77,7 +81,7 @@ function NavBar() {
                     </Link>
                   </MenuItem>
                   <MenuItem className='flex px-4 py-4 items-center'>
-                    <FaSignOutAlt className='mr-2' /> Sign Out
+                    <FaSignOutAlt className='mr-2' onClick={handleSignout}/> Sign Out
                   </MenuItem>
                 </>
               ) : (
