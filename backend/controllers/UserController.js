@@ -6,7 +6,7 @@ const UserService = require('../services/UserService');
 router.post('/login', async (req, res) => {
     try{
         const{email, password, usertype} = req.body;
-
+        let token = req.headers.authorization;
         if (email && password) {
             //Login with credentials
             const result = await UserService.login_with_cred(email, password, usertype);
