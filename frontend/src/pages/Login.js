@@ -31,7 +31,7 @@ function Login() {
   
           setTimeout(() => {
             
-            const dashboardRoute = userType === 'guest' ? '/guest-dashboard' : '/manager-dashboard';
+            const dashboardRoute = userType === 'guest' ? '/' : '/manager-dashboard';
             navigate(dashboardRoute);
 
             }, 1000);

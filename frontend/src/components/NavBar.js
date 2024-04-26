@@ -63,7 +63,8 @@ function NavBar() {
               </button>
             </MenuHandler>
             <MenuList className='w-max'>
-              {!isLoggedIn ? (
+              {console.log(isLoggedIn)}
+              {isLoggedIn ? (
                 <>
                   <MenuItem>
                     <Link to="/profile" className="flex items-center px-4 py-4" >
