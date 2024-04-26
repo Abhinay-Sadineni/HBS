@@ -1,4 +1,4 @@
-const { Hotel, RoomType, Calendar, Reservation } = require("../models");
+const { Hotel, RoomType, Calendar, Reservation, Image, FAQ } = require("../models");
 const Sequelize = require('sequelize');
 const sequelize = require('../config.js');
 
@@ -200,6 +200,74 @@ class HotelService {
         }
     }
 
+    static async get_hotel(manager_id) {
+        try {
+            const Hotel = await sequelize.query(
+                `
+                SELECT * FROM "Hotel" WHERE "manager_id" = :manager_id            
+                `,
+                {
+                    replacements: {
+                        manager_id: manager_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            let hotel_id
+            if (Hotel.length > 0) {
+                hotel_id = Hotel[0].hotel_id;
+            }
+            else {
+                throw new Error('No hotels found for the given manager ID');
+            }
+            const RoomTypes = await sequelize.query(
+                `
+                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
+            const Images = await sequelize.query(
+                `
+                SELECT "image" FROM "Image" WHERE "hotel_id" = :hotel_id            
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
+
+            const FAQs = await sequelize.query(
+                `
+                SELECT "Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
+            return {
+                Hotel: Hotel[0],
+                RoomTypes: RoomTypes,
+                Images: Images,
+                FAQs: FAQs
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     static async get_vacant_rooms_and_rr(hotel_id, no_of_guests, startDate, endDate) {
         try {
             console.log(startDate)
@@ -338,8 +406,13 @@ class HotelService {
         }
     }
 
-    static async add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
+    static async add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes) {
         try {
+            const check_hotel = await Hotel.findAll({ where: { manager_id } });
+            if (check_hotel.length > 0) {
+                throw new Error('Manager already has a hotel');
+            }
+
             const MyHotel = await Hotel.create({
                 manager_id: manager_id,
                 Hotel_name: Hotel_name,
@@ -353,7 +426,54 @@ class HotelService {
                 cancellation_policy: cancellation_policy,
                 check_in: check_in,
                 check_out: check_out
-            });   
+            });  
+            const hotelId = MyHotel.hotel_id;
+            for (let image of images){
+                await Image.create({
+                    image: image,
+                    hotel_id: hotelId
+                }); 
+            }
+            for (let faq of FAQs){
+                await FAQ.create({
+                    Q: faq.Q,
+                    A: faq.A,
+                    hotel_id: hotelId
+                }); 
+            }
+            for (let room_type of RoomTypes){
+                console.log(room_type.name)
+                await RoomType.create({
+                    room_type_name: room_type.name,
+                    no_of_rooms: room_type.no_of_rooms,
+                    list_of_amenties: room_type.list_of_amenties,
+                    max_guests: room_type.max_guests,
+                    hotel_id: hotelId
+                }); 
+            }
+            const calendars = [];
+            const currentDate = new Date();
+            const endDate = new Date(currentDate);
+            endDate.setDate(endDate.getDate() + 30);
+
+            for (let roomType of RoomTypes) {
+                let currentDateIterator = new Date(currentDate);
+                while (currentDateIterator <= endDate) {
+                    const date = new Date(currentDateIterator);
+
+                    const availableRooms = roomType.no_of_rooms;
+
+                    const calendar = {
+                    room_type_id: roomType.room_type_id,
+                    date: date,
+                    price: roomType.price,
+                    no_of_avail_rooms: Math.floor(Math.random() * availableRooms) + 1
+                    };
+                    calendars.push(calendar);
+                    currentDateIterator.setDate(currentDateIterator.getDate() + 1);
+                }
+            }
+            await Calendar.bulkCreate(calendars);
             return {
                 MyHotel
             };
@@ -362,28 +482,77 @@ class HotelService {
             throw new Error(error.message);
         }
     } 
-    static async edit_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
+    static async edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes) {
         try {
-            const MyHotel = await Hotel.update(
-                {
-                    Hotel_name: Hotel_name,
-                    Location: Location,
-                    register_date: register_date,
-                    Description: Description,
-                    Address: Address,
-                    latitude: latitude,
-                    longitude: longitude,
-                    list_of_amenities: list_of_amenities,
-                    cancellation_policy: cancellation_policy,
-                    check_in: check_in,
-                    check_out: check_out
-                },
-                {
-                    where: { manager_id: manager_id }
+            const [affectedRows] = await Hotel.update({
+                Hotel_name: Hotel_name,
+                Location: Location,
+                Description: Description,
+                Address: Address,
+                latitude: latitude,
+                longitude: longitude,
+                list_of_amenities: list_of_amenities,
+                cancellation_policy: cancellation_policy,
+                check_in: check_in,
+                check_out: check_out
+            }, {
+                where: { manager_id: manager_id }
+            });
+            
+            if (affectedRows === 0) {
+                throw new Error('Hotel not found for the provided manager_id');
+            }
+            
+            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = updatedHotel.hotel_id;
+            
+            for (let image of images){
+                await Image.update({
+                    image: image,
+                    hotel_id: hotelId
+                }); 
+            }
+            for (let faq of FAQs){
+                await FAQ.update({
+                    Q: faq.Q,
+                    A: faq.A,
+                    hotel_id: hotelId
+                }); 
+            }
+            for (let room_type of RoomTypes){
+                await RoomType.update({
+                    room_type_name: room_type.name,
+                    no_of_rooms: room_type.no_of_rooms,
+                    list_of_amenties: room_type.list_of_amenties,
+                    max_guests: room_type.max_guests,
+                    hotel_id: hotelId
+                }); 
+            }
+            const calendars = [];
+            const currentDate = new Date();
+            const endDate = new Date(currentDate);
+            endDate.setDate(endDate.getDate() + 30);
+
+            for (let roomType of RoomTypes) {
+                let currentDateIterator = new Date(currentDate);
+                while (currentDateIterator <= endDate) {
+                    const date = new Date(currentDateIterator);
+
+                    const availableRooms = roomType.no_of_rooms;
+
+                    const calendar = {
+                    room_type_id: roomType.room_type_id,
+                    date: date,
+                    price: roomType.price,
+                    no_of_avail_rooms: Math.floor(Math.random() * availableRooms) + 1
+                    };
+                    calendars.push(calendar);
+                    currentDateIterator.setDate(currentDateIterator.getDate() + 1);
                 }
-            );   
+            }
+            await Calendar.bulkCreate(calendars);
             return {
-                MyHotel
+                updatedHotel
             };
         }
         catch (error) {

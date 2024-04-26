@@ -94,9 +94,14 @@ router.get("/guest_history", auth, async (req, res) => {
 
 router.get("/cancel", auth, async (req, res) => {
     try {
+      let message
       const user_id = req.user_id
       const { gid } = req.body
-      const message = await ReservationService.cancel_reservation(gid, user_id);  
+      const check_policy = await ReservationService.check_cancellation_policy(gid);
+      if(!check_policy){
+        message = "Cancellation not possible, check cancellation policy."
+      }
+      else  message = await ReservationService.cancel_reservation(gid, user_id);  
       res.json({message: message})
     }
     catch (error) {
@@ -130,16 +135,16 @@ router.get("/manager_reservations", auth, async (req, res) => {
     }
 });
 
-// router.get("/calendar", auth, async (req, res) => {
-//     try {
-//       const user_id = req.user_id
-//       const message = await ReservationService.get_calendar(user_id);  
-//       res.json({message: message})
-//     }
-//     catch (error) {
-//       console.error("Error in calendar:", error);
-//       res.status(500).json({ error: "Internal server error" });
-//     }
-// });
+router.get("/calendar", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id
+      const Data = await ReservationService.get_calendar(manager_id);  
+      res.json({Data: Data})
+    }
+    catch (error) {
+      console.error("Error in calendar:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 module.exports = router;

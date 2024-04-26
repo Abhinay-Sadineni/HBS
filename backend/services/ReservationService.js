@@ -314,7 +314,67 @@ class ReservationService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }    
+    }  
+    static async check_cancellation_policy(gid) {
+        try {
+            const cancellation_policyData = await sequelize.query(
+                `
+                SELECT cancellation_policy, start_date, check_in
+                FROM "GroupRoom"
+                JOIN "Hotel" ON "GroupRoom"."hotel_id" = "Hotel"."hotel_id"
+                LEFT JOIN "Reservation" ON "Reservation"."gid" = "GroupRoom"."gid"
+                WHERE "GroupRoom"."gid" = :gid
+                GROUP BY "GroupRoom"."gid", cancellation_policy, start_date, check_in
+                `,
+                {
+                    replacements: {
+                        gid: gid
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            const { start_date, check_in, cancellation_policy } = cancellation_policyData[0];
+    
+            const combinedDateTime = new Date(`${start_date}T${check_in}`);
+            const now = new Date();
+
+            const timeDifference = combinedDateTime.getTime() - now.getTime();
+            const timeDifferenceInHours = timeDifference / (1000 * 60 * 60);
+
+            let a = 0;
+
+            if (timeDifferenceInHours > cancellation_policy) {
+                a = 1;
+            }
+                
+            console.log(a);
+            return {
+                a
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }  
+    static async get_calendar(manager_id) {
+        try {
+            const Calendar = await sequelize.query(
+                `
+                SELECT * from Calendar
+                `,
+                {
+                    replacements: {
+                        manager_id: manager_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            return {
+                Calendar
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }  
 }    
 
 function groupByGid(reservations) {
