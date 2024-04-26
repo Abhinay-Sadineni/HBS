@@ -132,7 +132,14 @@ class ReservationService {
     static async confirm_reservation(gid, status ,user_id) {
         try {
             let message;
-            if (status === 'cancelled') {
+            const check_user = await GroupRoom.findOne({
+                where: { gid: parseInt(gid), user_id: parseInt(user_id) }
+            });
+    
+            if (!check_user) {
+                message = "User not found";
+            }
+            else if (status === 'cancelled') {
                 await Reservation.destroy({ where: { gid: gid } });
                 await GroupRoom.destroy({where : {gid: gid , user_id: user_id}})
                 message = "Reservation cancelled successfully";
@@ -143,15 +150,188 @@ class ReservationService {
                     { where: { gid: gid } }
                 );
                 message = "Reservation confirmed successfully";
-            } else {
+            }
+            else {
                 throw new Error("Invalid status provided");
             }
             return { message };
-        } catch (error) {
+        }
+        catch (error) {
             throw new Error(error.message);
         }
     }
+   
+    static async get_user_reservations(user_id) {
+        try {
+            const Reservations = await sequelize.query(
+                `          
+                SELECT
+                    *
+                FROM
+                "Reservation"
+                LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                JOIN "Image" ON "Image"."hotel_id" = "Reservation"."hotel_id"
+                WHERE
+                    "user_id" = :user_id
+                `,
+                {
+                    replacements: {
+                        user_id: user_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            const groupedReservations = [];
+            let currentGid = null;
+            let currentGroup = null;
     
+            for (const reservation of Reservations) {
+                if (reservation.gid !== currentGid) {
+                    currentGid = reservation.gid;
+                    currentGroup = [];
+                    groupedReservations.push(currentGroup);
+                }
+                currentGroup.push(reservation);
+            }
+    
+            return groupedReservations;
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    } 
+
+    static async cancel_reservation(gid, user_id) {
+        try {
+            const check_user = await GroupRoom.findOne({
+                where: { gid: parseInt(gid), user_id: parseInt(user_id) }
+            });
+    
+            if (!check_user) {
+                return { message: "User not found" };
+            }
+    
+            await Reservation.update(
+                { status: 'cancelled' },
+                { where: { gid: parseInt(gid) } }
+            );
+    
+            return { message: "Reservation cancelled successfully" };
+        } catch (error) {
+            throw new Error("Error in cancelling reservation: " + error.message);
+        }
+    }
+    static async confirm_reject_reservation(gid, status, user_id) {
+        try {
+            let message;
+            const groupRoom = await GroupRoom.findOne({
+                where: { gid: parseInt(gid) }
+            });
+            const get_hotel = groupRoom.hotel_id;
+
+            const check_manager = await Hotel.findOne({
+                where: { hotel_id: get_hotel, manager_id: parseInt(user_id) }
+            });
+
+            if (!check_manager) {
+                throw new Error("User is not authorized to manage this hotel");
+            }
+
+            if (status === 'rejected') {
+                await Reservation.update(
+                    { status: 'rejected' },
+                    { where: { gid: gid } }
+                );
+                message = "Reservation rejected successfully";
+            }
+            else if (status === 'confirmed') {
+                await Reservation.update(
+                    { status: 'confirmed' },
+                    { where: { gid: gid } }
+                );
+                message = "Reservation confirmed successfully";
+            }
+            else {
+                message = "Invalid status provided";
+            }
+    
+            return { message };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async get_manager_reservations(user_id) {
+        try {
+            const today = new Date().toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
+    
+            const Reservations = await sequelize.query(
+                `SELECT
+                    *
+                 FROM
+                    "Reservation"
+                 LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                 JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
+                 WHERE
+                    "manager_id" = :manager_id
+                `,
+                {
+                    replacements: {
+                        manager_id: user_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+    
+            const groupedReservations = groupByGid(Reservations);
+    
+            const TodayReservations = await sequelize.query(
+                `SELECT
+                    *
+                 FROM
+                    "Reservation"
+                 LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                 JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
+                 WHERE
+                    "manager_id" = :manager_id
+                    AND :today_date BETWEEN "start_date" AND "end_date"
+                `,
+                {
+                    replacements: {
+                        manager_id: user_id,
+                        today_date: today
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+    
+            const groupedTodayReservations = groupByGid(TodayReservations);
+    
+            return {
+                Reservations: groupedReservations,
+                TodayReservations: groupedTodayReservations
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }    
+}    
+
+function groupByGid(reservations) {
+    const groupedReservations = [];
+    let currentGid = null;
+    let currentGroup = null;
+
+    for (const reservation of reservations) {
+        if (reservation.gid !== currentGid) {
+            currentGid = reservation.gid;
+            currentGroup = [];
+            groupedReservations.push(currentGroup);
+        }
+        currentGroup.push(reservation);
+    }
+
+    return groupedReservations;
 }
 
 module.exports = ReservationService;

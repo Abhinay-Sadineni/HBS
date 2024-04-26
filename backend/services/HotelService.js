@@ -338,6 +338,58 @@ class HotelService {
         }
     }
 
+    static async add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
+        try {
+            const MyHotel = await Hotel.create({
+                manager_id: manager_id,
+                Hotel_name: Hotel_name,
+                Location: Location,
+                register_date: register_date,
+                Description: Description,
+                Address: Address,
+                latitude: latitude,
+                longitude: longitude,
+                list_of_amenities: list_of_amenities,
+                cancellation_policy: cancellation_policy,
+                check_in: check_in,
+                check_out: check_out
+            });   
+            return {
+                MyHotel
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    } 
+    static async edit_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
+        try {
+            const MyHotel = await Hotel.update(
+                {
+                    Hotel_name: Hotel_name,
+                    Location: Location,
+                    register_date: register_date,
+                    Description: Description,
+                    Address: Address,
+                    latitude: latitude,
+                    longitude: longitude,
+                    list_of_amenities: list_of_amenities,
+                    cancellation_policy: cancellation_policy,
+                    check_in: check_in,
+                    check_out: check_out
+                },
+                {
+                    where: { manager_id: manager_id }
+                }
+            );   
+            return {
+                MyHotel
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
 
 module.exports = HotelService;

@@ -41,16 +41,12 @@ class UserService {
         try {
             const decoded = jwt.verify(token, process.env.SECRET_KEY);
             const user = await User.findOne({ where: { user_id: decoded.user_id } });
-
             if (!user) {
                 return { success: false, message: "User not found" };
             }
 
             if (user.usertype !== decoded.usertype) {
                 return { success: false, message: "Invalid user usertype" };
-            }
-            if (user.password !== decoded.password) {
-                return { success: false, message: "Invalid token" };
             }
 
             return { success: true, user };
