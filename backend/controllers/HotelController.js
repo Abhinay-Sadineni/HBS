@@ -77,7 +77,6 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
     try{
         const hotel_id = req.params.hotel_id;  
         const {no_of_guests, start_date, end_date} = req.query   
-        console.log(start_date)
         const Hotel = await HotelService.get_hotel_info(hotel_id)
         const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id, no_of_guests, start_date, end_date)
         res.json({HotelInfo: Hotel, VacantRoomsandRR: VacantRoomsandRR} );  
@@ -93,9 +92,15 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
 
 router.post("/add_hotel", auth, async (req, res) => {
     try {
-      const manager_id = req.user_id
-      const {Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out} = req.body
-      const Hotel = await HotelService.add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out);  
+      const manager_id = req.user_idconst 
+      
+      currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const day = String(currentDate.getDate()).padStart(2, '0'); 
+      const register_date = `${year}-${month}-${day}`;
+      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes} = req.body
+      const Hotel = await HotelService.add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes);  
       res.json({message: "Hotel added successfully", Hotel: Hotel})
     }
     catch (error){
@@ -107,8 +112,8 @@ router.post("/add_hotel", auth, async (req, res) => {
 router.post("/update_hotel", auth, async (req, res) => {
     try {
       const manager_id = req.user_id
-      const {Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out} = req.body
-      const Hotel = await HotelService.edit_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out);  
+      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes} = req.body
+      const Hotel = await HotelService.edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes);  
       res.json({message: "Hotel details updated successfully", Hotel: Hotel})
     }
     catch (error){
@@ -116,6 +121,20 @@ router.post("/update_hotel", auth, async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
 });
+
+router.get('/hotel', auth, async(req , res) =>{
+    try{
+        const manager_id = req.user_id   
+        const Hotel = await HotelService.get_hotel(manager_id)
+        res.json({HotelDetails: Hotel} );  
+    }
+
+    catch(error){
+        console.error('Error in getting Hotel details:', error);
+        res.status(500).json({success: false, message: "Server error"});
+    }
+
+} )
 
 module.exports = router; 
 

@@ -115,7 +115,7 @@ function TodayCard(props){
 }
 
 function Manager_Dashboard() {
-    const [activeFilter, setActiveFilter] = useState('hosting');
+    const [activeFilter, setActiveFilter] = useState('Currently hosting');
 
     const filterReservations = () => {
       const today = new Date().toISOString().split('T')[0];
