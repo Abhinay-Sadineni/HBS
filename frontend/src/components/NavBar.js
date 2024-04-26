@@ -21,27 +21,30 @@ function NavBar() {
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const response = axiosInstance.get('./login')
-        .then((response)=>{
-          if(response.status == 200){
-                setLoading(true)
-                setIsLoggedIn(true)
-                setIsLoggedIn(false)
-          }
-          else{
-
-          }
-        })
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setIsLoggedIn(false); // No token found, user is not logged in
+          setLoading(false);
+          return;
+        }
+        
+        const response = await axiosInstance.post('/login');
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
       } catch (error) {
         console.error('Error checking token:', error);
-        setIsLoggedIn(false); 
+        setIsLoggedIn(false);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
-
+  
     checkToken();
   }, []);
+  
 
   if (loading) {
     return <div>Loading...</div>; // Render a loading indicator while waiting for the response
