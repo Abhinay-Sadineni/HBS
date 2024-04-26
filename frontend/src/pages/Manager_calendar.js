@@ -98,6 +98,7 @@ var prices = {
     "Mon Jul 22 2024": 1000
 };
 
+//available rooms = total rooms - reservation.
 var availableRooms = {
     "Tue Apr 23 2024": 10,
     "Wed Apr 24 2024": 10,
