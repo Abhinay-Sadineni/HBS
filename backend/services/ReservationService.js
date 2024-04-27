@@ -106,42 +106,42 @@ class ReservationService {
             const groupRoom = await GroupRoom.create({
                 user_id: user_id,
                 hotel_id: hotel_id
-              });
-          
+            });
+
             const gid = groupRoom.gid;
             for (const roomType of room_types) {
                 const { room_type_id, count } = roomType;
                 await Reservation.create({
-                  booked_date: new Date(),
-                  start_date: start_date,
-                  end_date: end_date,
-                  gid: gid,
-                  hotel_id: hotel_id,
-                  room_type_id: room_type_id,
-                  No_of_rooms: count,
-                  payment: totalPrice[room_type_id].total_price,
-                  status: 'temporary'
+                    booked_date: new Date(),
+                    start_date: start_date,
+                    end_date: end_date,
+                    gid: gid,
+                    hotel_id: hotel_id,
+                    room_type_id: room_type_id,
+                    No_of_rooms: count,
+                    payment: totalPrice[room_type_id].total_price,
+                    status: 'temporary'
                 });
-              }
-          
-            return{ gid };
+            }
+
+            return { gid };
         } catch (error) {
             throw new Error(error.message);
         }
     }
-    static async confirm_reservation(gid, status ,user_id) {
+    static async confirm_reservation(gid, status, user_id) {
         try {
             let message;
             const check_user = await GroupRoom.findOne({
                 where: { gid: parseInt(gid), user_id: parseInt(user_id) }
             });
-    
+
             if (!check_user) {
                 message = "User not found";
             }
             else if (status === 'cancelled') {
                 await Reservation.destroy({ where: { gid: gid } });
-                await GroupRoom.destroy({where : {gid: gid , user_id: user_id}})
+                await GroupRoom.destroy({ where: { gid: gid, user_id: user_id } })
                 message = "Reservation cancelled successfully";
             }
             else if (status === 'confirmed') {
@@ -160,21 +160,32 @@ class ReservationService {
             throw new Error(error.message);
         }
     }
-   
+
     static async get_user_reservations(user_id) {
         try {
             const Reservations = await sequelize.query(
                 `          
                 SELECT
-                    *
-                FROM
-                "Reservation"
-                LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
-                JOIN "Image" ON "Image"."hotel_id" = "Reservation"."hotel_id"
-                JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
-                JOIN "RoomType" ON "RoomType"."room_type_id" = "Reservation"."hotel_id"
-                WHERE
-                    "user_id" = :user_id
+                            *
+                        FROM
+                            "Reservation"
+                        LEFT JOIN
+                            "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                        JOIN
+                            "RoomType" ON "RoomType"."room_type_id" = "Reservation"."hotel_id"
+                        JOIN
+                            (
+                                SELECT
+                                    "Hotel".*,
+                                    "Image"."image",
+                                    ROW_NUMBER() OVER (PARTITION BY "Hotel"."hotel_id" ORDER BY "Image"."image_id") AS rn
+                                FROM
+                                    "Hotel"
+                                LEFT JOIN
+                                    "Image" ON "Image"."hotel_id" = "Hotel"."hotel_id"
+                            ) AS "HotelImage" ON "HotelImage"."hotel_id" = "Reservation"."hotel_id" AND "HotelImage".rn = 1
+                        WHERE
+                            "user_id" = :user_id
                 `,
                 {
                     replacements: {
@@ -183,10 +194,12 @@ class ReservationService {
                     type: Sequelize.QueryTypes.SELECT
                 }
             );
+
+
             const groupedReservations = [];
             let currentGid = null;
             let currentGroup = null;
-    
+
             for (const reservation of Reservations) {
                 if (reservation.gid !== currentGid) {
                     currentGid = reservation.gid;
@@ -195,29 +208,29 @@ class ReservationService {
                 }
                 currentGroup.push(reservation);
             }
-    
+
             return groupedReservations;
         }
         catch (error) {
             throw new Error(error.message);
         }
-    } 
+    }
 
     static async cancel_reservation(gid, user_id) {
         try {
             const check_user = await GroupRoom.findOne({
                 where: { gid: parseInt(gid), user_id: parseInt(user_id) }
             });
-    
+
             if (!check_user) {
                 return { message: "User not found" };
             }
-    
+
             await Reservation.update(
                 { status: 'cancelled' },
                 { where: { gid: parseInt(gid) } }
             );
-    
+
             return { message: "Reservation cancelled successfully" };
         } catch (error) {
             throw new Error("Error in cancelling reservation: " + error.message);
@@ -256,7 +269,7 @@ class ReservationService {
             else {
                 message = "Invalid status provided";
             }
-    
+
             return { message };
         }
         catch (error) {
@@ -266,7 +279,7 @@ class ReservationService {
     static async get_manager_reservations(user_id) {
         try {
             const today = new Date().toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
-    
+
             const Reservations = await sequelize.query(
                 `SELECT
                     *
@@ -284,9 +297,9 @@ class ReservationService {
                     type: Sequelize.QueryTypes.SELECT
                 }
             );
-    
+
             const groupedReservations = groupByGid(Reservations);
-    
+
             const TodayReservations = await sequelize.query(
                 `SELECT
                     *
@@ -306,9 +319,9 @@ class ReservationService {
                     type: Sequelize.QueryTypes.SELECT
                 }
             );
-    
+
             const groupedTodayReservations = groupByGid(TodayReservations);
-    
+
             return {
                 Reservations: groupedReservations,
                 TodayReservations: groupedTodayReservations
@@ -316,7 +329,7 @@ class ReservationService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }  
+    }
     static async check_cancellation_policy(gid) {
         try {
             const cancellation_policyData = await sequelize.query(
@@ -336,7 +349,7 @@ class ReservationService {
                 }
             );
             const { start_date, check_in, cancellation_policy } = cancellation_policyData[0];
-    
+
             const combinedDateTime = new Date(`${start_date}T${check_in}`);
             const now = new Date();
 
@@ -348,7 +361,7 @@ class ReservationService {
             if (timeDifferenceInHours > cancellation_policy) {
                 a = 1;
             }
-                
+
             console.log(a);
             return {
                 a
@@ -356,7 +369,7 @@ class ReservationService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }  
+    }
     static async get_calendar(manager_id) {
         try {
             const Calendar = await sequelize.query(
@@ -380,8 +393,8 @@ class ReservationService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }  
-    static async update_rr(gid, user_id, rating, review){
+    }
+    static async update_rr(gid, user_id, rating, review) {
         try {
             const UpdatedRating = await GroupRoom.update(
                 { Rating: rating, Review: review },
@@ -391,8 +404,8 @@ class ReservationService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }   
-}    
+    }
+}
 
 function groupByGid(reservations) {
     const groupedReservations = [];

@@ -645,9 +645,9 @@ class HotelService {
             await Image.destroy({ where: { image_id: image_id, hotel_id: hotelId } });
 
     
-            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            let message = "Image deleted succesfully"
             return {
-                updatedHotel
+                message
             };
         }
         catch (error) {
@@ -662,9 +662,9 @@ class HotelService {
             await FAQ.destroy({ where: { faq_id: faq_id, hotel_id: hotelId } });
             
     
-            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            let message = "FAQ deleted succesfully"
             return {
-                updatedHotel
+                message
             };
         }
         catch (error) {
@@ -673,15 +673,40 @@ class HotelService {
     }
     static async delete_roomTypes(manager_id, room_type_id) {
         try {
+            let message
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            console.log(MyHotel)
             const hotelId = MyHotel.hotel_id;
-    
-            await RoomType.destroy({ where: { room_type_id: room_type_id, hotel_id: hotelId } });
-
-    
-            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            
+            const bookedRooms = await sequelize.query( 
+                `
+                SELECT COUNT(*)
+                FROM "Reservation"
+                WHERE "room_type_id" = :room_type_id 
+                AND "Reservation"."status" <> 'cancelled' 
+                AND "Reservation"."status" <> 'rejected' 
+                AND "hotel_id" = :hotel_id 
+                AND "start_date" > :today_date
+                `,
+                {
+                    replacements: {
+                        room_type_id: room_type_id,
+                        hotel_id: hotelId,
+                        today_date: new Date()
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            console.log("Booked Rooms",bookedRooms)
+            if(bookedRooms){
+                message = "RoomType has upcoming reservations, deletion not possible"
+            }
+            else{
+                await RoomType.destroy({ where: { room_type_id: room_type_id, hotel_id: hotelId } });
+                message = "RoomType deleted successfully"
+            }
             return {
-                updatedHotel
+                message
             };
         }
         catch (error) {
@@ -700,9 +725,9 @@ class HotelService {
             );
 
     
-            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            let message = "Image updated succesfully"
             return {
-                updatedHotel
+                message
             };
         }
         catch (error) {
@@ -723,9 +748,9 @@ class HotelService {
             );
 
     
-            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            let message = "FAQ updated succesfully"
             return {
-                updatedHotel
+                message
             };
         }
         catch (error) {
@@ -748,9 +773,9 @@ class HotelService {
                 { where: { room_type_id: roomType.room_type_id, hotel_id: hotelId } }
             );
     
-            const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            let message = "Room Type updated succesfully"
             return {
-                updatedHotel
+                message
             };
         }
         catch (error) {
