@@ -4,8 +4,10 @@ import axiosInstance from '../helpers/axios';
 function ReservationCard(props) {
 
   const [reviewPopup, setReviewPopup] = useState(false)
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState('');
+  const [rating, setRating] = useState(props.reservation[0].Rating);
+  const [review, setReview] = useState(props.reservation[0].Review);
+
+  
 
   const handleCancel = async (gid) => {
     console.log(gid)
@@ -40,6 +42,7 @@ function ReservationCard(props) {
       });
       if (response.status === 200) {
          props.change_review_rating(props.reservation[0].gid, rating, review)
+         setReviewPopup(false);
       } else {
         // Handle other status codes if needed
         console.error("Review submission failed. Status:", response.status);
@@ -93,11 +96,13 @@ function ReservationCard(props) {
                 type = "number"
                 min="1"
                 max="5"
+                value = {rating}
                 className="border rounded-md p-2 mb-4 w-full"
                 placeholder="Rating (1-5)"
                 onChange={(e) => setRating(e.target.value)}
               />
               <textarea
+                value = {review}
                 className="border rounded-md p-2 mb-4 w-full"
                 placeholder="Write your review..."
                 onChange={(e) => setReview(e.target.value)}
