@@ -126,13 +126,17 @@ function Manager_Dashboard() {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }})
         .then((response)=>{
-            if(response.data.HotelDetails){
-                      //
+            if(response.status===500){
+                  
             } 
             else{
                  navigate('/manager-reg-1')
             }
         })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          navigate('/manager-reg-1')
+        });
     },[])
 
     const filterReservations = () => {
