@@ -80,4 +80,116 @@ router.put('/profile/:user_id', async (req, res) => {
     }
 });
 
+// module.exports = router;
+
+// const User = require('../models/User');
+// const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
+// const nodemailer = require('nodemailer');
+// const { validationResult } = require('express-validator');
+
+// // Route: POST /forgot-password
+// // Description: Send a password reset email with a verification code
+// // Route: POST /forgot-password
+// // Description: Send a password reset email with a verification code
+// router.post('/forgot-password', async (req, res) => {
+//     const { email } = req.body;
+  
+//     try {
+//       // Check if the user with the provided email exists
+//       const user = await User.findOne({ email });
+//       if (!user) {
+//         return res.status(404).json({ error: 'User not found' });
+//       }
+  
+//       // Generate a random verification code
+//       const verificationCode = Math.floor(100000 + Math.random() * 900000);
+  
+//       // Save the verification code to the user document
+//       user.resetPasswordCode = verificationCode;
+//       await user.save();
+  
+//       // Send the verification code via email
+//       const transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         auth: {
+//           user: process.env.EMAIL_USERNAME,
+//           pass: process.env.EMAIL_PASSWORD,
+//         },
+//       });
+  
+//       const mailOptions = {
+//         from: process.env.EMAIL_USERNAME,
+//         to: email,
+//         subject: 'Password Reset Verification Code',
+//         text: `Your verification code is: ${verificationCode}`,
+//       };
+  
+//       transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//           console.error('Error sending email:', error);
+//           return res.status(500).json({ error: 'Error sending verification code' });
+//         }
+//         console.log('Email sent:', info.response);
+//         return res.status(200).json({ message: 'Verification code sent successfully' });
+//       });
+//     } catch (error) {
+//       console.error('Error sending verification code:', error);
+//       return res.status(500).json({ error: 'Server error' });
+//     }
+//   });
+  
+
+// // Route: POST /verify-code
+// // Description: Verify the verification code sent via email
+// router.post('/verify-code', async (req, res) => {
+//   const { email, code } = req.body;
+
+//   try {
+//     // Check if the user with the provided email exists
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     // Check if the provided verification code matches the code in the user document
+//     if (user.resetPasswordCode !== code) {
+//       return res.status(400).json({ error: 'Invalid verification code' });
+//     }
+
+//     return res.status(200).json({ message: 'Verification code verified successfully' });
+//   } catch (error) {
+//     console.error('Error verifying verification code:', error);
+//     return res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+// // Route: POST /reset-password
+// // Description: Reset the user's password
+// router.post('/reset-password', async (req, res) => {
+//   const { email, newPassword } = req.body;
+
+//   try {
+//     // Check if the user with the provided email exists
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     // Hash the new password
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+//     // Update the user's password and reset the verification code
+//     user.password = hashedPassword;
+//     user.resetPasswordCode = null;
+//     await user.save();
+
+//     return res.status(200).json({ message: 'Password reset successfully' });
+//   } catch (error) {
+//     console.error('Error resetting password:', error);
+//     return res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
 module.exports = router;
