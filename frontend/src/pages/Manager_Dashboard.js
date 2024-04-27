@@ -1,6 +1,8 @@
-import {React, useState} from 'react';
-import { Link } from 'react-router-dom';
+import {React, useEffect, useState} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Manager_NavBar from '../components/Manager_navbar';
+import axiosInstance from '../helpers/axios';
+
 
 const reservations = [
   {
@@ -116,6 +118,22 @@ function TodayCard(props){
 
 function Manager_Dashboard() {
     const [activeFilter, setActiveFilter] = useState('Currently hosting');
+    const navigate = useNavigate()
+
+
+    useEffect(()=>{
+        axiosInstance.get('hotel', { headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }})
+        .then((response)=>{
+            if(response.data.HotelDetails){
+                      //
+            } 
+            else{
+                 navigate('/manager-reg-1')
+            }
+        })
+    },[])
 
     const filterReservations = () => {
       const today = new Date().toISOString().split('T')[0];
