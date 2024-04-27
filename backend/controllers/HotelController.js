@@ -112,12 +112,123 @@ router.post("/add_hotel", auth, async (req, res) => {
 router.post("/update_hotel", auth, async (req, res) => {
     try {
       const manager_id = req.user_id
-      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes} = req.body
-      const Hotel = await HotelService.edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes);  
+      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out} = req.body
+      const Hotel = await HotelService.edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out);  
       res.json({message: "Hotel details updated successfully", Hotel: Hotel})
     }
     catch (error){
       console.error("Error in editing hotel:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.post("/add_images", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id
+      const {images} = req.body
+      const Hotel = await HotelService.add_images(manager_id, images);  
+      res.json({message: "Images added successfully", Hotel: Hotel})
+    }
+    catch (error){
+      console.error("Error in adding images:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.post("/add_faqs", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id
+      const {faqs} = req.body
+      const Hotel = await HotelService.add_faqs(manager_id, faqs);  
+      res.json({message: "FAQs added successfully", Hotel: Hotel})
+    }
+    catch (error){
+      console.error("Error in adding FAQs:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.post("/add_room_types", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id
+      const {room_types} = req.body
+      const Hotel = await HotelService.add_roomTypes(manager_id, room_types);  
+      res.json({message: "RoomTypes added successfully", Hotel: Hotel})
+    }
+    catch (error){
+      console.error("Error in adding RoomTypes:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.put("/update_images", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id;
+      const { images } = req.body;
+      const Hotel = await HotelService.update_images(manager_id, images);  
+      res.json({ message: "Images updated successfully", Hotel: Hotel });
+    } catch (error) {
+      console.error("Error in updating images:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.put("/update_faqs", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id;
+      const { faqs } = req.body;
+      const Hotel = await HotelService.update_faqs(manager_id, faqs);  
+      res.json({ message: "FAQs updated successfully", Hotel: Hotel });
+    } catch (error) {
+      console.error("Error in updating FAQs:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.put("/update_room_types", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id;
+      const { room_type_ids } = req.body;
+      const Hotel = await HotelService.update_roomTypes(manager_id, room_type_ids);  
+      res.json({ message: "RoomTypes updated successfully", Hotel: Hotel });
+    } catch (error) {
+      console.error("Error in updating RoomTypes:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.delete("/delete_images", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id;
+      const { image_ids } = req.body;
+      const Hotel = await HotelService.delete_images(manager_id, image_ids);  
+      res.json({ message: "Images deleted successfully", Hotel: Hotel });
+    } catch (error) {
+      console.error("Error in deleting images:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.delete("/delete_faqs", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id;
+      const { faq_ids } = req.body;
+      const Hotel = await HotelService.delete_faqs(manager_id, faq_ids);  
+      res.json({ message: "FAQs deleted successfully", Hotel: Hotel });
+    } catch (error) {
+      console.error("Error in deleting FAQs:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.delete("/delete_room_types", auth, async (req, res) => {
+    try {
+      const manager_id = req.user_id;
+      const { room_type_ids } = req.body;
+      const Hotel = await HotelService.delete_roomTypes(manager_id, room_type_ids);  
+      res.json({ message: "RoomTypes deleted successfully", Hotel: Hotel });
+    } catch (error) {
+      console.error("Error in deleting RoomTypes:", error);
       res.status(500).json({ error: "Internal server error" });
     }
 });
