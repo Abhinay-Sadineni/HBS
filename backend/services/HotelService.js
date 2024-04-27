@@ -154,7 +154,7 @@ class HotelService {
             );
             const RoomTypes = await sequelize.query(
                 `
-                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
+                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests", "default_price" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -218,11 +218,13 @@ class HotelService {
                 hotel_id = Hotel[0].hotel_id;
             }
             else {
-                throw new Error('No hotels found for the given manager ID');
+                return {
+                    message: 'No hotels found for the given manager ID'
+                };
             }
             const RoomTypes = await sequelize.query(
                 `
-                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
+                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests", "default_price" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -675,7 +677,6 @@ class HotelService {
         try {
             let message
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
-            console.log(MyHotel)
             const hotelId = MyHotel.hotel_id;
             
             const bookedRooms = await sequelize.query( 
@@ -757,31 +758,7 @@ class HotelService {
             throw new Error(error.message);
         }
     }
-    static async update_roomTypes(manager_id, roomType) {
-        try {
-            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
-            const hotelId = MyHotel.hotel_id;
-    
-            await RoomType.update(
-                { 
-                    room_type_name: roomType.room_type_name,
-                    no_of_rooms: roomType.no_of_rooms,
-                    list_of_amenties: roomType.list_of_amenties,
-                    max_guests: roomType.max_guests,
-                    default_price: roomType.default_price
-                },
-                { where: { room_type_id: roomType.room_type_id, hotel_id: hotelId } }
-            );
-    
-            let message = "Room Type updated succesfully"
-            return {
-                message
-            };
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    }              
+            
 }
 
 module.exports = HotelService;

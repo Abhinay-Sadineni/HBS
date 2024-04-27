@@ -163,16 +163,30 @@ router.post("/rr", auth, async (req, res) => {
   }
 });
 
-// router.post("/change_price", auth, async (req, res) => {
-//   try {
-//     const manager_id = req.user_id
-//     const Data = await ReservationService.get_calendar(manager_id);  
-//     res.json({Data: Data})
-//   }
-//   catch (error) {
-//     console.error("Error in calendar:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
+router.post("/change_price", auth, async (req, res) => {
+  try {
+    const manager_id = req.user_id
+    const {dateList} = req.body
+    const message = await ReservationService.change_price(manager_id, dateList);  
+    res.json({message})
+  }
+  catch (error) {
+    console.error("Error in changing price:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/block_rooms", auth, async (req, res) => {
+  try {
+    const manager_id = req.user_id
+    const {dateList} = req.body
+    const message = await ReservationService.block_rooms(manager_id, dateList);  
+    res.json({message})
+  }
+  catch (error) {
+    console.error("Error in blocking rooms:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 module.exports = router;

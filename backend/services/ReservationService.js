@@ -381,6 +381,7 @@ class ReservationService {
             throw new Error(error.message);
         }
     }  
+
     static async update_rr(gid, user_id, rating, review){
         try {
             const UpdatedRating = await GroupRoom.update(
@@ -391,7 +392,72 @@ class ReservationService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }   
+    }
+
+    static async change_price(manager_id, DateList) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            if (!MyHotel) {
+                throw new Error("Hotel not found for the provided manager_id");
+            }
+            const hotelId = MyHotel.hotel_id;
+    
+            for (let date_price of DateList) {
+                const MyRoom = await RoomType.findOne({ where: { room_type_id: date_price.room_type_id } });
+                if (!MyRoom) {
+                    throw new Error("Room type not found for the provided room_type_id");
+                }
+    
+                if (MyRoom.hotel_id !== hotelId) {
+                    throw new Error("User doesn't have permission to modify this room type");
+                }
+    
+                await Calendar.update(
+                    { price: date_price.price },
+                    { where: { room_type_id: date_price.room_type_id, date: date_price.date } }
+                );
+            }
+    
+            return {
+                message: "Price changed successfully"
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    static async block_rooms(manager_id, DateList) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            if (!MyHotel) {
+                throw new Error("Hotel not found for the provided manager_id");
+            }
+            const hotelId = MyHotel.hotel_id;
+    
+            for (let date_price of DateList) {
+                const MyRoom = await RoomType.findOne({ where: { room_type_id: date_price.room_type_id } });
+                if (!MyRoom) {
+                    throw new Error("Room type not found for the provided room_type_id");
+                }
+    
+                if (MyRoom.hotel_id !== hotelId) {
+                    throw new Error("User doesn't have permission to modify this room type");
+                }
+    
+                await Calendar.update(
+                    { price: date_price.price },
+                    { where: { room_type_id: date_price.room_type_id, date: date_price.date } }
+                );
+            }
+    
+            return {
+                message: "Price changed successfully"
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+        
 }    
 
 function groupByGid(reservations) {
