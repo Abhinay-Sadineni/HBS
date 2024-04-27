@@ -171,6 +171,8 @@ class ReservationService {
                 "Reservation"
                 LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
                 JOIN "Image" ON "Image"."hotel_id" = "Reservation"."hotel_id"
+                JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
+                JOIN "RoomType" ON "RoomType"."room_type_id" = "Reservation"."hotel_id"
                 WHERE
                     "user_id" = :user_id
                 `,
@@ -221,18 +223,18 @@ class ReservationService {
             throw new Error("Error in cancelling reservation: " + error.message);
         }
     }
-    static async confirm_reject_reservation(gid, status, user_id) {
+    static async confirm_reject_reservation(gid, status, manager_id) {
         try {
             let message;
             const groupRoom = await GroupRoom.findOne({
-                where: { gid: parseInt(gid) }
+                where: { gid }
             });
             const get_hotel = groupRoom.hotel_id;
-
             const check_manager = await Hotel.findOne({
-                where: { hotel_id: get_hotel, manager_id: parseInt(user_id) }
+                where: { hotel_id: get_hotel, manager_id }
             });
-
+            console.log(get_hotel)
+            console.log(check_manager)
             if (!check_manager) {
                 throw new Error("User is not authorized to manage this hotel");
             }
@@ -244,9 +246,9 @@ class ReservationService {
                 );
                 message = "Reservation rejected successfully";
             }
-            else if (status === 'confirmed') {
+            else if (status === 'accepted') {
                 await Reservation.update(
-                    { status: 'confirmed' },
+                    { status: 'accepted' },
                     { where: { gid: gid } }
                 );
                 message = "Reservation confirmed successfully";
@@ -359,7 +361,11 @@ class ReservationService {
         try {
             const Calendar = await sequelize.query(
                 `
-                SELECT * from Calendar
+                SELECT date, price, "RoomType"."room_type_id", room_type_name, no_of_avail_rooms
+                FROM "Calendar" JOIN "RoomType"
+                ON "Calendar"."room_type_id" = "RoomType"."room_type_id"
+                JOIN "Hotel" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
+                WHERE "manager_id" = :manager_id
                 `,
                 {
                     replacements: {
@@ -375,6 +381,17 @@ class ReservationService {
             throw new Error(error.message);
         }
     }  
+    static async update_rr(gid, user_id, rating, review){
+        try {
+            const UpdatedRating = await GroupRoom.update(
+                { Rating: rating, Review: review },
+                { where: { gid: gid, user_id: user_id } }
+            );
+            return UpdatedRating.length
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }   
 }    
 
 function groupByGid(reservations) {

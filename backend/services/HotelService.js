@@ -257,11 +257,55 @@ class HotelService {
                 }
             );
 
+            const Ratings = await sequelize.query(
+                `
+                SELECT 
+                    COUNT(CASE WHEN "Rating" = '1' THEN 1 END) AS count_rating_1,
+                    COUNT(CASE WHEN "Rating" = '2' THEN 1 END) AS count_rating_2,
+                    COUNT(CASE WHEN "Rating" = '3' THEN 1 END) AS count_rating_3,
+                    COUNT(CASE WHEN "Rating" = '4' THEN 1 END) AS count_rating_4,
+                    COUNT(CASE WHEN "Rating" = '5' THEN 1 END) AS count_rating_5,
+                    COUNT(*) AS total_ratings
+                FROM "GroupRoom"
+                WHERE "hotel_id" = :hotel_id
+                AND "Rating" IS NOT NULL
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            const Reviews = await sequelize.query(
+                `          
+                SELECT "GroupRoom"."Review",
+                "GroupRoom"."Rating",
+                "User"."username" as name
+                FROM "GroupRoom"
+                JOIN "User" ON "GroupRoom"."user_id"="User"."user_id"
+                WHERE "GroupRoom"."hotel_id" = :hotel_id
+                AND "GroupRoom"."Review" IS NOT NULL
+                GROUP BY
+                "GroupRoom"."Review",
+                "GroupRoom"."Rating",
+                "User"."username"
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
             return {
                 Hotel: Hotel[0],
                 RoomTypes: RoomTypes,
                 Images: Images,
-                FAQs: FAQs
+                FAQs: FAQs,
+                Ratings: Ratings,
+                Reviews: Reviews
             };
         } catch (error) {
             throw new Error(error.message);
@@ -448,13 +492,14 @@ class HotelService {
                     no_of_rooms: room_type.no_of_rooms,
                     list_of_amenties: room_type.list_of_amenties,
                     max_guests: room_type.max_guests,
+                    default_price: room_type.default_price,
                     hotel_id: hotelId
                 }); 
             }
             const calendars = [];
             const currentDate = new Date();
             const endDate = new Date(currentDate);
-            endDate.setDate(endDate.getDate() + 30);
+            endDate.setDate(endDate.getDate() + 90);
 
             for (let roomType of RoomTypes) {
                 let currentDateIterator = new Date(currentDate);
@@ -466,8 +511,8 @@ class HotelService {
                     const calendar = {
                     room_type_id: roomType.room_type_id,
                     date: date,
-                    price: roomType.price,
-                    no_of_avail_rooms: Math.floor(Math.random() * availableRooms) + 1
+                    price: roomType.default_price,
+                    no_of_avail_rooms: availableRooms
                     };
                     calendars.push(calendar);
                     currentDateIterator.setDate(currentDateIterator.getDate() + 1);
@@ -482,7 +527,7 @@ class HotelService {
             throw new Error(error.message);
         }
     } 
-    static async edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes) {
+    static async edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
         try {
             const [affectedRows] = await Hotel.update({
                 Hotel_name: Hotel_name,
@@ -504,34 +549,66 @@ class HotelService {
             }
             
             const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
-            const hotelId = updatedHotel.hotel_id;
+            return {
+                updatedHotel
+            }
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async add_images(manager_id, images) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
             
             for (let image of images){
-                await Image.update({
+                await Image.create({
                     image: image,
                     hotel_id: hotelId
                 }); 
             }
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async add_faqs(manager_id, FAQs) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+
             for (let faq of FAQs){
-                await FAQ.update({
+                await FAQ.create({
                     Q: faq.Q,
                     A: faq.A,
                     hotel_id: hotelId
                 }); 
             }
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async add_roomTypes(manager_id, RoomTypes) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+
             for (let room_type of RoomTypes){
-                await RoomType.update({
+                await RoomType.create({
                     room_type_name: room_type.name,
                     no_of_rooms: room_type.no_of_rooms,
                     list_of_amenties: room_type.list_of_amenties,
                     max_guests: room_type.max_guests,
+                    default_price: room_type.default_price,
                     hotel_id: hotelId
                 }); 
             }
             const calendars = [];
             const currentDate = new Date();
             const endDate = new Date(currentDate);
-            endDate.setDate(endDate.getDate() + 30);
+            endDate.setDate(endDate.getDate() + 90);
 
             for (let roomType of RoomTypes) {
                 let currentDateIterator = new Date(currentDate);
@@ -544,7 +621,7 @@ class HotelService {
                     room_type_id: roomType.room_type_id,
                     date: date,
                     price: roomType.price,
-                    no_of_avail_rooms: Math.floor(Math.random() * availableRooms) + 1
+                    no_of_avail_rooms: availableRooms
                     };
                     calendars.push(calendar);
                     currentDateIterator.setDate(currentDateIterator.getDate() + 1);
@@ -559,6 +636,152 @@ class HotelService {
             throw new Error(error.message);
         }
     }
+    static async delete_images(manager_id, image_id) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+    
+  
+            await Image.destroy({ where: { image_id: image_id, hotel_id: hotelId } });
+
+    
+            let message = "Image deleted succesfully"
+            return {
+                message
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async delete_faqs(manager_id, faq_id) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+    
+            await FAQ.destroy({ where: { faq_id: faq_id, hotel_id: hotelId } });
+            
+    
+            let message = "FAQ deleted succesfully"
+            return {
+                message
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async delete_roomTypes(manager_id, room_type_id) {
+        try {
+            let message
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            console.log(MyHotel)
+            const hotelId = MyHotel.hotel_id;
+            
+            const bookedRooms = await sequelize.query( 
+                `
+                SELECT COUNT(*)
+                FROM "Reservation"
+                WHERE "room_type_id" = :room_type_id 
+                AND "Reservation"."status" <> 'cancelled' 
+                AND "Reservation"."status" <> 'rejected' 
+                AND "hotel_id" = :hotel_id 
+                AND "start_date" > :today_date
+                `,
+                {
+                    replacements: {
+                        room_type_id: room_type_id,
+                        hotel_id: hotelId,
+                        today_date: new Date()
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            console.log("Booked Rooms",bookedRooms)
+            if(bookedRooms){
+                message = "RoomType has upcoming reservations, deletion not possible"
+            }
+            else{
+                await RoomType.destroy({ where: { room_type_id: room_type_id, hotel_id: hotelId } });
+                message = "RoomType deleted successfully"
+            }
+            return {
+                message
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }   
+    static async update_images(manager_id, img) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+    
+
+            await Image.update(
+                { image: img.image },
+                { where: { image_id: img.image_id, hotel_id: hotelId } }
+            );
+
+    
+            let message = "Image updated succesfully"
+            return {
+                message
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async update_faqs(manager_id, faq) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+    
+            await FAQ.update(
+                { 
+                    Q: faq.Q,
+                    A: faq.A
+                },
+                { where: { faq_id: faq.faq_id, hotel_id: hotelId } }
+            );
+
+    
+            let message = "FAQ updated succesfully"
+            return {
+                message
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static async update_roomTypes(manager_id, roomType) {
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+    
+            await RoomType.update(
+                { 
+                    room_type_name: roomType.room_type_name,
+                    no_of_rooms: roomType.no_of_rooms,
+                    list_of_amenties: roomType.list_of_amenties,
+                    max_guests: roomType.max_guests,
+                    default_price: roomType.default_price
+                },
+                { where: { room_type_id: roomType.room_type_id, hotel_id: hotelId } }
+            );
+    
+            let message = "Room Type updated succesfully"
+            return {
+                message
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }              
 }
 
 module.exports = HotelService;

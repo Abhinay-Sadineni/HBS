@@ -82,6 +82,8 @@ function Hotelpage() {
     return <Loading/>;
   }
 
+  const a = Object.values(hotel.VacantRoomsandRR.Ratings[0]).splice(1).map(num => parseInt(num));
+
   return (
     <div className="h-screen">
       <NavBar />
@@ -102,7 +104,8 @@ function Hotelpage() {
             </div>
           </div>
           <div className="border-b border-gray-400 py-4 mb-4">
-            <RatingBar ratings={Object.values(hotel.VacantRoomsandRR.Ratings[0])} />
+            
+            <RatingBar ratings = {a} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -40,25 +40,39 @@ async function getRandomHotelId() {
 }
 
 async function generateHashedPassword(password) {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  const hashedPassword = await bcrypt.hash(password, 10)
   return hashedPassword;
 }
 
 async function generateUsers() {
   const users = [];
-  for (let i = 0; i < 50; i++) {
-    const userType = i < 10 ? 'HM' : 'guest';
+  const totalGuests = 200;
+  const totalHMs = 60;
+  
+  for (let i = 0; i < totalHMs; i++) {
     const user = {
       username: faker.internet.userName(),
       email: faker.internet.email(),
-      password: await generateHashedPassword(faker.internet.password()),
+      password: await generateHashedPassword('123'),
       phone_number: faker.phone.phoneNumber().replace(/\D/g, ''),
       country_code: Math.floor(Math.random() * 999) + 1,
-      usertype: userType
+      usertype: 'HM'
     };
     users.push(user);
   }
+  
+  for (let i = 0; i < totalGuests; i++) {
+    const user = {
+      username: faker.internet.userName(),
+      email: faker.internet.email(),
+      password: await generateHashedPassword('123'),
+      phone_number: faker.phone.phoneNumber().replace(/\D/g, ''),
+      country_code: Math.floor(Math.random() * 999) + 1,
+      usertype: 'guest'
+    };
+    users.push(user);
+  }
+  
   await User.bulkCreate(users);
 }
 
@@ -86,7 +100,7 @@ function getRandomAmenities(amenities, probability) {
 
 async function generateHotels() {
   const hotels = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 50; i++) {
     const managerUserId = await getRandomUserIdForManager();
     const selectedHotelAmenities = getRandomAmenities(hotelAmenities, 0.3);
     const hotel = {
@@ -100,8 +114,8 @@ async function generateHotels() {
       longitude: faker.address.longitude(),
       list_of_amenities: selectedHotelAmenities.join(', '),
       cancellation_policy: faker.random.number({ min: 1, max: 100 }),
-      check_in: faker.random.arrayElement(['12:00 PM', '2:00 PM', '3:00 PM']),
-      check_out: faker.random.arrayElement(['10:00 AM', '11:00 AM', '12:00 PM'])
+      check_in: faker.random.arrayElement(['12:00', '14:00', '15:00']),
+      check_out: faker.random.arrayElement(['10:00', '11:00', '12:00'])
     };
     hotels.push(hotel);
   }
@@ -129,26 +143,6 @@ async function generateImages() {
   }
 
   await Image.bulkCreate(images);
-}
-
-
-async function generateRoomTypes() {
-  const roomTypes = [];
-  const hotels = await Hotel.findAll();
-  for (let hotel of hotels) {
-    for (let i = 0; i < 3; i++) {
-      const selectedRoomAmenities = getRandomAmenities(roomAmenities, 0.3);
-      const roomType = {
-        room_type_name: faker.lorem.word(),
-        no_of_rooms: Math.floor(Math.random() * 10) + 1,
-        list_of_amenties: selectedRoomAmenities.join(', '),
-        max_guests: Math.floor(Math.random() * 4) + 1,
-        hotel_id: hotel.hotel_id
-      };
-      roomTypes.push(roomType);
-    }
-  }
-  await RoomType.bulkCreate(roomTypes);
 }
 
 async function generateRoomTypes() {
@@ -254,7 +248,7 @@ async function generateCalendars() {
   const calendars = [];
   const currentDate = new Date();
   const endDate = new Date(currentDate);
-  endDate.setDate(endDate.getDate() + 30);
+  endDate.setDate(endDate.getDate() + 90);
 
   const hotels = await Hotel.findAll();
   for (let hotel of hotels) {

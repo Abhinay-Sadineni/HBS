@@ -4,7 +4,7 @@ import { useCookies } from 'react-cookie';
 import Loading from '../components/Loading';
 import axios from 'axios'
 
-function Login() {
+function Login({ loginPopup, setLoginPopup, isLoggedIn, setIsLoggedIn}) {
   const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('guest'); // Default user type is guest
@@ -27,14 +27,37 @@ function Login() {
         if (token) {
           localStorage.setItem('token',token)
 
-          await setLoading(true);
-  
-          setTimeout(() => {
-            
-            const dashboardRoute = userType === 'guest' ? '/' : '/manager-dashboard';
-            navigate(dashboardRoute);
+          if(userType === 'guest' ){  
+            await setLoading(true);
 
-            }, 1000);
+    
+            setTimeout(() => {
+              
+              // const dashboardRoute = userType === 'guest' ? '/' : '/manager-dashboard';
+              
+              // const dashboardRoute = '/manager-dashboard'   
+              // navigate(dashboardRoute);
+              setIsLoggedIn(true);
+              // setLoading1(true);
+              setLoginPopup(false);
+              
+
+              }, 1000);
+          } 
+
+          if(userType === 'manager' ){  
+            await setLoading(true);
+    
+            setTimeout(() => {
+              
+              // const dashboardRoute = userType === 'guest' ? '/' : '/manager-dashboard';
+              
+              const dashboardRoute = '/manager-dashboard'   
+              navigate(dashboardRoute);
+              
+
+              }, 1000);
+          }  
   
         } else {
           console.error('No token received in response headers');
@@ -58,7 +81,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       {loading == true && <Loading />}
       {loading == false && <div className="max-w-md w-full space-y-8">
         <div>

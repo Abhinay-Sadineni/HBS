@@ -23,7 +23,7 @@ function App() {
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/" element={<Home />} />
           <Route exact path="/list/:location/:no_guests/:no_of_rooms/:startDate/:endDate" element={<HotelList />} />
-          <Route exact path="/guest-dashboard/history" element={<History />} />
+          <Route exact path="/history" element={<History />} />
           <Route exact path="/hotel/:hotelId/:no_of_guests/:start_date/:end_date" element={<HotelPage />} />
           <Route exact path="/bill" element={<BillPage />} />
           <Route exact path="/hotel-page" element={<HotelPage />} />

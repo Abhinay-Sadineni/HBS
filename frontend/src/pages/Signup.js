@@ -4,7 +4,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import backgroundImage from '../assets/images/signup.jpg'; // Replace with the actual path to your image
 import axios from 'axios'
-function Signup() {
+function Signup({signUpPopup, setSignUpPopup}) {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
@@ -51,11 +51,14 @@ function Signup() {
 
       if (response.status === 201) {
         // Prompt the user with a confirmation dialog
-        const confirmed = window.confirm('Registration successful! Proceed to login?');
-        // If user confirms, redirect to login page
-        if (confirmed) {
-          navigate('/login');
-        }
+        // const confirmed = window.confirm('Registration successful! Proceed to login?');
+        // // If user confirms, redirect to login page
+        // if (confirmed) {
+        //   navigate('/login');
+        //   // alert('login to proceed')
+        // }
+        alert('Registration Succesfull')
+        setSignUpPopup(false);
       } 
       
     }
@@ -69,12 +72,12 @@ function Signup() {
   };
 
   return (
-    <div className="App flex justify-center items-center min-h-screen py-40 from-mycolour to-mycolour2 bg-gradient-115">
-      <div className="container">
+    <div className="App flex justify-center items-center h-3/5 py-40 from-mycolour to-mycolour2 bg-gradient-115">
+      {/* <div className="container"> */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="flex">
-            <div className="w-3/5 bg-register-image" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-            <div className="w-2/5 py-16 px-8"> {/* Adjusted width */}
+            <div className="w-2/5 bg-register-image" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+            <div className="w-3/5 py-16 px-4"> {/* Adjusted width */}
               <h2 className="text-3xl text-center mb-4">Register</h2>
               <p className="mb-4 text-center">Create your account</p>
               <form onSubmit={handleSubmit}>
@@ -134,7 +137,7 @@ function Signup() {
             </div>
           </div>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 }
