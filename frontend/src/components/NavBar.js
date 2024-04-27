@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/images/HBSLogo.jpeg';
 import SearchBar from './SearchBar';
 import axiosInstance from '../helpers/axios'
+import Login from '../pages/Login';
+import Signup from '../pages/Signup';
 
 
 import {
@@ -16,9 +18,11 @@ import {
 import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
 import { FiAlignJustify } from "react-icons/fi";
 
-function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
+function NavBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loginPopup, setLoginPopup] = useState(false);
+  const [signUpPopup, setSignUpPopup] = useState(false);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -73,6 +77,7 @@ function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
 
 
   return (
+    <div>
     <nav className='fixed z-1000 top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white bg-opacity-99'>
       <div className='flex flex-row items-center justify-between'>
         <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
@@ -127,6 +132,33 @@ function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
         </div>
       </div>
     </nav>
+
+
+    {loginPopup && (
+  <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+    <div className='bg-white p-8 rounded-lg w-2/5 h-3/5 relative'>
+      <button onClick={() => setLoginPopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"> &#x2715; </button>
+      <Login loginPopup = {loginPopup}
+              setLoginPopup = {setLoginPopup}
+              // loading = {loading}
+              // setLoading = {setLoading}
+              isLoggedIn = {isLoggedIn}
+              setIsLoggedIn = {setIsLoggedIn}
+      
+      />
+    </div>
+  </div>
+)}
+
+{signUpPopup && (
+  <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+    <div className='bg-white p-8 rounded-lg w-2/5 h-4/5 relative flex justify-center items-center'>
+      <button onClick={() => setSignUpPopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"> &#x2715; </button>
+      <Signup />
+    </div>
+  </div>
+)}
+    </div>
   )
 }
 

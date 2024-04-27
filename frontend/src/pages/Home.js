@@ -3,15 +3,14 @@ import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Card from '../components/List_card';
 import hotelsList from '../components/hotels';
-import Login from '../pages/Login';
-import Signup from './Signup';
+// import Login from '../pages/Login';
+// import Signup from './Signup';
 
 function Home() {
-  const [loginPopup, setLoginPopup] = useState(false);
-  const [signUpPopup, setSignUpPopup] = useState(false);
+  // const [loginPopup, setLoginPopup] = useState(false);
+  // const [signUpPopup, setSignUpPopup] = useState(false);
   const [amPopup, setAmPopup] = useState(false);
 
-  console.log(loginPopup);
   const am = [
     "Wifi", "TV", "Kitchen", "Washing Machine", "Air Conditioning",
     "Dedicated work space", "Free Parking on Premises", "Pool", "Piano",
@@ -25,8 +24,8 @@ const rooms_am = [
 
   return (
     <div className="h-screen relative">
-      <NavBar loginPopup={loginPopup} setLoginPopup={setLoginPopup} 
-              signUpPopup = {signUpPopup} setSignUpPopup = {setSignUpPopup}
+      <NavBar 
+
       /> 
       <div className="fixed mt-1 mb-4 border border-gray-300 bg-white shadow-lg">
         <button onClick={() => setAmPopup(true)} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Show Filters</button>
@@ -63,26 +62,16 @@ const rooms_am = [
           </div>
         </div>
       )}
-      
 
 
-      {loginPopup && (
-  <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
-    <div className='bg-white p-8 rounded-lg w-2/5 h-3/5 relative'>
-      <button onClick={() => setLoginPopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"> &#x2715; </button>
-      <Login />
-    </div>
-  </div>
-)}
-
-{signUpPopup && (
+{/* {signUpPopup && (
   <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
     <div className='bg-white p-8 rounded-lg w-2/5 h-4/5 relative flex justify-center items-center'>
       <button onClick={() => setSignUpPopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"> &#x2715; </button>
       <Signup />
     </div>
   </div>
-)}
+)} */}
 
 
 
