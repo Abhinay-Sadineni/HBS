@@ -90,7 +90,7 @@ function ReservationCard(props) {
         </div>
         <div className="flex flex-col items-center">
           {props.reservation[0].status === "pending" ||
-          props.reservation[0].status === "confirmed" ? (
+          props.reservation[0].status === "accepted" ? (
             <button
               onClick={() => handleCancel(props.reservation[0].gid)}
               className="bg-red-500 text-white px-4 py-2 rounded mt-4"
