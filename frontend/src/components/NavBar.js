@@ -151,10 +151,13 @@ function NavBar() {
 )}
 
 {signUpPopup && (
-  <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+  <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
     <div className='bg-white p-8 rounded-lg w-2/5 h-4/5 relative flex justify-center items-center'>
       <button onClick={() => setSignUpPopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"> &#x2715; </button>
-      <Signup />
+      <Signup 
+        signUpPopup = {signUpPopup}
+        setSignUpPopup = {setSignUpPopup}
+      />
     </div>
   </div>
 )}

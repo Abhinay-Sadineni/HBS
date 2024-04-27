@@ -4,7 +4,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import backgroundImage from '../assets/images/signup.jpg'; // Replace with the actual path to your image
 import axios from 'axios'
-function Signup() {
+function Signup({signUpPopup, setSignUpPopup}) {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
@@ -51,12 +51,14 @@ function Signup() {
 
       if (response.status === 201) {
         // Prompt the user with a confirmation dialog
-        const confirmed = window.confirm('Registration successful! Proceed to login?');
-        // If user confirms, redirect to login page
-        if (confirmed) {
-          navigate('/login');
-          // alert('login to proceed')
-        }
+        // const confirmed = window.confirm('Registration successful! Proceed to login?');
+        // // If user confirms, redirect to login page
+        // if (confirmed) {
+        //   navigate('/login');
+        //   // alert('login to proceed')
+        // }
+        alert('Registration Succesfull')
+        setSignUpPopup(false);
       } 
       
     }
