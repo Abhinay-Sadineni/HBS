@@ -89,8 +89,19 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
 
 } )
 
+const multer = require('multer');
+const path = require('path');
 
-router.post("/add_hotel", auth, async (req, res) => {
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
+
+router.post("/add_hotel", auth, upload.any(), async (req, res) => {
     try {
       const manager_id = req.user_idconst 
       
@@ -99,7 +110,10 @@ router.post("/add_hotel", auth, async (req, res) => {
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');
       const day = String(currentDate.getDate()).padStart(2, '0'); 
       const register_date = `${year}-${month}-${day}`;
-      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes} = req.body
+      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, FAQs, RoomTypes} = req.body
+
+      const images = req.files.map(file => file.path);
+
       const Hotel = await HotelService.add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes);  
       res.json({message: "Hotel added successfully", Hotel: Hotel})
     }
