@@ -1,220 +1,401 @@
-import React, { useState } from 'react';
-import hotelsList from '../components/hotels';
-import reviewList from '../components/reviews';
-import StarRoundedIcon from '@mui/icons-material/StarRounded';
+import React, { useState } from "react";
+import { Link } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
-const rating = [1000, 1000, 1000, 1000, 1000];
+function Manager_hotel() {
+    const [formData, setFormData] = useState({
+      name: 'Example Hotel',
+    description: 'This is a dummy hotel for testing purposes.',
+    location: 'Test Location',
+    address: '123 Test Street',
+    latitude: '40.7128',
+    longitude: '-74.0060',
+    amenities: ['Wifi', 'Pool'],
+    cancellationPolicy: 1,
+    checkInTime: '1:00',
+    checkOutTime: '12:00',
+    images: [
+    ],
+    rooms: [
+        { roomType: 'Single Room', amenities: ['TV', 'Air Conditioning'], availableRooms: 10, defaultPrice: 100 },
+        { roomType: 'Double Room', amenities: ['TV', 'Kitchen'], availableRooms: 5, defaultPrice: 150 },
+    ]
+    });
+    const [imagePopup, setImagePopup] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [currentStep, setCurrentStep] = useState(1);
+    const [amPopup, setAmPopup] = useState(false);
+    const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
 
-function ReviewCard(props) {
-  const stars = [];
-  for (let i = 0; i < props.rating; i++) {
-    stars.push(<StarRoundedIcon key={i} />);
-  }
+    const toggleImagePopup = (index) => {
+        setImagePopup(!imagePopup);
+        setCurrentImageIndex(index);
+      };
+    
+      const showNextImage = () => {
+        const nextIndex = (currentImageIndex + 1) % formData.images.length;
+        setCurrentImageIndex(nextIndex);
+      };
+    
+      const showPreviousImage = () => {
+        const previousIndex = (currentImageIndex - 1 + formData.images.length) % formData.images.length;
+        setCurrentImageIndex(previousIndex);
+      };
 
-  return (
-    <div className="flex flex-col border border-gray-400 p-4 ">
-      <h2 className="text-l font-bold">{props.name}</h2>
-      <div className='text-sm text-yellow-500'>
-        {stars}
-      </div>
-      <p>{props.review}</p>
-    </div>
-  );
-}
 
-function Hotelpage() {
 
-  const [showPopup, setShowPopup] = useState(false);
-  const [imagePopup, setImagePopup] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [editMode, setEditMode] = useState(false);
-  const [hotelName, setHotelName] = useState("Hotel Name");
-  const [hostedBy, setHostedBy] = useState("Hosted by Manager");
-  const [description, setDescription] = useState("It is an architectural villa on the south side of Koh Samui, private and in a natural environment, it has sweeping ocean views and has a great salt water lap pool. Half way up a hill, it gets natural breezes, whithout mozzies even at dusk. It is minimally designed, but takes maximum advantage of the nature. It is called the naked house because the walls are left naked. We primarily cater to families and couples.");
-  const [amenities, setAmenities] = useState(["Mountain view", "Ocean view", "Kitchen", "Wifi", "Dedicated work space"]);
-  const [photos, setPhotos] = useState([...hotelsList[0].imgURL]);
-
-  const togglePopup = () => {
-    setShowPopup(!showPopup);
-  };
-
-  const toggleImagePopup = (index) => {
-    setImagePopup(!imagePopup);
-    setCurrentImageIndex(index);
-  };
-
-  const showNextImage = () => {
-    const nextIndex = (currentImageIndex + 1) % photos.length;
-    setCurrentImageIndex(nextIndex);
-  };
-
-  const showPreviousImage = () => {
-    const previousIndex = (currentImageIndex - 1 + photos.length) % photos.length;
-    setCurrentImageIndex(previousIndex);
-  };
-
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-  };
-
-  const handleFieldChange = (field, value) => {
-    switch (field) {
-      case 'hotelName':
-        setHotelName(value);
-        break;
-      case 'hostedBy':
-        setHostedBy(value);
-        break;
-      case 'description':
-        setDescription(value);
-        break;
-      case 'amenities':
-        setAmenities(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setPhotos([...photos, reader.result]);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
     };
-  };
 
-  const deletePhoto = (index) => {
-    const updatedPhotos = [...photos];
-    updatedPhotos.splice(index, 1);
-    setPhotos(updatedPhotos);
-    if (currentImageIndex === index && index !== 0) {
-      setCurrentImageIndex(index - 1);
+    const handleAmenitiesChange = (e) => {
+        const { value } = e.target;
+        const amenities = [...formData.amenities];
+
+        if (amenities.includes(value)) {
+            const index = amenities.indexOf(value);
+            amenities.splice(index, 1);
+        } else {
+            amenities.push(value);
+        }
+
+        setFormData({
+            ...formData,
+            amenities
+        });
+    };
+
+    const handleImageUpload = (e) => {
+        const files = Array.from(e.target.files);
+        setFormData({
+            ...formData,
+            images: files
+        });
+    };
+
+    const handleNext = (e) => {
+        e.preventDefault();
+        for (const key in formData) {
+            if (formData[key] === '') {
+                setErrorMessage(`Please fill in ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                return;
+            }
+        }
+        if (formData.amenities.length < 2) {
+            setErrorMessage('Please select two or more amenities');
+            return;
+        }
+
+        if (formData.description.length > 500) {
+            setErrorMessage('Description must be less than 500 characters');
+            return;
+        }
+
+        if (formData.images.length < 0) {
+            setErrorMessage('Please upload at least five images');
+            return;
+        }
+        setCurrentStep(currentStep + 1)
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Perform form submission
+        // Add your submission logic here
+        console.log(formData)
+    };
+
+    function handlePrevious(){
+        setCurrentStep(currentStep - 1);
     }
-  };
 
-  return (
-    <div className="h-screen">
-      <div className='fixed border top-[78px] overflow-scroll no-scrollbar max-h-[720px] flex flex-col md:flex-row items-start  justify-between ml-10 mr-10'>
-        <div className="md:w-1/2 md:mr-5">
-          <div className="flex justify-between">
-            <h1 className="text-xl font-bold mt-8">
-              {editMode ? <input type="text" value={hotelName} onChange={(e) => handleFieldChange('hotelName', e.target.value)} /> : hotelName}
-            </h1>
-            <button onClick={toggleEditMode} className="btn btn-primary border border-gray-400 rounded-md px-4 py-2">{editMode ? 'Save' : 'Edit'}</button>
-          </div>
-          <h2 className="text-lg font-semibold">
-            {editMode ? <input type="text" value={hostedBy} onChange={(e) => handleFieldChange('hostedBy', e.target.value)} /> : hostedBy}
-          </h2>
-          {editMode ?
-            <textarea className='mb3' style={{ height: "auto", minHeight: "150px", width: "auto", minWidth: "800px" }} value={description} onChange={(e) => handleFieldChange('description', e.target.value)} />
-            :
-            <p className="text-m" >{description}</p>
-          }
+    const addRoomType = () => {
+        setFormData({
+            ...formData,
+            rooms: [...formData.rooms, { roomType: '', amenities: [], availableRooms: 0, defaultPrice: 0 }]
+        });
+    };
 
-          <div className="border-t border-b border-gray-400 py-4 mt-4 ">
-            <h1 className="text-xl font-bold">What this place offers</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {amenities.map((amenity, index) => (
-                <p key={index}>
-                  {editMode ? <input type="text" value={amenity} onChange={(e) => {
-                    const updatedAmenities = [...amenities];
-                    updatedAmenities[index] = e.target.value;
-                    handleFieldChange('amenities', updatedAmenities);
-                  }} /> : amenity}
-                </p>
-              ))}
-            </div>
-          </div>
-          <div className="border-b border-gray-400 py-4 mb-4">
-            {/* RatingBar component */}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {reviewList.slice(0, 4).map((review, index) => (
-              <ReviewCard
-                key={index}
-                name={review.name}
-                rating={review.rating}
-                review={review.review}
-              />
-            ))}
-          </div>
-          <button onClick={togglePopup} className="btn btn-primary my-4 border border-gray-400 rounded-md px-4 py-2">Show All Reviews</button>
-          {showPopup && (
-            <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white p-8 rounded-lg overflow-y-auto max-h-full relative">
-                <button onClick={togglePopup} className="absolute top-0 right-0 p-2 text-black-900 hover:text-gray-900">
-                  &#x2715;
-                </button>
-                <h1 className="text-xl font-bold mb-4">All Reviews</h1>
-                <div className="grid grid-cols-1 gap-4">
-                  {reviewList.map((review, index) => (
-                    <ReviewCard
-                      key={index}
-                      name={review.name}
-                      rating={review.rating}
-                      review={review.review}
-                    />
-                  ))}
+    const handleRoomInputChange = (index, e) => {
+        const { name, value } = e.target;
+        const updatedRooms = [...formData.rooms];
+        updatedRooms[index][name] = value;
+        setFormData({
+            ...formData,
+            rooms: updatedRooms
+        });
+    };
+
+    const selectAmenities = (index) => {
+        setAmPopup(true);
+        setCurrentRoomIndex(index);
+    };
+    
+    const closeAmenitiesPopup = () => {
+        setAmPopup(false);
+    };
+
+    const handleRoomAmenitiesChange = (e) => {
+        const { value } = e.target;
+        const updatedRooms = [...formData.rooms];
+        const amenity_array = updatedRooms[currentRoomIndex].amenities;
+    
+        if (amenity_array.includes(value)) {
+            const index = amenity_array.indexOf(value);
+            amenity_array.splice(index, 1);
+        } else {
+            amenity_array.push(value);
+        }
+    
+        updatedRooms[currentRoomIndex].amenities = amenity_array;
+        setFormData({
+            ...formData,
+            rooms: updatedRooms
+        });
+    };
+    
+    const handleDeleteRoom = (index) => {
+        const updatedRooms = formData.rooms.filter((room, i) => i !== index);
+        setFormData({
+            ...formData,
+            rooms: updatedRooms
+        });
+    };
+
+    const am = [
+        "Wifi", "TV", "Kitchen", "Washing Machine", "Air Conditioning",
+        "Dedicated work space", "Free Parking on Premises", "Pool", "Piano",
+        "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
+    ];
+
+    const rooms_am = [
+        "TV", "Kitchen", "Washing Machine", "Air Conditioning",
+       "Dedicated work space", "Essentials", "Ceiling Fan", "Fridge", "Micro Wave", 
+   ];
+   const saveRoomChanges = (index) => {
+    const updatedRooms = [...formData.rooms];
+    updatedRooms[index].editable = false;
+    setFormData({
+        ...formData,
+        rooms: updatedRooms
+    });
+};
+
+const setRoomEditable = (index, editable) => {
+    const updatedRooms = [...formData.rooms];
+    updatedRooms[index].editable = editable;
+    setFormData({
+        ...formData,
+        rooms: updatedRooms
+    });
+};
+
+    return (
+        <div className="flex justify-center items-center">
+            {currentStep === 1 && (
+            <div className="grid grid-cols-2 gap-8 w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
+                <div>
+                    <h1 className="text-2xl font-bold mb-4">Let's Register your hotel</h1>
+                    {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <p>Name:</p>
+                            <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Description:</p>
+                            <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Location:</p>
+                            <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Address:</p>
+                            <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Latitude:</p>
+                            <input type="text" name="latitude" placeholder="Latitude" value={formData.latitude} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Longitude:</p>
+                            <input type="text" name="longitude" placeholder="Longitude" value={formData.longitude} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                    </form>
                 </div>
-              </div>
+                <div>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <p className="font-semibold">Amenities:</p>
+                            <div className="grid grid-cols-2 gap-2">
+                            {am.map((amenity, index) => (
+                                <label key={index} className="flex items-center">
+                                    <input type="checkbox" name={amenity.toLowerCase()} value={amenity} onChange={handleAmenitiesChange} checked={formData.amenities.includes(amenity)} className="mr-2" />
+                                    {amenity}
+                                </label>
+                            ))}
+                            </div>
+                        </div>
+                        <div>
+                            <p>Cancellation Policy:</p>
+                            <input type="number" name="cancellationPolicy" placeholder="Cancellation Policy" value={formData.cancellationPolicy} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Check-in Time:</p>
+                            <input type="text" name="checkInTime" placeholder="Check-in Time" value={formData.checkInTime} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Check-out Time:</p>
+                            <input type="text" name="checkOutTime" placeholder="Check-out Time" value={formData.checkOutTime} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        </div>
+                        <div>
+                            <p>Upload Images:</p>
+                            <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="border border-gray-300 rounded-md px-4 py-2" />
+                            {/* Display submitted images */}
+                            {formData.images.length > 0 && (
+                                <div>
+                                    <p>Submitted Images:</p>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {formData.images.map((image, index) => (
+                                            <img key={index} src={URL.createObjectURL(image)} alt={`Image ${index}`} className="w-20 h-20 object-cover rounded-md" onClick={() => toggleImagePopup(index)} />
+                                        ))}
+                                    </div>
+                                    {imagePopup && (
+                                        <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+                                            <div className="bg-white p-8 rounded-lg overflow-y-auto max-h-full relative" style={{ width: '80%' }}>
+                                                <button onClick={() => setImagePopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800">
+                                                    &#x2715;
+                                                </button>
+                                                <button onClick={showPreviousImage} className="absolute top-1/2 left-0 transform -translate-y-1/2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-l-md">
+                                                    &lt;
+                                                </button>
+                                                <button onClick={showNextImage} className="absolute top-1/2 right-0 transform -translate-y-1/2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-r-md">
+                                                    &gt;
+                                                </button>
+                                                <img src={URL.createObjectURL(formData.images[currentImageIndex])} alt={`Image ${currentImageIndex}`} />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        <button onClick = {handleNext}className="bg-blue-500 text-white px-4 py-2 rounded-md">Next</button>
+                    </form>
+                </div>
             </div>
-          )}
+
+        )}
+        {currentStep === 2 && (
+                <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
+                <h1 className="text-2xl font-bold mb-4">Let us know about your rooms</h1>
+            
+                <div className="grid grid-cols-5 gap-4 mb-4">
+                    <div>Room Type</div>
+                    <div>Amenities</div>
+                    <div>Available Rooms</div>
+                    <div>Default Price</div>
+                    <div></div>
+                </div>
+            
+                {formData.rooms.map((room, index) => (
+                    <div key={index} className="grid grid-cols-5 gap-4 mb-4">
+                        <input
+                            type="text"
+                            name="roomType"
+                            value={room.roomType}
+                            readOnly={!room.editable} 
+                            onChange={(e) => handleRoomInputChange(index, e)}
+                            className="border border-gray-300 rounded-md px-4 py-2"
+                        />
+                        <div>
+                            <button
+                                onClick={() => selectAmenities(index)}
+                                className="bg-white-500  border border-gray-500 px-4 py-2 rounded-md"
+                                disabled={!room.editable} 
+                            >
+                                Select Amenities
+                            </button>
+                        </div>
+                        <input
+                            type="number"
+                            name="availableRooms"
+                            value={room.availableRooms}
+                            readOnly={!room.editable} 
+                            onChange={(e) => handleRoomInputChange(index, e)}
+                            className="border border-gray-300 rounded-md px-4 py-2"
+                        />
+                        <input
+                            type="number"
+                            name="defaultPrice"
+                            value={room.defaultPrice}
+                            readOnly={!room.editable} 
+                            onChange={(e) => handleRoomInputChange(index, e)}
+                            className="border border-gray-300 rounded-md px-4 py-2"
+                        />
+                        <div className="flex items-center justify-center space-x-2">
+                            {room.editable ? ( 
+                                <button
+                                    onClick={() => saveRoomChanges(index)}
+                                    className="bg-green-500 text-white px-4 py-2 rounded-md"
+                                >
+                                    Save
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => setRoomEditable(index, true)}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                                >
+                                    Edit
+                                </button>
+                            )}
+                            <button onClick={() => handleDeleteRoom(index)} className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                <span className="text-xs">-</span>
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            
+                <button onClick={addRoomType} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">Add Room Type</button>
+                <button onClick={() => handlePrevious()} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4">Previous</button>
+                <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
+            
+                {amPopup && (
+                    <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+                        <div className="bg-white p-8 rounded-lg">
+                            <h2 className="text-lg font-semibold mb-4">Select Amenities</h2>
+                            <div className="grid grid-cols-2 gap-4">
+                                {rooms_am.map((amenity, index) => (
+                                    <div key={index}>
+                                        <input
+                                            type="checkbox"
+                                            name={`amenity_${index}`}
+                                            value={amenity}
+                                            className="mr-2"
+                                            onChange={handleRoomAmenitiesChange}
+                                            checked={formData.rooms[currentRoomIndex].amenities.includes(amenity)}
+                                        />
+                                        {amenity}
+                                    </div>
+                                ))}
+                            </div>
+                            <button onClick={() => closeAmenitiesPopup()} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 ml-4">Close</button>
+                        </div>
+                    </div>
+                )}
+            
+            </div>
+            
+        )}   
 
         </div>
-
-        <div className="md:w-1/2 mt-8 ">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div className="relative">
-              <img src={photos[currentImageIndex]} onClick={() => toggleImagePopup(currentImageIndex)} className="w-full h-48 md:h-96" alt="Main Image" />
-              {editMode &&
-                    <button onClick={() => deletePhoto(currentImageIndex)} className="absolute top-1 right-1 p-2 text-neutral-50 text-neutral-100" style={{ fontSize: '24px' }}>
-                      &#x2715;
-                    </button>
-              }
-              {imagePopup && (
-                <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
-                  <div className="bg-white p-8 rounded-lg overflow-y-auto max-h-full relative">
-                    <button onClick={() => toggleImagePopup(currentImageIndex)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800" >
-                      &#x2715;
-                    </button>
-                    <button onClick={showPreviousImage} className="absolute top-1/2 left-0 transform -translate-y-1/2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-l-md">
-                      &lt;
-                    </button>
-                    <button onClick={showNextImage} className="absolute top-1/2 right-0 transform -translate-y-1/2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-r-md">
-                      &gt;
-                    </button>
-                    <img src={photos[currentImageIndex]} alt="Popup Image" />
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {photos.map((photo, index) => (
-                <div key={index} className="relative">
-                  <img src={photo} onClick={() => toggleImagePopup(index)} className="w-full h-24 md:h-48" alt={`Image ${index + 1}`} />
-                  {editMode &&
-                    <button onClick={() => deletePhoto(index)} className="absolute top-1 right-1 p-2 text-neutral-50 hover:text-neutral-100">
-                      &#x2715;
-                    </button>
-                  }
-                </div>
-              ))}
-              {editMode &&
-                <div className="relative">
-                  <label htmlFor="upload-photo" className="block cursor-pointer border border-gray-300 p-4 text-center">
-                    Upload Photo
-                    <input type="file" id="upload-photo" className="hidden" onChange={handlePhotoUpload} />
-                  </label>
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
 
-export default Hotelpage;
+export default Manager_hotel;
