@@ -165,15 +165,14 @@ function Manager_reg_1() {
     };
 
     const am = [
-        "Wifi", "TV", "Kitchen", "Washing Machine", "Air Conditioning",
-        "Dedicated work space", "Free Parking on Premises", "Pool", "Piano",
+        "Wifi", "Elevator", "External Power Source", "Free Parking on Premises", "Pool", "Piano",
         "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
     ];
-
+    
     const rooms_am = [
         "TV", "Kitchen", "Washing Machine", "Air Conditioning",
        "Dedicated work space", "Essentials", "Ceiling Fan", "Fridge", "Micro Wave", 
-   ];
+    ];
 
     return (
         <div className="flex justify-center items-center">

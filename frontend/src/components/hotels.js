@@ -1,3 +1,13 @@
+const am = [
+  "Wifi", "Elevator", "External Power Source", "Free Parking on Premises", "Pool", "Piano",
+  "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
+];
+
+const rooms_am = [
+  "TV", "Kitchen", "Washing Machine", "Air Conditioning",
+ "Dedicated work space", "Essentials", "Ceiling Fan", "Fridge", "Micro Wave", 
+];
+
 const hotelsList = [
     {
       id: 1,
@@ -11,7 +21,16 @@ const hotelsList = [
       name: "Hotel 1",
       location : "Hyderabad",
       rating : "4.2",
-      price: "1500Rs"
+      price: "1000",
+      amenities : ["Elevator",  "Fire Extingusher"],
+      rooms : [
+        {
+          amenities : ["TV", "Kitchen"],
+        },
+        {
+          amenities : ["Fridge", "Micro Wave"]
+        }
+      ],
     },
     {
       id: 2,
@@ -19,7 +38,16 @@ const hotelsList = [
       name: "Hotel 2",
       location : "Mumbai",
       rating : "3.1",
-      price: "1500Rs"
+      price: "1000",
+      amenities : ["Elevator", "Wifi", "External Power Source" ],
+      rooms : [
+        {
+          amenities : ["TV", "Kitchen"],
+        },
+        {
+          amenities : ["Fridge", "Micro Wave"]
+        }
+      ],
     },
     {
       id: 3,
@@ -27,7 +55,16 @@ const hotelsList = [
       name: "Hotel 3",
       location : "Delhi",
       rating : "4.2",
-      price: "1500Rs"
+      price: "1100",
+      amenities : ["Carbon Monoxide Alarm", "First Aid Kit" ],
+      rooms : [
+        {
+          amenities : ["TV", "Kitchen"],
+        },
+        {
+          amenities : ["Fridge", "Micro Wave"]
+        }
+      ],
     },
     {
         id: 4,
@@ -35,7 +72,17 @@ const hotelsList = [
         name: "Hotel 4",
         location : "Chennai",
         rating : "4.2",
-        price: "1500Rs"
+        price: "1100",
+        amenities : ["Elevator", "Wifi" ],
+        rooms : [
+          {
+            amenities : ["TV", "Kitchen"],
+          },
+          {
+            amenities : ["Dedicated work space", "Essentials"]
+          }
+
+        ],
     },
     {
         id: 5,
@@ -43,7 +90,16 @@ const hotelsList = [
         name: "Hotel 5",
         location : "Banglore",
         rating : "4.2",
-        price: "1500Rs"
+        price: "1200",
+        amenities : ["Elevator", "Wifi" ],
+        rooms : [
+          {
+            amenities : ["TV", "Kitchen"],
+          },
+          {
+            amenities : ["Dedicated work space", "Essentials"]
+          }
+        ],
     },
     {
         id: 6,
@@ -51,7 +107,13 @@ const hotelsList = [
         name: "Hotel 6",
         location : "Kolkata",
         rating : "4.2",
-        price: "1500Rs"
+        price: "1200",
+        amenities : ["Smoke alarm", "Fire Extingusher"],
+        rooms : [
+          {
+            amenities : ["TV", "Kitchen"],
+          },
+        ],
     },
     {
       id: 7,
@@ -59,7 +121,13 @@ const hotelsList = [
       name: "Hotel 6",
       location : "Kolkata",
       rating : "4.2",
-      price: "1500Rs"
+      price: "1300",
+      amenities : ["Elevator", "Wifi" ],
+      rooms : [
+        {
+          amenities : ["TV", "Kitchen"],
+        },
+      ],
   },
   {
     id: 8,
@@ -67,7 +135,13 @@ const hotelsList = [
     name: "Hotel 5",
     location : "Banglore",
     rating : "4.2",
-    price: "1500Rs"
+    price: "1300",
+    amenities : ["Elevator", "Wifi" ],
+    rooms : [
+      {
+        amenities : ["TV", "Kitchen"],
+      },
+    ],
 },
 {
   id: 9,
@@ -75,7 +149,13 @@ const hotelsList = [
   name: "Hotel 4",
   location : "Chennai",
   rating : "4.2",
-  price: "1500Rs"
+  price: "1400",
+  amenities : ["Elevator", "Wifi" ],
+  rooms : [
+    {
+      amenities : ["TV", "Kitchen"],
+    },
+  ],
 },
 {
   id: 10,
@@ -83,7 +163,13 @@ const hotelsList = [
   name: "Hotel 3",
   location : "Delhi",
   rating : "4.2",
-  price: "1500Rs"
+  price: "1400",
+  amenities : ["Elevator", "Wifi" ],
+  rooms : [
+    {
+      amenities : ["TV", "Kitchen"],
+    },
+  ],
 },
 {
   id: 11,
@@ -97,7 +183,13 @@ const hotelsList = [
   name: "Hotel 1",
   location : "Hyderabad",
   rating : "4.2",
-  price: "1500Rs"
+  price: "1500",
+  amenities : ["Elevator", "Wifi" ],
+  rooms : [
+    {
+      amenities : ["TV", "Kitchen"],
+    },
+  ],
 },
 
 {
@@ -112,7 +204,13 @@ const hotelsList = [
   name: "Hotel 1",
   location : "Hyderabad",
   rating : "4.2",
-  price: "1500Rs"
+  price: "1500",
+  amenities : ["Elevator", "Wifi" ],
+  rooms : [
+    {
+      amenities : ["TV", "Kitchen"],
+    },
+  ],
 }
 
   ];
