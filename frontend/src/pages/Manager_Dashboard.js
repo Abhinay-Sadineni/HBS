@@ -126,17 +126,22 @@ function Manager_Dashboard() {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }})
         .then((response)=>{
-            if(response.status===500){
+            console.log(response.data)
+
+            if(response.data){
+              if(response.data.HotelDetails.message === "No hotels found for the given manager ID"){
+                navigate('/manager-reg-1')
+              }
                   
             } 
             else{
-                 navigate('/manager-reg-1')
+                //  navigate('/manager-reg-1')
             }
         })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          navigate('/manager-reg-1')
-        });
+        // .catch((error) => {
+        //   console.error("Error fetching data:", error);
+        //   navigate('/manager-reg-1')
+        // });
     },[])
 
     const filterReservations = () => {
