@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import axiosInstance from '../helpers/axios';
 
 function ReservationCard(props) {
+
+  const [reviewPopup, setReviewPopup] = useState(false)
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState('');
 
   const handleCancel = async (gid) => {
     console.log(gid)
@@ -25,30 +29,87 @@ function ReservationCard(props) {
       console.error("Error cancelling reservation:", error);
     }
   };
+
+  const handleSubmitReview = async () => {
+    try {
+      // Send rating and review to the backend
+      const response = await axiosInstance.post('/rr', {
+        gid: props.reservation[0].gid,
+        rating,
+        review
+      });
+      if (response.status === 200) {
+         props.change_review_rating(props.reservation[0].gid, rating, review)
+      } else {
+        // Handle other status codes if needed
+        console.error("Review submission failed. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
+  };
+
   
     return (
         <div className="w-3/5 bg-white rounded-lg shadow-lg p-8 mx-auto mt-8">
             <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                    <img src={`http://localhost:5000/${props.img}`} alt="Placeholder" className="w-32 h-32 object-cover rounded-lg mr-8" />
+                    <img src={`http://localhost:5000/${props.reservation[0].image}`} alt="Placeholder" className="w-32 h-32 object-cover rounded-lg mr-8" />
                     <div>
-                        <h1 className="text-2xl font-bold">{props.name}</h1>
-                        <p className="text-gray-500">{props.checkin} - {props.checkout}.</p>
-                        <p className="text-gray-500">{props.noGuest} Guest, {props.noRoom} Room </p>
+                        <h1 className="text-2xl font-bold">{props.reservation[0].name}</h1>
+                        <p className="text-gray-500">{props.reservation[0].start_date} - {props.reservation[0].end_date}</p>
+                        <p className="text-gray-500">{props.reservation[0].noRoom} Rooms </p>
                     </div>
                 </div>
                 <div>
-                    <h2 className="text-lg font-semibold">{props.gid}</h2>
+                    <h2 className="text-lg font-semibold">{props.reservation[0].gid}</h2>
                 </div>
                 <div className='flex flex-col items-center'>
-                    {props.status === 'pending' || props.status === 'confirmed' ? (
-                        <button onClick={() => handleCancel(props.gid)} className="bg-red-500 text-white px-4 py-2 rounded mt-4">Cancel Booking</button>
+                    {props.reservation[0].status === 'pending' || props.reservation[0].status === 'confirmed' ? (
+                        <button onClick={() => handleCancel(props.reservation[0].gid)} className="bg-red-500 text-white px-4 py-2 rounded mt-4">Cancel Booking</button>
                     ) : (
                         <button className="bg-gray-400 text-gray-800 px-4 py-2 rounded mt-4" disabled>Cancel Booking</button>
                     )}
-                    <p className="text-black-500">{props.status} </p>
+                    <p className="text-black-500">{props.reservation[0].status} </p>
+                </div>
+                <div>
+                    {props.reservation[0].status === 'accepted' ? (
+                         <button className="bg-blue-400 text-white px-4 py-2 rounded mt-4" onClick={() => setReviewPopup(true)}>Give Review</button>
+                    ) : (
+                        <button className="bg-gray-400 text-gray-800 px-4 py-2 rounded mt-4" disabled>Give Review</button>
+                        
+                    )}
+                   
                 </div>
             </div>
+            {reviewPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+          <div className="bg-white p-8 rounded-lg flex flex-col items-center w-2/5">
+
+              <h2 className="text-2xl font-bold mb-4 ">Give Review</h2>
+              {/* Rating input */}
+
+              <input
+                type = "number"
+                min="1"
+                max="5"
+                className="border rounded-md p-2 mb-4 w-full"
+                placeholder="Rating (1-5)"
+                onChange={(e) => setRating(e.target.value)}
+              />
+              <textarea
+                className="border rounded-md p-2 mb-4 w-full"
+                placeholder="Write your review..."
+                onChange={(e) => setReview(e.target.value)}
+              ></textarea>
+
+              <div className="flex justify-end">
+                <button className="bg-blue-400 text-white px-4 py-2 rounded mr-2" onClick={handleSubmitReview}>Submit</button>
+                <button className="bg-red-400 text-gray-800 px-4 py-2 rounded" onClick={() => setReviewPopup(false)}>Cancel</button>
+              </div>
+          </div>
+        </div>
+      )}
         </div>
     );
   }

@@ -41,6 +41,21 @@ function History() {
 
   }
 
+  const change_review_rating = (id, rat, rev) =>{
+    setReservationList(prevList => {
+      return prevList.map(group => {
+        return group.map(reservation => {
+          if (reservation.gid === id) {
+            return { ...reservation, rating: rat, review : rev };
+          }
+          return reservation;
+        });
+      });
+    });
+  }
+
+  console.log(reservationList);
+
   return (
     <div>
       <div className="fixed top-0 w-full z-10 mb-20">
@@ -51,15 +66,10 @@ function History() {
         {reservationList.map((reservation, index) => (
           <ReservationCard
             key={index}
-            name={reservation[0].name}
-            checkin={reservation[0].start_date}
-            checkout={reservation[0].end_date}
-            noGuest={reservation[0].No_of_guests}
-            noRoom={reservation[0].No_of_rooms}
-            gid={reservation[0].gid}
-            status={reservation[0].status}
+            reservation = {reservation}
             changeStatus = {changeStatus}
-            img = {reservation[0].image}
+            change_review_rating = {change_review_rating}
+
           />
         ))}
       </div>

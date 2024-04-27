@@ -8,48 +8,48 @@
 // // className="fixed top-0 w-full z-10"
 
 // var initialReservationList = [
-//   [
-//     {
-//       "rid": 58,
-//       "booked_date": "2024-04-23",
-//       "start_date": "2024-05-09",
-//       "end_date": "2024-05-12",
-//       "gid": 29,
-//       "hotel_id": 1,
-//       "room_type_id": 3,
-//       "No_of_rooms": 3,
-//       "No_of_guests": 3,
-//       "payment": 6000,
-//       "status": "pending",
-//       "createdAt": "2024-04-22T18:43:05.479Z",
-//       "updatedAt": "2024-04-22T18:43:05.479Z",
-//       "user_id": 52,
-//       "Review": null,
-//       "Rating": null,
-//       "image_id": 1,
-//       "image": "hotel2.jpg"
-//     },
-//     {
-//       "rid": 59,
-//       "booked_date": "2024-04-23",
-//       "start_date": "2024-05-09",
-//       "end_date": "2024-05-12",
-//       "gid": 29,
-//       "hotel_id": 1,
-//       "room_type_id": 2,
-//       "No_of_rooms": 3,
-//       "No_of_guests": 3,
-//       "payment": 3000,
-//       "status": "pending",
-//       "createdAt": "2024-04-22T18:43:05.479Z",
-//       "updatedAt": "2024-04-22T18:43:05.479Z",
-//       "user_id": 52,
-//       "Review": null,
-//       "Rating": null,
-//       "image_id": 1,
-//       "image": "hotel2.jpg"
-//     }
-//   ],
+  // [
+  //   {
+  //     "rid": 58,
+  //     "booked_date": "2024-04-23",
+  //     "start_date": "2024-05-09",
+  //     "end_date": "2024-05-12",
+  //     "gid": 29,
+  //     "hotel_id": 1,
+  //     "room_type_id": 3,
+  //     "No_of_rooms": 3,
+  //     "No_of_guests": 3,
+  //     "payment": 6000,
+  //     "status": "pending",
+  //     "createdAt": "2024-04-22T18:43:05.479Z",
+  //     "updatedAt": "2024-04-22T18:43:05.479Z",
+  //     "user_id": 52,
+  //     "Review": null,
+  //     "Rating": null,
+  //     "image_id": 1,
+  //     "image": "hotel2.jpg"
+  //   },
+  //   {
+  //     "rid": 59,
+  //     "booked_date": "2024-04-23",
+  //     "start_date": "2024-05-09",
+  //     "end_date": "2024-05-12",
+  //     "gid": 29,
+  //     "hotel_id": 1,
+  //     "room_type_id": 2,
+  //     "No_of_rooms": 3,
+  //     "No_of_guests": 3,
+  //     "payment": 3000,
+  //     "status": "pending",
+  //     "createdAt": "2024-04-22T18:43:05.479Z",
+  //     "updatedAt": "2024-04-22T18:43:05.479Z",
+  //     "user_id": 52,
+  //     "Review": null,
+  //     "Rating": null,
+  //     "image_id": 1,
+  //     "image": "hotel2.jpg"
+  //   }
+  // ],
 
 //   [
 //     {
