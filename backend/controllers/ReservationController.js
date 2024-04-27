@@ -147,4 +147,32 @@ router.get("/calendar", auth, async (req, res) => {
     }
 });
 
+router.post("/rr", auth, async (req, res) => {
+  try {
+    const user_id = req.user_id
+    const {gid, rating, review} = req.body
+    const UpdatedRR = await ReservationService.update_rr(gid, user_id, rating, review);  
+    if(!UpdatedRR){
+      res.status(400).json({message: "User doesn't have permission to modify this"})
+    }
+    else  res.json({message: "Rating, Review added successfully"})
+  }
+  catch (error) {
+    console.error("Error in adding rating:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// router.post("/change_price", auth, async (req, res) => {
+//   try {
+//     const manager_id = req.user_id
+//     const Data = await ReservationService.get_calendar(manager_id);  
+//     res.json({Data: Data})
+//   }
+//   catch (error) {
+//     console.error("Error in calendar:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 module.exports = router;

@@ -171,6 +171,8 @@ class ReservationService {
                 "Reservation"
                 LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
                 JOIN "Image" ON "Image"."hotel_id" = "Reservation"."hotel_id"
+                JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
+                JOIN "RoomType" ON "RoomType"."room_type_id" = "Reservation"."hotel_id"
                 WHERE
                     "user_id" = :user_id
                 `,
@@ -359,7 +361,11 @@ class ReservationService {
         try {
             const Calendar = await sequelize.query(
                 `
-                SELECT * from Calendar
+                SELECT date, price, "RoomType"."room_type_id", room_type_name, no_of_avail_rooms
+                FROM "Calendar" JOIN "RoomType"
+                ON "Calendar"."room_type_id" = "RoomType"."room_type_id"
+                JOIN "Hotel" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
+                WHERE "manager_id" = :manager_id
                 `,
                 {
                     replacements: {
@@ -375,6 +381,17 @@ class ReservationService {
             throw new Error(error.message);
         }
     }  
+    static async update_rr(gid, user_id, rating, review){
+        try {
+            const UpdatedRating = await GroupRoom.update(
+                { Rating: rating, Review: review },
+                { where: { gid: gid, user_id: user_id } }
+            );
+            return UpdatedRating.length
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }   
 }    
 
 function groupByGid(reservations) {
