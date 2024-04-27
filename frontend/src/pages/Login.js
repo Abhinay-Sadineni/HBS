@@ -31,8 +31,11 @@ function Login() {
   
           setTimeout(() => {
             
-            const dashboardRoute = userType === 'guest' ? '/' : '/manager-dashboard';
+            // const dashboardRoute = userType === 'guest' ? '/' : '/manager-dashboard';
+            if(userType === 'manager' ){
+            const dashboardRoute = '/manager-dashboard'   
             navigate(dashboardRoute);
+            }
 
             }, 1000);
   
@@ -58,7 +61,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       {loading == true && <Loading />}
       {loading == false && <div className="max-w-md w-full space-y-8">
         <div>

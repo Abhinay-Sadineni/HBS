@@ -4,6 +4,7 @@ import logo from '../assets/images/HBSLogo.jpeg';
 import SearchBar from './SearchBar';
 import axiosInstance from '../helpers/axios'
 
+
 import {
   Menu,
   MenuHandler,
@@ -14,7 +15,7 @@ import {
 import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
 import { FiAlignJustify } from "react-icons/fi";
 
-function NavBar() {
+function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -49,6 +50,14 @@ function NavBar() {
   const handleSignout = () =>{
         localStorage.clear('token');
   }
+
+  const handleLogin = () => {
+    setLoginPopup(true);
+  }
+
+  const handleSignUp = () => {
+    setSignUpPopup(true);
+  }
   
 
   if (loading) {
@@ -56,7 +65,7 @@ function NavBar() {
   }
 
   return (
-    <nav className='fixed z-1000 top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white-800 opacity-100'>
+    <nav className='fixed z-1000 top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white bg-opacity-99'>
       <div className='flex flex-row items-center justify-between'>
         <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
         <SearchBar />
@@ -68,6 +77,7 @@ function NavBar() {
               </button>
             </MenuHandler>
             <MenuList className='w-max'>
+              {console.log(isLoggedIn)}
               {isLoggedIn ? (
                 <>
                   <MenuItem>
@@ -80,21 +90,24 @@ function NavBar() {
                       <FaUser className='mr-2' /> History
                     </Link>
                   </MenuItem>
-                  <MenuItem className='flex px-4 py-4 items-center'>
-                    <FaSignOutAlt className='mr-2' onClick={handleSignout}/> Sign Out
-                  </MenuItem>
+                  <MenuItem >
+                    {/* <FaSignOutAlt className='mr-2' onClick={handleSignout}/> Sign Out */}
+                    <button className='mr-2 flex px-4 py-4 items-center' onClick={handleSignout} > Sign Out</button>
+                  </MenuItem>                  
                 </>
               ) : (
                 <>
                   <MenuItem>
-                    <Link to="/login" className="flex items-center px-4 py-4" >
-                      <FaUser className='mr-2' /> Login
-                    </Link>
+                    {/* <Link to="/login" className="flex items-center px-4 py-4" > */}
+                      {/* <FaUser className='mr-2' />  */}
+                      <button className='mr-2 flex px-4 py-4 items-center' onClick={() => handleLogin()} > Login</button>
+                    {/* </Link> */}
                   </MenuItem>
                   <MenuItem>
-                    <Link to="/signup" className="flex items-center px-4 py-4" >
-                      <FaUser className='mr-2' /> Signup
-                    </Link>
+                    {/* <Link to="/signup" className="flex items-center px-4 py-4" > */}
+                      {/* <FaUser className='mr-2' /> Signup */}
+                    {/* </Link> */}
+                    <button className='mr-2 flex px-4 py-4 items-center' onClick={() => handleSignUp()} > Sign Up</button>
                   </MenuItem>
                 </>
               )}
