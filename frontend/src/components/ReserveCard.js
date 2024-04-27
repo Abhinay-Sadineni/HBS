@@ -87,7 +87,7 @@ function ReserveCard(props) {
 
     const handleIncrement = (roomType) => {
         const updatedRoomTypes = roomTypes.map(room => {
-            if (room.room_type_name === roomType.room_type_name && room.count + 1 < room.min_vacant_rooms) {
+            if (room.room_type_name === roomType.room_type_name && room.count + 1 <= room.min_vacant_rooms) {
                 return {
                     ...room,
                     count: room.count + 1
@@ -124,10 +124,12 @@ function ReserveCard(props) {
     const renderRoomTypes = () => {
         return roomTypes.map((room, index) => (
             <div key={index} className="room-type flex justify-between items-center">{room.room_type_name}
+                {console.log(room)}
                 <div className="flex justify-center">
                     <button onClick={() => handleDecrement(room)} className={`minus-button m-2 rounded-full border border-gray-300 ${room.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={room.count === 0}><RemoveIcon /></button>
                     <div className="room-count m-2">{room.count}</div>
-                    <button onClick={() => handleIncrement(room)} className="plus-button m-2 rounded-full border border-gray-300"> <AddIcon /></button>
+                    <button onClick={() => handleIncrement(room)} className={`plus-button m-2 rounded-full border border-gray-300 ${
+                        room.count === parseInt(room.min_vacant_rooms) ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={room.count === parseInt(room.min_vacant_rooms) }> <AddIcon /></button>
                 </div>
             </div>
         ));

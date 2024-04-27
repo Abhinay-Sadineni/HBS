@@ -41,7 +41,7 @@ const SearchBar = () => {
     };
 
     return (
-        <div className='flex justify-center'>
+        <div className='flex justify-center z-1'>
             <div className="max-w-10em mx-auto bg-white rounded-md  flex flex-col md:flex-row ">
                 <div>
                     <input type="text" id="location" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full  px-2 py-2 mb-4 md:mb-0 border-y border-l border-gray-300" />
