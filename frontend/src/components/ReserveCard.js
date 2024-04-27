@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useParams } from 'react-router-dom';
@@ -17,6 +17,7 @@ function ReserveCard(props) {
     const [showModal, setShowModal] = useState(false);
     const roomSelectionRef = useRef(null);
     const { hotelId, no_of_guests, start_date, end_date } = useParams();
+    const Navigate = useNavigate()
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -172,10 +173,19 @@ function ReserveCard(props) {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         }).then((response)=>{
-            window.confirm(response.data.message.message)
-        })
-        }
-        setReservationDetails(null)
+            const confirmationMessage = response.data.message.message;
+            const confirmed = window.confirm(`${confirmationMessage} Redirecting to bill`);
+            if (confirmed) {
+                Navigate(`/bill/${reservationDetails.gid.gid}`)
+            } else {
+                console.log("Bye"); // Log Bye if not confirmed
+            }
+        }).catch(error => {
+            console.error("Error confirming reservation:", error);
+        });
+    }
+    setReservationDetails(null);
+
     }
 
     return (

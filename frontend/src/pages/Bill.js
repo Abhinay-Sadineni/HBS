@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import SearchBar from '../components/SearchBar';
 import hotelsList from '../components/hotels';
+import { useParams } from 'react-router-dom';
+
 
 function BillPage() {
+
+  const [reservationList, setReservationList] = useState([]);
+  const {gid} =useParams()
+
+  useEffect(() => {
+    axiosInstance.get(`/bill/${gid}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        console.log(response.data);
+        setReservationList(response.data.List);
+      } else {
+        // Handle other status codes if needed
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching reservation history:", error);
+    });
+  }, [gid]);
+
+
+
   return (
     <div className="HI flex flex-col items-center">
       <div className="fixed top-0 w-full z-10 mb-10 border-b border-gray-300">
