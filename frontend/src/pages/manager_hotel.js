@@ -418,7 +418,7 @@ const addNewFAQ = () => {
                     </div>
                 ))}
             
-                <button onClick={addRoomType} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">Add Room Type</button>
+                <button onClick={addRoomType} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4">Add Room Type</button>
                 <button onClick={() => handlePrevious()} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4">Previous</button>
                 <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
             
