@@ -164,9 +164,9 @@ router.post("/add_room_types", auth, async (req, res) => {
 router.put("/update_images", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { images } = req.body;
-      const Hotel = await HotelService.update_images(manager_id, images);  
-      res.json({ message: "Images updated successfully", Hotel: Hotel });
+      const { image } = req.body;
+      const message = await HotelService.update_images(manager_id, image);  
+      res.json({ message: message });
     } catch (error) {
       console.error("Error in updating images:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -176,9 +176,9 @@ router.put("/update_images", auth, async (req, res) => {
 router.put("/update_faqs", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { faqs } = req.body;
-      const Hotel = await HotelService.update_faqs(manager_id, faqs);  
-      res.json({ message: "FAQs updated successfully", Hotel: Hotel });
+      const { faq } = req.body;
+      const message = await HotelService.update_faqs(manager_id, faq);   
+      res.json({ message: message });
     } catch (error) {
       console.error("Error in updating FAQs:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -188,9 +188,9 @@ router.put("/update_faqs", auth, async (req, res) => {
 router.put("/update_room_types", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { room_type_ids } = req.body;
-      const Hotel = await HotelService.update_roomTypes(manager_id, room_type_ids);  
-      res.json({ message: "RoomTypes updated successfully", Hotel: Hotel });
+      const { room_type } = req.body;
+      const message = await HotelService.update_roomTypes(manager_id, room_type);  
+      res.json({ message: message });
     } catch (error) {
       console.error("Error in updating RoomTypes:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -200,9 +200,9 @@ router.put("/update_room_types", auth, async (req, res) => {
 router.delete("/delete_images", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { image_ids } = req.body;
-      const Hotel = await HotelService.delete_images(manager_id, image_ids);  
-      res.json({ message: "Images deleted successfully", Hotel: Hotel });
+      const { image_id } = req.body;
+      const message = await HotelService.delete_images(manager_id, image_id);   
+      res.json({ message: message });
     } catch (error) {
       console.error("Error in deleting images:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -212,9 +212,9 @@ router.delete("/delete_images", auth, async (req, res) => {
 router.delete("/delete_faqs", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { faq_ids } = req.body;
-      const Hotel = await HotelService.delete_faqs(manager_id, faq_ids);  
-      res.json({ message: "FAQs deleted successfully", Hotel: Hotel });
+      const { faq_id } = req.body;
+      const message = await HotelService.delete_faqs(manager_id, faq_id);  
+      res.json({ message: message });
     } catch (error) {
       console.error("Error in deleting FAQs:", error);
       res.status(500).json({ error: "Internal server error" });
@@ -224,9 +224,9 @@ router.delete("/delete_faqs", auth, async (req, res) => {
 router.delete("/delete_room_types", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { room_type_ids } = req.body;
-      const Hotel = await HotelService.delete_roomTypes(manager_id, room_type_ids);  
-      res.json({ message: "RoomTypes deleted successfully", Hotel: Hotel });
+      const { room_type_id } = req.body;
+      const message= await HotelService.delete_roomTypes(manager_id, room_type_id);  
+      res.json({ message: message});
     } catch (error) {
       console.error("Error in deleting RoomTypes:", error);
       res.status(500).json({ error: "Internal server error" });
