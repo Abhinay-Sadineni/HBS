@@ -20,7 +20,8 @@ function Manager_hotel() {
     rooms: [
         { roomType: 'Single Room', amenities: ['TV', 'Air Conditioning'], availableRooms: 10, defaultPrice: 100 },
         { roomType: 'Double Room', amenities: ['TV', 'Kitchen'], availableRooms: 5, defaultPrice: 150 },
-    ]
+    ],
+    faqs: []
     });
     const [imagePopup, setImagePopup] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -28,6 +29,10 @@ function Manager_hotel() {
     const [currentStep, setCurrentStep] = useState(1);
     const [amPopup, setAmPopup] = useState(false);
     const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
+    const [newFAQ, setNewFAQ] = useState({
+        question: '',
+        answer: '',
+    });
 
     const toggleImagePopup = (index) => {
         setImagePopup(!imagePopup);
@@ -196,6 +201,56 @@ const setRoomEditable = (index, editable) => {
     });
 };
 
+
+
+const saveFAQChanges = (index) => {
+    const updatedFAQs = [...formData.faqs];
+    updatedFAQs[index].editable = false; // Set editable to false
+    setFormData({
+        ...formData,
+        faqs: updatedFAQs,
+    });
+};
+
+const setFAQEditable = (index, editable) => {
+    const updatedFAQs = [...formData.faqs];
+    updatedFAQs[index].editable = editable; // Set editable state
+    setFormData({
+        ...formData,
+        faqs: updatedFAQs,
+    });
+};
+
+const handleDeleteFAQ = (index) => {
+    const updatedFAQs = [...formData.faqs];
+    updatedFAQs.splice(index, 1); // Remove FAQ at the specified index
+    setFormData({
+        ...formData,
+        faqs: updatedFAQs,
+    });
+};
+
+const handleFAQInputChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedFAQs = [...formData.faqs];
+    updatedFAQs[index][name] = value; // Update answer of the FAQ at the specified index
+    setFormData({
+        ...formData,
+        faqs: updatedFAQs,
+    });
+};
+
+const addNewFAQ = () => {
+    if (newFAQ.question && newFAQ.answer) {
+        setFormData({
+            ...formData,
+            faqs: [...formData.faqs, { question: newFAQ.question, answer: newFAQ.answer, editable: false }],
+        });
+        setNewFAQ({ question: '', answer: '' }); // Reset newFAQ state
+    }
+};
+
+
     return (
         <div className="flex justify-center items-center">
             {currentStep === 1 && (
@@ -293,6 +348,7 @@ const setRoomEditable = (index, editable) => {
 
         )}
         {currentStep === 2 && (
+                <div>
                 <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
                 <h1 className="text-2xl font-bold mb-4">Let us know about your rooms</h1>
             
@@ -390,6 +446,54 @@ const setRoomEditable = (index, editable) => {
                     </div>
                 )}
             
+            </div>
+            <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold mb-4">FAQs</h1>
+
+            {formData.faqs.map((faq, index) => (
+                <div key={index} className="mb-4">
+                    <div className="pl-6">
+                        <span className="font-bold">{index + 1}:</span>
+                        {faq.editable ? (
+                            <textarea name="question" value={faq.question} onChange={(e) => handleFAQInputChange(index, e)} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        ) : (
+                            <div className="border border-gray-300 rounded-md p-2">
+                                <p>{faq.question}</p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="pl-6">
+                        <span className="font-bold">Ans: </span>
+                        {faq.editable ? (
+                            <textarea name="answer" value={faq.answer} onChange={(e) => handleFAQInputChange(index, e)} className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                        ) : (
+                            <div className="border border-gray-300 rounded-md p-2">
+                                <p>{faq.answer}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex items-center">
+                        {faq.editable ? (
+                            <button onClick={() => saveFAQChanges(index)} className="bg-green-500 text-white px-3 py-1 rounded-md mr-2">Save</button>
+                        ) : (
+                            <button onClick={() => setFAQEditable(index, true)} className="bg-blue-500 text-white px-3 py-1 rounded-md mr-2">Edit</button>
+                        )}
+                        <button onClick={() => handleDeleteFAQ(index)} className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                            <span className="text-xs">-</span>
+                        </button>
+                    </div>
+                </div>
+            ))}
+
+            <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">Add New FAQ</h3>
+                <input type="text" name="question" value={newFAQ.question} onChange={(e) => setNewFAQ({ ...newFAQ, question: e.target.value })} placeholder="Question" className="w-full border border-gray-300 rounded-md px-4 py-2 mb-2" />
+                <textarea name="answer" value={newFAQ.answer} onChange={(e) => setNewFAQ({ ...newFAQ, answer: e.target.value })} placeholder="Answer" className="w-full border border-gray-300 rounded-md px-4 py-2" />
+                <button onClick={addNewFAQ} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Add FAQ</button>
+            </div>
+        </div>
+
             </div>
             
         )}   
