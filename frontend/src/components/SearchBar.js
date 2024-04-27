@@ -12,20 +12,7 @@ const SearchBar = () => {
     const navigate = useNavigate();
     const {pathname} = useLocation()
 
-    useEffect(() => {
-        if (pathname === '/guest-dashboard') {
-            localStorage.removeItem('searchQuery');
-        } else {
-            const searchQuery = JSON.parse(localStorage.getItem('searchQuery'));
-            if (searchQuery) {
-                if(searchQuery.location) setLocation(searchQuery.location);
-                if(searchQuery.startDate) setStartDate(new Date(searchQuery.startDate));
-                if(searchQuery.endDate) setEndDate(new Date(searchQuery.endDate));
-                if(searchQuery.numRooms) setNumRooms(searchQuery.numRooms);
-                if(searchQuery.numGuests) setNumGuests(searchQuery.numGuests);
-            }
-        }
-    }, []);
+
 
     const handleSearch = () => {
         const searchQuery = {
