@@ -11,6 +11,9 @@ function Home() {
   const [filteredHotels, setFilteredHotels] = useState([...hotelsList]);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [selectedRoomAmenities, setSelectedRoomAmenities] = useState([]);
+  const [sortBy, setSortBy] = useState(''); 
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+
 
 
   const am = [
@@ -58,20 +61,39 @@ function Home() {
     setSelectedRoomAmenities(updatedRoomAmenities);
   };
 
+  const sortHotels = (hotels, sortBy) => {
+    switch (sortBy) {
+      case 'priceLowToHigh':
+        return hotels.sort((a, b) => parseInt(a.price) - parseInt(b.price));
+      case 'priceHighToLow':
+        return hotels.sort((a, b) => parseInt(b.price) - parseInt(a.price));
+      case 'ratingsHighToLow':
+        return hotels.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+      case 'ratingsLowToHigh':
+        return hotels.sort((a, b) => parseFloat(a.rating) - parseFloat(b.rating));
+      default:
+        return hotels;
+    }
+  };
 
 
   return (
     <div className="h-screen relative">
-      <NavBar 
-
-      /> 
-      <div className="fixed mt-1 mb-4 border border-gray-300 bg-white shadow-lg">
+      <NavBar /> 
+      <div  className="fixed top-18 right-0 top mt-1 ">
         <button onClick={() => setAmPopup(true)} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Show Filters</button>
       </div>
-    
-
-      <div className="border mt-[78px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-scroll no-scrollbar max-h-[720px]">
-        {filteredHotels.map(hotel => (
+      <button onClick={() => setShowSortDropdown(!showSortDropdown)} className='fixed top-18 left-0 mt-1 w-40 bg-white border border-gray-300 rounded-lg shadow-lg'>Sort By</button>
+      {showSortDropdown && (
+            <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg">
+              <button onClick={() => { setSortBy('priceLowToHigh'); setShowSortDropdown(false); }} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left">Price (Low to High)</button>
+              <button onClick={() => { setSortBy('priceHighToLow'); setShowSortDropdown(false); }} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left">Price (High to Low)</button>
+              <button onClick={() => { setSortBy('ratingsHighToLow'); setShowSortDropdown(false); }} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left">Ratings (High to Low)</button>
+              <button onClick={() => { setSortBy('ratingsLowToHigh'); setShowSortDropdown(false); }} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left">Ratings (Low to High)</button>
+            </div>
+          )}
+      <div className=" border mt-[78px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-scroll no-scrollbar max-h-[720px]">
+        {sortHotels(filteredHotels, sortBy).map(hotel => (
           <div key={hotel.id} className='m-4'>
             <Card 
               imgURL={hotel.imgURL[0]}
