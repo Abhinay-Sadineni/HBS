@@ -110,7 +110,7 @@ router.post("/cancel", auth, async (req, res) => {
     }
 });
 
-router.get("/confirm_reject", auth, async (req, res) => {
+router.post("/confirm_reject", auth, async (req, res) => {
     try {
       const user_id = req.user_id
       const { gid, status } = req.body

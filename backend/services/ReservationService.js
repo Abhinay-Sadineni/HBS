@@ -223,18 +223,18 @@ class ReservationService {
             throw new Error("Error in cancelling reservation: " + error.message);
         }
     }
-    static async confirm_reject_reservation(gid, status, user_id) {
+    static async confirm_reject_reservation(gid, status, manager_id) {
         try {
             let message;
             const groupRoom = await GroupRoom.findOne({
-                where: { gid: parseInt(gid) }
+                where: { gid }
             });
             const get_hotel = groupRoom.hotel_id;
-
             const check_manager = await Hotel.findOne({
-                where: { hotel_id: get_hotel, manager_id: parseInt(user_id) }
+                where: { hotel_id: get_hotel, manager_id }
             });
-
+            console.log(get_hotel)
+            console.log(check_manager)
             if (!check_manager) {
                 throw new Error("User is not authorized to manage this hotel");
             }
@@ -246,9 +246,9 @@ class ReservationService {
                 );
                 message = "Reservation rejected successfully";
             }
-            else if (status === 'confirmed') {
+            else if (status === 'accepted') {
                 await Reservation.update(
-                    { status: 'confirmed' },
+                    { status: 'accepted' },
                     { where: { gid: gid } }
                 );
                 message = "Reservation confirmed successfully";
