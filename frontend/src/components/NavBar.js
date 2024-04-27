@@ -10,6 +10,7 @@ import {
   MenuHandler,
   MenuList,
   MenuItem,
+  Spinner
 } from "@material-tailwind/react";
 
 import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
@@ -24,7 +25,7 @@ function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          setIsLoggedIn(false); // No token found, user is not logged in
+          setIsLoggedIn(false); 
           setLoading(false);
           return;
         }
@@ -47,9 +48,20 @@ function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
   }, []);
 
 
-  const handleSignout = () =>{
-        localStorage.clear('token');
+  const handleSignout =  () => {
+    try {
+      setLoading(true);
+      localStorage.removeItem('token');
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000); 
+    }
   }
+  
 
   const handleLogin = () => {
     setLoginPopup(true);
@@ -58,11 +70,7 @@ function NavBar({loginPopup, setLoginPopup, signUpPopup, setSignUpPopup}) {
   const handleSignUp = () => {
     setSignUpPopup(true);
   }
-  
 
-  if (loading) {
-    return <div>Loading...</div>; // Render a loading indicator while waiting for the response
-  }
 
   return (
     <nav className='fixed z-1000 top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white bg-opacity-99'>
