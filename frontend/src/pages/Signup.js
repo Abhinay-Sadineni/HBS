@@ -124,7 +124,7 @@ function Signup({signUpPopup, setSignUpPopup}) {
                   onChange={(e) => setUserType(e.target.value)}
                 >
                   <option value="guest">Guest</option>
-                  <option value="user">User</option>
+                  <option value="HM">Manager</option>
                 </select>
                 {error && <p className="text-red-500">{error}</p>}
                 <button
