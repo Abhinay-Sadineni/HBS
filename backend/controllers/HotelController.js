@@ -185,18 +185,6 @@ router.put("/update_faqs", auth, async (req, res) => {
     }
 });
 
-router.put("/update_room_types", auth, async (req, res) => {
-    try {
-      const manager_id = req.user_id;
-      const { room_type } = req.body;
-      const message = await HotelService.update_roomTypes(manager_id, room_type);  
-      res.json({ message: message });
-    } catch (error) {
-      console.error("Error in updating RoomTypes:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-});
-
 router.delete("/delete_images", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
