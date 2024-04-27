@@ -92,6 +92,22 @@ router.get("/guest_history", auth, async (req, res) => {
     }
 });
 
+router.get("/bill/:gid", auth, async (req, res) => {
+  try {
+    const user_id = req.user_id
+    const {gid} = req.params
+    const List = await ReservationService.get_bill(user_id,gid);  
+    res.json({List: List});
+  }
+  catch (error) {
+    console.error("Error in fetching user reservations:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
 router.post("/cancel", auth, async (req, res) => {
     try {
       let message

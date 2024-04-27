@@ -38,7 +38,6 @@ function History() {
         });
       });
     });
-
   }
 
   const change_review_rating = (id, rat, rev) =>{
