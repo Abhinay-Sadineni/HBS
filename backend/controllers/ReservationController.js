@@ -92,7 +92,7 @@ router.get("/guest_history", auth, async (req, res) => {
     }
 });
 
-router.get("/cancel", auth, async (req, res) => {
+router.post("/cancel", auth, async (req, res) => {
     try {
       let message
       const user_id = req.user_id

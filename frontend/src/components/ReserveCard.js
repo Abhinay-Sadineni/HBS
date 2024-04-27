@@ -142,10 +142,15 @@ function ReserveCard(props) {
     const handleCancel = (e) =>{
         e.preventDefault()
         setShowModal(false);
+        let token = localStorage.getItem('token');
         if(reservationDetails.gid){
            axiosInstance.post('/confirm',{
                gid : reservationDetails.gid.gid,
                status: "cancelled"
+           },{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
            }).then((response)=>{
                window.confirm(response.data.message.message)
            })
@@ -160,7 +165,11 @@ function ReserveCard(props) {
            axiosInstance.post('/confirm',{
                gid : reservationDetails.gid.gid,
                status: "confirmed"
-           }).then((response)=>{
+           },{
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        }).then((response)=>{
             window.confirm(response.data.message.message)
         })
         }
