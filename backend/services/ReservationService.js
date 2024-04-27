@@ -161,6 +161,84 @@ class ReservationService {
         }
     }
 
+    static async get_bill(user_id , gid){
+            try {
+                const Reservations = await sequelize.query(
+                    `          
+                                        SELECT
+                            "Reservation"."rid",
+                            "Reservation"."booked_date",
+                            "Reservation"."start_date",
+                            "Reservation"."end_date",
+                            "Reservation"."gid",
+                            "Reservation"."hotel_id",
+                            "Reservation"."room_type_id",
+                            "Reservation"."No_of_rooms",
+                            "Reservation"."payment",
+                            "Reservation"."status",
+                            "GroupRoom"."Review",
+                            "GroupRoom"."Rating",
+                            "HotelImage"."Hotel_name",
+                            "HotelImage"."Address",
+                            "HotelImage"."latitude",
+                            "HotelImage"."longitude",
+                            "HotelImage"."cancellation_policy",
+                            "HotelImage"."check_in",
+                            "HotelImage"."check_out",
+                            "HotelImage"."image",
+                            "RoomType"."room_type_name"
+                            FROM
+                            "Reservation"
+                            JOIN
+                            "RoomType" ON "RoomType"."room_type_id" = "Reservation"."room_type_id"
+                            LEFT JOIN
+                            "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                            JOIN
+                            (
+                                SELECT
+                                    "Hotel".*,
+                                    "Image"."image",
+                                    ROW_NUMBER() OVER (PARTITION BY "Hotel"."hotel_id" ORDER BY "Image"."image_id") AS rn
+                                FROM
+                                    "Hotel"
+                                LEFT JOIN
+                                    "Image" ON "Image"."hotel_id" = "Hotel"."hotel_id"
+                            ) AS "HotelImage" ON "HotelImage"."hotel_id" = "Reservation"."hotel_id" AND "HotelImage".rn = 1
+                            WHERE
+                            "user_id"= :user_id
+                            "Reservation"."gid"= :gid
+                    `,
+                    {
+                        replacements: {
+                            user_id: user_id,
+                            gid: gid
+                        },
+                        type: Sequelize.QueryTypes.SELECT
+                    }
+                );
+    
+    
+                const groupedReservations = [];
+                let currentGid = null;
+                let currentGroup = null;
+    
+                for (const reservation of Reservations) {
+                    if (reservation.gid !== currentGid) {
+                        currentGid = reservation.gid;
+                        currentGroup = [];
+                        groupedReservations.push(currentGroup);
+                    }
+                    currentGroup.push(reservation);
+                }
+    
+                return groupedReservations;
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        
+    }
+
     static async get_user_reservations(user_id) {
         try {
             const Reservations = await sequelize.query(
