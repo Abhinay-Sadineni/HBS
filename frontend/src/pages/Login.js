@@ -35,7 +35,7 @@ function Login({ loginPopup, setLoginPopup, isLoggedIn, setIsLoggedIn }) {
             }, 1000);
           }
 
-          if (userType === 'manager') {
+          if(userType === 'HM' ){  
             await setLoading(true);
 
             setTimeout(() => {
