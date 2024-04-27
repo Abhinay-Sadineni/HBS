@@ -214,7 +214,7 @@ class ReservationService {
                             "Image" ON "Image"."hotel_id" = "Hotel"."hotel_id"
                     ) AS "HotelImage" ON "HotelImage"."hotel_id" = "Reservation"."hotel_id" AND "HotelImage".rn = 1
                 WHERE
-                    "Reservation"."gid" = :gid,
+                    "Reservation"."gid" = :gid
                     `,
                     {
                         replacements: {
