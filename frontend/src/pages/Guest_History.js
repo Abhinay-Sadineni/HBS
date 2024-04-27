@@ -25,25 +25,21 @@ function History() {
     });
   }, []);
 
-  const handleCancel = async (gid) => {
-    try {
-      const response = await axiosInstance.get('/cancel', {
-        params: { gid: gid },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+
+
+  const changeStatus = (id) =>{
+    setReservationList(prevList => {
+      return prevList.map(group => {
+        return group.map(reservation => {
+          if (reservation.gid === id) {
+            return { ...reservation, status: "cancelled" };
+          }
+          return reservation;
+        });
       });
-      if (response.status === 200) {
-        // If cancellation is successful, update the reservation list
-        setReservationList(prevList => prevList.filter(reservation => reservation[0].gid !== gid));
-      } else {
-        // Handle other status codes if needed
-        console.error("Cancellation failed. Status:", response.status);
-      }
-    } catch (error) {
-      console.error("Error cancelling reservation:", error);
-    }
-  };
+    });
+
+  }
 
   return (
     <div>
@@ -60,9 +56,10 @@ function History() {
             checkout={reservation[0].end_date}
             noGuest={reservation[0].No_of_guests}
             noRoom={reservation[0].No_of_rooms}
-            rid={reservation[0].gid}
+            gid={reservation[0].gid}
             status={reservation[0].status}
-            onCancel={() => handleCancel(reservation[0].gid)}
+            changeStatus = {changeStatus}
+            img = {reservation[0].image}
           />
         ))}
       </div>
