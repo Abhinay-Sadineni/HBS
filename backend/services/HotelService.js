@@ -302,7 +302,11 @@ class HotelService {
             );
 
             return {
-                Hotel: Hotel[0]
+                Hotel: Hotel[0],
+                Images: Images,
+                FAQs: FAQs,
+                Ratings: Ratings,
+                Reviews: Reviews
             };
         } catch (error) {
             throw new Error(error.message);
