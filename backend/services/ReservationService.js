@@ -354,9 +354,9 @@ class ReservationService {
             console.log(get_hotel)
             console.log(check_manager)
             if (!check_manager) {
-                throw new Error("User is not authorized to manage this hotel");
+                return "User is not authorized to manage this hotel";
             }
-
+            console.log("status is ", status)
             if (status === 'rejected') {
                 await Reservation.update(
                     { status: 'rejected' },
@@ -434,7 +434,7 @@ class ReservationService {
                 TodayReservations: groupedTodayReservations
             };
         } catch (error) {
-            throw new Error(error.message);
+             Error(error.message);
         }
     }
     static async check_cancellation_policy(gid) {
@@ -518,18 +518,18 @@ class ReservationService {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
             if (!MyHotel) {
-                throw new Error("Hotel not found for the provided manager_id");
+                return "Hotel not found for the provided manager_id";
             }
             const hotelId = MyHotel.hotel_id;
     
             for (let date_price of DateList) {
                 const MyRoom = await RoomType.findOne({ where: { room_type_id: date_price.room_type_id } });
                 if (!MyRoom) {
-                    throw new Error("Room type not found for the provided room_type_id");
+                    return "Room type not found for the provided room_type_id";
                 }
     
                 if (MyRoom.hotel_id !== hotelId) {
-                    throw new Error("User doesn't have permission to modify this room type");
+                    return "User doesn't have permission to modify this room type";
                 }
     
                 await Calendar.update(
@@ -550,7 +550,7 @@ class ReservationService {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
             if (!MyHotel) {
-                throw new Error("Hotel not found for the provided manager_id");
+                return "Hotel not found for the provided manager_id";
             }
             const hotelId = MyHotel.hotel_id;
             const endDate = new Date();
@@ -607,11 +607,11 @@ class ReservationService {
             for (let date_price of DateList) {
                 const MyRoom = await RoomType.findOne({ where: { room_type_id: date_price.room_type_id } });
                 if (!MyRoom) {
-                    throw new Error("Room type not found for the provided room_type_id");
+                    return "Room type not found for the provided room_type_id";
                 }
     
                 if (MyRoom.hotel_id !== hotelId) {
-                    throw new Error("User doesn't have permission to modify this room type");
+                    return "User doesn't have permission to modify this room type";
                 }
                 
                 const bookedRoom = bookedRooms.find(room => room.room_type_id === date_price.room_type_id && room.date === date_price.date);
@@ -687,6 +687,7 @@ class ReservationService {
     
     static async get_reservations(manager_id){
         try{
+        const today = new Date().toISOString().split('T')[0];
         const TodayReservations = await sequelize.query(
             `SELECT
             "username", "phone_number", "email", "start_date", "end_date"

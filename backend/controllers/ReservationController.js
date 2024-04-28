@@ -141,6 +141,7 @@ router.post("/confirm_reject", auth, async (req, res) => {
     try {
       const user_id = req.user_id
       const { gid, status } = req.body
+      console.log("gid : ", gid, "status : ", status)
       const message = await ReservationService.confirm_reject_reservation(gid, status, user_id);  
       res.json({message: message})
     }
@@ -241,7 +242,8 @@ router.get('/trigger-update', async (req, res) => {
 router.get('/today_reservations', auth, async (req, res) => {
   try {
       const manager_id = req.user_id
-      await ReservationService.get_reservations(manager_id);
+      const reservations = await ReservationService.get_reservations(manager_id);
+      res.status(200).json({reservations})
   } catch (error) {
       console.error('Error in getting today reservations:', error);
       res.status(500).send('Internal server error');
