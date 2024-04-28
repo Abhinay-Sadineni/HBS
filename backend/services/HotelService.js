@@ -1,6 +1,8 @@
 const { Hotel, RoomType, Calendar, Reservation, Image, FAQ } = require("../models");
 const Sequelize = require('sequelize');
 const sequelize = require('../config.js');
+const fs = require('fs');
+const path = require('path');
 
 class HotelService {
   static async get_booked_rooms(location, no_of_guests, startDate, endDate) {
@@ -610,6 +612,19 @@ class HotelService {
     }
 
 
+    static async get_image(manager_id){
+        try {
+            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+            const hotelId = MyHotel.hotel_id;
+            
+            const images = await Image.findAll({ where: { hotel_id: hotelId } });
+            return images
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    } 
+
     static async add_images(manager_id, images) {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
@@ -689,24 +704,35 @@ class HotelService {
             throw new Error(error.message);
         }
     }
-    static async delete_images(manager_id, image_id) {
-        try {
-            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
-            const hotelId = MyHotel.hotel_id;
-    
-  
-            await Image.destroy({ where: { image_id: image_id, hotel_id: hotelId } });
 
-    
-            let message = "Image deleted succesfully"
-            return {
-                message
-            };
+
+static async delete_images(manager_id, image_id) {
+    try {
+        const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
+        if (!MyHotel) {
+            throw new Error("Hotel not found for the provided manager_id");
         }
-        catch (error) {
-            throw new Error(error.message);
-        }
+        const hotelId = MyHotel.hotel_id;
+
+        // Find the images to delete
+        const imagesToDelete = await Image.findAll({ where: { image_id: image_id, hotel_id: hotelId } });
+
+        // Delete images from database
+        await Image.destroy({ where: { image_id: image_id, hotel_id: hotelId } });
+
+        // Delete image files from uploads directory
+        imagesToDelete.forEach(image => {
+            const imagePath = path.join(__dirname, '../uploads', image.image); // Adjust the path as necessary
+            fs.unlinkSync(imagePath);
+        });
+
+        return {
+            message: "Images deleted successfully"
+        };
+    } catch (error) {
+        throw new Error(error.message);
     }
+}
     static async delete_faqs(manager_id, faq_id) {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });

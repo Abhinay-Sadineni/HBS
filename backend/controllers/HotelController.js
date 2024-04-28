@@ -5,13 +5,32 @@ const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
-  destination: '../uploads/', // Folder where images will be stored
+  destination: './uploads', // Folder where images will be stored
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    const fileName = file.fieldname + '-' + Date.now() + file.originalname;
+    cb(null, fileName);
   }
 });
 
-const upload = multer({ storage });
+
+const multi_upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == 'image/png' ||
+      file.mimetype == 'image/jpeg' ||
+      file.mimetype == 'image/jpg'
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      const err = new Error('Only .jpg .jpeg .png images are supported!');
+      err.name = 'ExtensionError';
+      return cb(err);
+    }
+  },
+}).array('images', 10);
+
 const router = express.Router();
 
 
@@ -136,25 +155,39 @@ router.post("/update_hotel", auth, async (req, res) => {
     }
 });
 
-router.post("/add_images", auth, upload.array('images', 5), async (req, res) => {
-    try {
-      const manager_id = req.user_id
-      const {images} = req.files
-      console.log(images)
-      const Hotel = await HotelService.add_images(manager_id, images);  
-      res.json({message: "Images added successfully", Hotel: Hotel})
-    }
-    catch (error){
-      console.error("Error in adding images:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
+
+router.get("/get_images", auth , async(req, res)=>{
+  try{
+    const manager_id = req.user_id;
+    const images = await HotelService.get_image(manager_id);
+    res.json({images : images});
+  } catch(error){
+    console.error("Error in getting images:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
+
+router.post("/add_images", auth, multi_upload, async (req, res) => {
+  try {
+    const manager_id = req.user_id;
+    const imagePaths = req.files.map(file => file.filename);
+    console.log(imagePaths); // Check if image paths are correctly extracted
+    
+    const Hotel = await HotelService.add_images(manager_id, imagePaths);  
+    res.json({message: "Images added successfully", Hotel: Hotel});
+  } catch (error) {
+    console.error("Error in adding images:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 
-router.delete("/delete_images", auth, async (req, res) => {
+
+
+router.delete("/delete_images/:image_id", auth, async (req, res) => {
   try {
     const manager_id = req.user_id;
-    const { image_id } = req.body;
+    const { image_id } = req.params;
     const message = await HotelService.delete_images(manager_id, image_id);   
     res.json({ message: message });
   } catch (error) {
