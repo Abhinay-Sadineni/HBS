@@ -556,7 +556,7 @@ class HotelService {
                 Address: Address,
                 latitude: latitude,
                 longitude: longitude,
-                list_of_amenities: list_of_amenities,
+                list_of_amenities: list_of_amenities.join(","),
                 cancellation_policy: cancellation_policy,
                 check_in: check_in,
                 check_out: check_out
@@ -577,6 +577,8 @@ class HotelService {
             throw new Error(error.message);
         }
     }
+
+
     static async add_images(manager_id, images) {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
