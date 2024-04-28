@@ -595,9 +595,7 @@ class HotelService {
                 }
             }
             await Calendar.bulkCreate(calendars);
-            return {
-                MyHotel
-            };
+            return "Added successfully";
         }
         catch (error) {
             throw new Error(error.message);
