@@ -144,15 +144,17 @@ class HotelService {
     static async get_pop_hotel_all() {
         try {
             const Reservs = await sequelize.query(
-                `          
+                `     
                 SELECT
-                    "Hotel"."hotel_id",
-                    COUNT(*)
-                    FROM
-                    "Hotel"
-                    LEFT JOIN "Reservation" ON "Reservation"."hotel_id" = "Hotel"."hotel_id"
-                    GROUP BY
-                    "Hotel"."hotel_id"
+                "Hotel"."hotel_id", "Hotel"."Hotel_name", "Location", COUNT(*), "image", CAST(SUM("Rating") AS FLOAT) / COUNT("Rating") AS avg_rating
+                FROM
+                "Hotel"
+                LEFT JOIN "Reservation" ON "Reservation"."hotel_id" = "Hotel"."hotel_id"
+                JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                JOIN "Image" ON "Image"."hotel_id" = "Hotel"."hotel_id"
+                GROUP BY
+                "Hotel"."hotel_id",
+                "image"
             `,
                 {
                     type: Sequelize.QueryTypes.SELECT
