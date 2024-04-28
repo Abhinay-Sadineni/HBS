@@ -141,6 +141,30 @@ class HotelService {
         }
     }
 
+    static async get_pop_hotel_all() {
+        try {
+            const Reservs = await sequelize.query(
+                `          
+                SELECT
+                    "Hotel"."hotel_id",
+                    COUNT(*)
+                    FROM
+                    "Hotel"
+                    LEFT JOIN "Reservation" ON "Reservation"."hotel_id" = "Hotel"."hotel_id"
+                    GROUP BY
+                    "Hotel"."hotel_id"
+            `,
+                {
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
+            return Reservs;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     static async get_hotel_info(hotel_id) {
         try {
             const Hotel = await sequelize.query(

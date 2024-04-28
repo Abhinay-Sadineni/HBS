@@ -290,6 +290,19 @@ router.get('/hotel_room_faqs', auth, async(req , res) =>{
 
 } )
 
+router.get('/pop_hotels', async(req , res) =>{
+  try{   
+      const Hotel = await HotelService.get_pop_hotel_all()
+      res.json({Hotels: Hotel} );  
+  }
+
+  catch(error){
+      console.error('Error in getting Hotel details:', error);
+      res.status(500).json({success: false, message: "Server error"});
+  }
+
+} )
+
 module.exports = router; 
 
 
