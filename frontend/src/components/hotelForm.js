@@ -5,6 +5,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import axiosInstance from "../helpers/axios";
 
 function HotelForm({handleNext}) {
+    const [loading, setLoading] = useState(true)
     const [formData, setFormData] = useState({
         name: 'Example Hotel',
         description: 'This is a dummy hotel for testing purposes.',
@@ -19,29 +20,39 @@ function HotelForm({handleNext}) {
         
     });
 
-    useEffect(()=>{
-        axiosInstance.get('hotel', { headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }})
-          .then((response)=>{
-              console.log(response.data)
+    useEffect(() => {
+        setLoading(true); // Set loading to true when the effect starts
 
-              let Hotel = response.HotelDetails.Hotel
-
-              
-
-              setFormData({...formData,})
-  
-              if(response.data){
-                console.log(response.data)
-
-                    
-              } 
-              else{
-                  //  navigate('/manager-reg-1')
-              }
-          })
-    },[])
+        axiosInstance.get('hotel', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then((response) => {
+            if (response.data) {
+                let Hotel = response.data.HotelDetails.Hotel
+                setFormData({
+                    name: Hotel.Hotel_name || '',
+                    description: Hotel.Description || '',
+                    location: Hotel.Location || '',
+                    address: Hotel.Address || '',
+                    latitude: Hotel.latitude || '',
+                    longitude: Hotel.longitude || '',
+                    amenities: Hotel.list_of_amenities.split(',') || [''],
+                    cancellationPolicy: Hotel.cancellation_policy || 0,
+                    checkInTime: Hotel.check_in || '9:00',
+                    checkOutTime: Hotel.check_out || '9:00',
+                });
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching hotel data:", error);
+            // Handle error
+        })
+        .finally(() => {
+            setLoading(false); // Set loading to false when the request is completed (whether success or failure)
+        });
+    }, []);
 
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -77,10 +88,9 @@ function HotelForm({handleNext}) {
 
 
     const am = [
-        "Wifi", "TV", "Kitchen", "Washing Machine", "Air Conditioning",
-        "Dedicated work space", "Free Parking on Premises", "Pool", "Piano",
+        "Wifi", "Elevator", "External Power Source", "Free Parking on Premises", "Pool", "Piano",
         "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
-    ];
+      ];
 
 
 
@@ -112,6 +122,10 @@ function HotelForm({handleNext}) {
 
     return (
         <div className="flex justify-center items-center">
+            {loading ? (
+                // Display loading indicator while waiting for data
+                <p>Loading...</p>
+            ) : (
                 <div className="grid grid-cols-2 gap-8 w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
                     <div>
                         <h1 className="text-2xl font-bold mb-4">Let's Register your hotel</h1>
@@ -173,6 +187,7 @@ function HotelForm({handleNext}) {
                         </form>
                     </div>
                 </div>
+            )}
 
         </div>
     );
