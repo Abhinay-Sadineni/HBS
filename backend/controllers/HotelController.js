@@ -136,10 +136,11 @@ router.post("/update_hotel", auth, async (req, res) => {
     }
 });
 
-router.post("/add_images", auth, async (req, res) => {
+router.post("/add_images", auth, upload.array('images', 5), async (req, res) => {
     try {
       const manager_id = req.user_id
-      const {images} = req.body
+      const {images} = req.files
+      console.log(images)
       const Hotel = await HotelService.add_images(manager_id, images);  
       res.json({message: "Images added successfully", Hotel: Hotel})
     }
@@ -147,6 +148,19 @@ router.post("/add_images", auth, async (req, res) => {
       console.error("Error in adding images:", error);
       res.status(500).json({ error: "Internal server error" });
     }
+});
+
+
+router.delete("/delete_images", auth, async (req, res) => {
+  try {
+    const manager_id = req.user_id;
+    const { image_id } = req.body;
+    const message = await HotelService.delete_images(manager_id, image_id);   
+    res.json({ message: message });
+  } catch (error) {
+    console.error("Error in deleting images:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 router.post("/add_faqs", auth, async (req, res) => {
@@ -175,17 +189,6 @@ router.post("/add_room_types", auth, async (req, res) => {
     }
 });
 
-router.put("/update_images", auth, async (req, res) => {
-    try {
-      const manager_id = req.user_id;
-      const { image } = req.body;
-      const message = await HotelService.update_images(manager_id, image);  
-      res.json({ message: message });
-    } catch (error) {
-      console.error("Error in updating images:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-});
 
 router.put("/update_faqs", auth, async (req, res) => {
     try {
@@ -199,17 +202,7 @@ router.put("/update_faqs", auth, async (req, res) => {
     }
 });
 
-router.delete("/delete_images", auth, async (req, res) => {
-    try {
-      const manager_id = req.user_id;
-      const { image_id } = req.body;
-      const message = await HotelService.delete_images(manager_id, image_id);   
-      res.json({ message: message });
-    } catch (error) {
-      console.error("Error in deleting images:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-});
+
 
 router.delete("/delete_faqs", auth, async (req, res) => {
     try {
