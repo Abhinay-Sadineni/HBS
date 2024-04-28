@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 import axiosInstance from "../helpers/axios";
 
 function HotelForm({handleNext}) {
@@ -81,10 +78,6 @@ function HotelForm({handleNext}) {
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(formData)
-    };
 
 
     const am = [
@@ -95,7 +88,8 @@ function HotelForm({handleNext}) {
 
 
 
-    const handleSubmit1 = () => {
+    const handleSubmit = async(e) => {
+        e.preventDefault()
         for (const key in formData) {
             if (formData[key] === '') {
                 setErrorMessage(`Please fill in ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
@@ -111,18 +105,24 @@ function HotelForm({handleNext}) {
             setErrorMessage('Description must be less than 500 characters');
             return;
         }
-
-        if (formData.images.length < 0) {
-            setErrorMessage('Please upload at least five images');
-            return;
+        console.log(formData)
+        try {
+            const response = await axiosInstance.post('update_hotel',formData,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            },formData);
+            console.log(response.data); 
+        } catch (error) {
+            console.error('Error:', error);
         }
-        console.log()
     }
 
 
     return (
         <div className="flex justify-center items-center">
-            {loading ? (
+                           {loading ? (
                 // Display loading indicator while waiting for data
                 <p>Loading...</p>
             ) : (
@@ -182,13 +182,14 @@ function HotelForm({handleNext}) {
                                 <p>Check-out Time:</p>
                                 <input type="text" name="checkOutTime" placeholder="Check-out Time" value={formData.checkOutTime} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
                             </div>
-                            <button onClick={handleSubmit1} className="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
+                            <button onClick={(e)=>handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
                             <button onClick={(e) => handleNext(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Next</button>
                         </form>
                     </div>
                 </div>
-            )}
-
+            
+                                )
+      }
         </div>
     );
 }

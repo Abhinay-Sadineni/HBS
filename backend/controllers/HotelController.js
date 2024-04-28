@@ -126,8 +126,8 @@ router.post("/add_hotel", auth , async (req, res) => {
 router.post("/update_hotel", auth, async (req, res) => {
     try {
       const manager_id = req.user_id
-      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out} = req.body
-      const Hotel = await HotelService.edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out);  
+      const {name, location, description, address, latitude, longitude, amenities, cancellationpolicy, checkInTime, checkoutTime} = req.body
+      const Hotel = await HotelService.edit_hotel(manager_id, name, location, description, address, latitude, longitude, amenities, cancellationpolicy,  checkInTime, checkoutTime);  
       res.json({message: "Hotel details updated successfully", Hotel: Hotel})
     }
     catch (error){
