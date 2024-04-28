@@ -92,7 +92,7 @@ router.post('/forgot-password', async (req, res) => {
   
     try {
       // Check if the user with the provided email exists
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ where: { email: email } });
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -101,9 +101,9 @@ router.post('/forgot-password', async (req, res) => {
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
   
       // Save the verification code to the user document
-      user.resetPasswordCode = verificationCode;
-      await user.save(user.resetPasswordCode);
-      console.log()
+    //   user.otp = verificationCode;
+      const user2 = await User.update({otp: verificationCode},{where:{email: email }});
+      console.log(user2)
       // Send the verification code via email
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -144,14 +144,14 @@ router.post('/verify-code', async (req, res) => {
 
   try {
     // Check if the user with the provided email exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email: email } });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
+    console.log(user,email)
     // Check if the provided verification code matches the code in the user document
-    console.log(user.resetPasswordCode, code)
-    if (user.resetPasswordCode !== code) {
+    console.log(user.otp, code)
+    if (parseInt(user.otp) !== parseInt(code)) {
       return res.status(400).json({ error: 'Invalid verification code' });
     }
 
@@ -162,14 +162,13 @@ router.post('/verify-code', async (req, res) => {
   }
 });
 
-// Route: POST /reset-password
-// Description: Reset the user's password
 router.post('/reset-password', async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
     // Check if the user with the provided email exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email: email } });
+    console.log(user)
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -177,11 +176,8 @@ router.post('/reset-password', async (req, res) => {
     // Hash the new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    // Update the user's password and reset the verification code
-    user.password = hashedPassword;
-    user.resetPasswordCode = null;
-    await user.save();
+    await User.update({otp: null, password: hashedPassword},{where:{email: email }});
+    
 
     return res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
