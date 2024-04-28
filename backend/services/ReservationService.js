@@ -356,7 +356,7 @@ class ReservationService {
             if (!check_manager) {
                 throw new Error("User is not authorized to manage this hotel");
             }
-
+            console.log("status is ", status)
             if (status === 'rejected') {
                 await Reservation.update(
                     { status: 'rejected' },

@@ -14,8 +14,8 @@ const manager_reservations = [
           "no_of_rooms": 1
         }
       ],
-      "checkin": "2024-04-26",
-      "checkout": "2024-04-26",
+      "checkin": "2024-05-15",
+      "checkout": "2024-05-26",
       "totalPayout": "$1085"
     },
     {
@@ -33,8 +33,8 @@ const manager_reservations = [
           "no_of_rooms": 4
         }
       ],
-      "checkin": "2024-04-21",
-      "checkout": "2024-04-22",
+      "checkin": "2024-05-23",
+      "checkout": "2024-05-29",
       "totalPayout": "$176"
     },
     {
@@ -52,8 +52,8 @@ const manager_reservations = [
           "no_of_rooms": 2
         }
       ],
-      "checkin": "2024-04-25",
-      "checkout": "2024-04-26",
+      "checkin": "2024-05-25",
+      "checkout": "2024-05-26",
       "totalPayout": "$525"
     },
     {
