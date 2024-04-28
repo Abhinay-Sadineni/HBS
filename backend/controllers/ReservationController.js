@@ -141,6 +141,7 @@ router.post("/confirm_reject", auth, async (req, res) => {
     try {
       const user_id = req.user_id
       const { gid, status } = req.body
+      console.log("gid : ", gid, "status : ", status)
       const message = await ReservationService.confirm_reject_reservation(gid, status, user_id);  
       res.json({message: message})
     }
