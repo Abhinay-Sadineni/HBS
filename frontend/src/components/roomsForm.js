@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 function RoomForm({handlePrevious}) {
+
     const [formData2 ,setFormData2] = useState({
         rooms: [
             { roomType: 'Single Room', amenities: ['TV', 'Air Conditioning'], availableRooms: 10, defaultPrice: 100 },
@@ -19,10 +20,6 @@ function RoomForm({handlePrevious}) {
     });
 
 
-
-
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData2)
@@ -32,7 +29,7 @@ function RoomForm({handlePrevious}) {
     const addRoomType = () => {
         setFormData2({
             ...formData2,
-            rooms: [...formData2.rooms, { roomType: '', amenities: [], availableRooms: 0, defaultPrice: 0 }]
+            rooms: [...formData2.rooms, { roomType: 'Default Room', amenities: ["Ceiling Fan", "Essentials"], availableRooms: 1, defaultPrice: 100 }]
         });
     };
 

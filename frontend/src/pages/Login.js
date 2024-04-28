@@ -106,7 +106,7 @@ function Login({ loginPopup, setLoginPopup, isLoggedIn, setIsLoggedIn }) {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 >
                   <option value="guest">Guest</option>
-                  <option value="manager">Manager</option>
+                  <option value="HM">Manager</option>
                 </select>
               </div>
             </div>

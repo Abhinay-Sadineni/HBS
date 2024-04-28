@@ -30,7 +30,7 @@ function App() {
           <Route exact path="/hotel-page" element={<HotelPage />} />
           <Route exact path = "/manager-dashboard" element = {<Manager_Dashboard/>} />
           <Route exact path ="/Profile" element ={<Profile/>}/>
-          <Route exact path = "/manager-hotel/:step" element = {<Manager_hotel/>} />
+          <Route exact path = "/manager-hotel" element = {<Manager_hotel/>} />
           <Route exact path = "/manager-reg-1" element = {<Manager_reg_1/>} />
           <Route exact path = "/manager-calendar" element = {<Manager_calendar/>} />
           <Route exact path = "/manager-reservations" element = {<Manager_Reservation/>} />
