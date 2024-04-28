@@ -93,6 +93,14 @@ function Home() {
             </div>
           )}
       <div className=" border mt-[78px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-scroll no-scrollbar max-h-[720px]">
+      {filteredHotels.length === 0 && (
+        <div className='w-full h-screen flex flex-col items-center justify-center'>
+            <p className='text-2xl text-gray-500'>No Hotels Found</p>
+            <p className='text-l text-gray-500'>Try Resetting Filters</p>
+        </div>
+      )}
+
+
         {sortHotels(filteredHotels, sortBy).map(hotel => (
           <div key={hotel.id} className='m-4'>
             <Card 

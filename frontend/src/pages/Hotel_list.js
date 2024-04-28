@@ -227,6 +227,12 @@ function HotelList() {
             <Loading/>
           ) : (
             <div className="grid grid-cols-1 gap-4 ">
+              {filteredHotels.length === 0 && (
+                <div className='w-full h-screen flex flex-col items-center justify-center'>
+                    <p className='text-2xl text-gray-500'>No Hotels Found</p>
+                    <p className='text-l text-gray-500'>Try Resetting Filters</p>
+                </div>
+              )}
               {filteredHotels.map((hotel) => (
                 <div key={hotel.id} onClick={() => handleHotelClick(hotel.id)}>
                   <HotelCard {...hotel} />
