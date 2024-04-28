@@ -557,52 +557,54 @@ class HotelService {
     static async add_roomTypes(manager_id, RoomTypes) {
         try {
             const check_hotel = await Hotel.findAll({ where: { manager_id } });
-
-            const hotelId = check_hotel.hotel_id;
-
-
-            for (let room_type of RoomTypes){
-                console.log(room_type.name)
-                await RoomType.create({
+            const hotelId = check_hotel[0].hotel_id;
+            console.log('hotedl_id', hotelId)
+    
+            const calendars = [];
+            const currentDate = new Date();
+            const endDate = new Date(currentDate);
+            endDate.setDate(endDate.getDate() + 90);
+    
+            for (let room_type of RoomTypes) {
+                const createdRoomType = await RoomType.create({
                     room_type_name: room_type.name,
                     no_of_rooms: room_type.no_of_rooms,
                     list_of_amenties: room_type.list_of_amenties,
                     max_guests: room_type.max_guests,
                     default_price: room_type.default_price,
                     hotel_id: hotelId
-                }); 
-            }
-            const calendars = [];
-            const currentDate = new Date();
-            const endDate = new Date(currentDate);
-            endDate.setDate(endDate.getDate() + 90);
+                });
 
-            for (let roomType of RoomTypes) {
+                
+    
+                const roomTypeId = createdRoomType.room_type_id;
+                console.log(createdRoomType)
+
+
+    
                 let currentDateIterator = new Date(currentDate);
                 while (currentDateIterator <= endDate) {
                     const date = new Date(currentDateIterator);
-
-                    const availableRooms = roomType.no_of_rooms;
-
+                    const availableRooms = room_type.no_of_rooms;
+    
                     const calendar = {
-                    room_type_id: roomType.room_type_id,
-                    date: date,
-                    price: roomType.default_price,
-                    no_of_avail_rooms: availableRooms
+                        room_type_id: roomTypeId,
+                        date: date,
+                        price: room_type.default_price,
+                        no_of_avail_rooms: availableRooms
                     };
                     calendars.push(calendar);
                     currentDateIterator.setDate(currentDateIterator.getDate() + 1);
                 }
             }
+    
             await Calendar.bulkCreate(calendars);
-            return {
-                MyHotel
-            };
-        }
-        catch (error) {
+            return "Sucesss";
+        } catch (error) {
             throw new Error(error.message);
         }
-    } 
+    }
+    
 
     static async edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
         try {
@@ -682,52 +684,7 @@ class HotelService {
             throw new Error(error.message);
         }
     }
-    static async add_roomTypes(manager_id, RoomTypes) {
-        try {
-            const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
-            const hotelId = MyHotel.hotel_id;
 
-            for (let room_type of RoomTypes){
-                await RoomType.create({
-                    room_type_name: room_type.name,
-                    no_of_rooms: room_type.no_of_rooms,
-                    list_of_amenties: room_type.list_of_amenties,
-                    max_guests: room_type.max_guests,
-                    default_price: room_type.default_price,
-                    hotel_id: hotelId
-                }); 
-            }
-            const calendars = [];
-            const currentDate = new Date();
-            const endDate = new Date(currentDate);
-            endDate.setDate(endDate.getDate() + 90);
-
-            for (let roomType of RoomTypes) {
-                let currentDateIterator = new Date(currentDate);
-                while (currentDateIterator <= endDate) {
-                    const date = new Date(currentDateIterator);
-
-                    const availableRooms = roomType.no_of_rooms;
-
-                    const calendar = {
-                    room_type_id: roomType.room_type_id,
-                    date: date,
-                    price: roomType.price,
-                    no_of_avail_rooms: availableRooms
-                    };
-                    calendars.push(calendar);
-                    currentDateIterator.setDate(currentDateIterator.getDate() + 1);
-                }
-            }
-            await Calendar.bulkCreate(calendars);
-            return {
-                updatedHotel
-            };
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    }
 
 
 static async delete_images(manager_id, image_id) {
