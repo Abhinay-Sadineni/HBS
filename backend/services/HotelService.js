@@ -512,7 +512,7 @@ class HotelService {
         try {
             const check_hotel = await Hotel.findAll({ where: { manager_id } });
             if (check_hotel.length > 0) {
-                throw new Error('Manager already has a hotel');
+                return 'Manager already has a hotel';
             }
             console.log({
                 manager_id: manager_id,
@@ -620,7 +620,7 @@ class HotelService {
             });
             
             if (affectedRows === 0) {
-                throw new Error('Hotel not found for the provided manager_id');
+                return 'Hotel not found for the provided manager_id';
             }
             
             const updatedHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
@@ -732,7 +732,7 @@ static async delete_images(manager_id, image_id) {
     try {
         const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
         if (!MyHotel) {
-            throw new Error("Hotel not found for the provided manager_id");
+            return "Hotel not found for the provided manager_id";
         }
         const hotelId = MyHotel.hotel_id;
 
