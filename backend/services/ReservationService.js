@@ -387,7 +387,7 @@ class ReservationService {
 
             const Reservations = await sequelize.query(
                 `SELECT
-                    rid, booked_date, start_date, end_date, "GroupRoom"."gid", status, phone_number, payment
+                    rid, booked_date, start_date, end_date, "GroupRoom"."gid", status, phone_number, payment, room_type_name, "No_of_rooms"
                 FROM
                     "Reservation"
                 JOIN (SELECT * FROM (SELECT "room_type_id", "room_type_name" FROM "RoomType")) r ON r."room_type_id" = "Reservation"."room_type_id"
