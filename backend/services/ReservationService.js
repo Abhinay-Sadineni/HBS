@@ -387,12 +387,14 @@ class ReservationService {
 
             const Reservations = await sequelize.query(
                 `SELECT
-                    *
-                 FROM
+                    rid, booked_date, start_date, end_date, "GroupRoom"."gid", status, phone_number, payment
+                FROM
                     "Reservation"
-                 LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
-                 JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
-                 WHERE
+                JOIN (SELECT * FROM (SELECT "room_type_id", "room_type_name" FROM "RoomType")) r ON r."room_type_id" = "Reservation"."room_type_id"
+                LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
+                JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
+                JOIN (SELECT * FROM (SELECT "user_id", "phone_number" FROM "User")) h ON h."user_id" = "GroupRoom"."user_id"
+                WHERE
                     "manager_id" = :manager_id
                 `,
                 {
@@ -633,7 +635,55 @@ class ReservationService {
             throw new Error(error.message);
         }
     }
+
+    static async updateCalendar() {
+        try {
+            const currentDate = new Date();
+            const currentDateStr = currentDate.toISOString().split('T')[0];
         
+            const endDate = new Date(currentDate);
+            endDate.setDate(endDate.getDate() + 90);
+            const endDateStr = endDate.toISOString().split('T')[0];
+        
+            await Calendar.destroy({
+                where: {
+                    date: { $lt: currentDateStr }
+                }
+            });
+        
+            const roomTypes = await RoomType.findAll();
+        
+            for (const roomType of roomTypes) {
+                let dateIterator = new Date(currentDate);
+                while (dateIterator <= endDate) {
+                    const dateStr = dateIterator.toISOString().split('T')[0];
+        
+                    const existingEntry = await Calendar.findOne({
+                        where: {
+                            room_type_id: roomType.room_type_id,
+                            date: dateStr
+                        }
+                    });
+        
+                    if (!existingEntry) {
+                        await Calendar.create({
+                            room_type_id: roomType.room_type_id,
+                            date: dateStr,
+                            price: roomType.default_price,
+                            no_of_avail_rooms: roomType.no_of_rooms
+                        });
+                    }
+                    dateIterator.setDate(dateIterator.getDate() + 1);
+                }
+            }
+            
+            return {
+                message: "Calendar Updated successfully"
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }            
 }    
 
 function groupByGid(reservations) {
