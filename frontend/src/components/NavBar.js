@@ -12,10 +12,9 @@ import {
   MenuHandler,
   MenuList,
   MenuItem,
-  Spinner
 } from "@material-tailwind/react";
 
-import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
+import { FaUser, FaQuestionCircle } from 'react-icons/fa';
 import { FiAlignJustify } from "react-icons/fi";
 
 function NavBar() {
@@ -33,6 +32,7 @@ function NavBar() {
       if (!token) {
         setIsLoggedIn(false); 
         setLoading(false);
+        console.log(loading)
         return;
       }
       
@@ -53,7 +53,7 @@ function NavBar() {
 
   useEffect(() => {
     checkToken();
-  }, []);
+  },[]);
 
 
   const handleSignout =  () => {
