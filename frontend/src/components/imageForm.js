@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../helpers/axios";
+import Loading from "./Loading";
 
 function ImageForm({ handleNext, handlePrevious }) {
-
 
     const [fetchedImages, setFetchedImages] = useState([{ id: 10, imgURL: "http://localhost:5000/hotel1.jpg" }, { id: 20, imgURL: "http://localhost:5000/hotel2.jpg" }, { id: 30, imgURL: "http://localhost:5000/hotel3.jpg" }, { id: 45, imgURL: "http://localhost:5000/hotel4.jpg" }, { id: 59, imgURL: "http://localhost:5000/hotel5.jpg" }])
 
@@ -14,12 +14,13 @@ function ImageForm({ handleNext, handlePrevious }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [currentUploadedImageIndex, setCurrentUploadedImageIndex] = useState(0);
 
+
     const toggleImagePopup = (index) => {
         setImagePopup(!imagePopup);
         setCurrentImageIndex(index);
     };
 
-    const [Loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
 
 
@@ -82,6 +83,9 @@ function ImageForm({ handleNext, handlePrevious }) {
                         updatedImages.splice(index, 1);
                         setFetchedImages(updatedImages);
                         console.log("Image deleted successfully");
+                        if(response.status === 200){
+                            alert("Images Deleted Successfully")
+                        }   
                     } else {
                         console.error("Failed to delete image");
                     }
@@ -111,7 +115,7 @@ function ImageForm({ handleNext, handlePrevious }) {
 
     }
 
-    useEffect(() => {
+    const handleFetch = async () => {
         setLoading(true); // Set loading to true when the effect starts
 
         axiosInstance.get('get_images', {
@@ -136,6 +140,13 @@ function ImageForm({ handleNext, handlePrevious }) {
             .finally(() => {
                 setLoading(false);
             });
+
+
+    }
+
+    useEffect(() => {
+       handleFetch();
+
     }, []);
 
 
@@ -158,6 +169,15 @@ function ImageForm({ handleNext, handlePrevious }) {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 }, formData1);
+            if(response.status === 200){
+                alert("Images uploaded Successfully")
+            } 
+            // Navigate("/manager-hotel/2")  
+            handleFetch() 
+            setFormData1({
+                ...formData1,
+                images: []
+            });
             console.log(response.data);
         } catch (error) {
             console.error('Error:', error);
@@ -169,6 +189,10 @@ function ImageForm({ handleNext, handlePrevious }) {
 
     return (
         <div className="grid grid-cols-2 gap-8 w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
+            {loading ? (
+                // Display loading indicator while waiting for data
+                <Loading />
+            ) : (
             <form className="space-y-4">
                 <div>
                     <p>Upload Images:</p>
@@ -245,6 +269,7 @@ function ImageForm({ handleNext, handlePrevious }) {
                 <button onClick={(e) => handleNext(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Next</button>
                 <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
             </form>
+            )}
         </div>
     )
 

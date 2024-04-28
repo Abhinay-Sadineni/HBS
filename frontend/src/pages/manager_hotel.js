@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import HotelForm from "../components/hotelForm";
 import ImageForm from "../components/imageForm";
 import RoomForm from "../components/roomsForm";
-
+import Manager_NavBar from "../components/Manager_navbar";
 function Manager_hotel() {
 
 
@@ -20,9 +20,12 @@ function Manager_hotel() {
 
 
     return (
-        <div className="flex justify-center items-center">
+        <div>
+        <Manager_NavBar />    
+        <div className=" mt-[78px] flex justify-center items-center">
             {currentStep === 1 && <HotelForm handleNext = {handleNext} />
             }
+
             {currentStep === 2 && 
                         <ImageForm handleNext={handleNext} handlePrevious={handlePrevious}/>
             } 
@@ -30,6 +33,7 @@ function Manager_hotel() {
                 <RoomForm handlePrevious={handlePrevious}/>
                 )}
 
+        </div>
         </div>
     );
 }

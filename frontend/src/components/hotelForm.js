@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../helpers/axios";
+import Loading from "./Loading";
 
 function HotelForm({handleNext}) {
     const [loading, setLoading] = useState(true)
@@ -113,6 +114,8 @@ function HotelForm({handleNext}) {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             },formData);
+            if(response.status === 200)
+                alert("Submitted Succesfully")
             console.log(response.data); 
         } catch (error) {
             console.error('Error:', error);
@@ -124,11 +127,11 @@ function HotelForm({handleNext}) {
         <div className="flex justify-center items-center">
                            {loading ? (
                 // Display loading indicator while waiting for data
-                <p>Loading...</p>
+                <Loading />
             ) : (
                 <div className="grid grid-cols-2 gap-8 w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
                     <div>
-                        <h1 className="text-2xl font-bold mb-4">Let's Register your hotel</h1>
+                        <h1 className="text-2xl font-bold mb-4">Edit Hotel Info</h1>
                         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
