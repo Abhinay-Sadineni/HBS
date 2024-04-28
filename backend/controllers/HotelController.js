@@ -99,6 +99,8 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
 
 } )
 
+const multer = require('multer');
+const path = require('path');
 
 router.post("/add_hotel", auth , async (req, res) => {
     try {

@@ -13,6 +13,7 @@ import Manager_hotel from './pages/manager_hotel';
 import Manager_reg_1 from './pages/manager_reg_1';
 import Manager_calendar from './pages/Manager_calendar';
 import Manager_Reservation from './pages/Manager_Reservations';
+import ForgotPassword from './pages/ForgotPass';
 function App() {
   return (
     <Router>
@@ -33,6 +34,7 @@ function App() {
           <Route exact path = "/manager-reg-1" element = {<Manager_reg_1/>} />
           <Route exact path = "/manager-calendar" element = {<Manager_calendar/>} />
           <Route exact path = "/manager-reservations" element = {<Manager_Reservation/>} />
+          <Route exact path = "/forgot-password" element = {<ForgotPassword/>} />
         </Routes>
       </div>
     </Router>

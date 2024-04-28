@@ -551,6 +551,56 @@ class ReservationService {
                 throw new Error("Hotel not found for the provided manager_id");
             }
             const hotelId = MyHotel.hotel_id;
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + 90);
+
+            const bookedRooms = await sequelize.query( 
+                `
+                WITH date_range AS (
+                    SELECT generate_series(:startDate::date, :endDate::date, INTERVAL '1 DAY') AS date
+                )
+                SELECT
+                    to_char(dr.date, 'YYYY-MM-DD') AS date,
+                    r."room_type_id",
+                    SUM(r."No_of_rooms") as no_of_booked_rooms
+                FROM
+                    date_range dr
+                JOIN
+                (
+                    SELECT 
+                        res."hotel_id",
+                        res."room_type_id",
+                        res."No_of_rooms",
+                        res."start_date",
+                        res."end_date"
+                    FROM 
+                    (
+                        SELECT * FROM "Reservation" 
+                        WHERE "Reservation"."status" <> 'cancelled' 
+                        AND "Reservation"."status" <> 'rejected'
+                    ) res
+                    JOIN
+                        "RoomType" rt ON res."room_type_id" = rt."room_type_id"
+                    JOIN 
+                        "Hotel" h ON res."hotel_id" = h."hotel_id"
+                    WHERE 
+                        h."hotel_id" = :hotel_id
+                ) AS r ON dr.date BETWEEN r."start_date" AND r."end_date"
+                GROUP BY
+                    dr.date,
+                    r."room_type_id"
+                ORDER BY
+                    dr.date
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotelId,
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: endDate.toISOString().split('T')[0]
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
     
             for (let date_price of DateList) {
                 const MyRoom = await RoomType.findOne({ where: { room_type_id: date_price.room_type_id } });
@@ -561,9 +611,17 @@ class ReservationService {
                 if (MyRoom.hotel_id !== hotelId) {
                     throw new Error("User doesn't have permission to modify this room type");
                 }
-    
+                
+                const bookedRoom = bookedRooms.find(room => room.room_type_id === date_price.room_type_id && room.date === date_price.date);
+
+                if (bookedRoom && date_price.no_of_avail_rooms < bookedRoom.no_of_booked_rooms) {
+                    return {
+                        message: "Number of available rooms are less than number of booked rooms"
+                    };
+                }
+
                 await Calendar.update(
-                    { price: date_price.price },
+                    { no_of_avail_rooms: date_price.no_of_avail_rooms },
                     { where: { room_type_id: date_price.room_type_id, date: date_price.date } }
                 );
             }
