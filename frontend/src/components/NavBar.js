@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link ,useLocation ,useNavigate} from 'react-router-dom';
 import logo from '../assets/images/HBSLogo.jpeg';
 import SearchBar from './SearchBar';
 import axiosInstance from '../helpers/axios'
@@ -23,31 +23,35 @@ function NavBar() {
   const [loading, setLoading] = useState(true);
   const [loginPopup, setLoginPopup] = useState(false);
   const [signUpPopup, setSignUpPopup] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+
+  const checkToken = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setIsLoggedIn(false); 
+        setLoading(false);
+        return;
+      }
+      
+      const response = await axiosInstance.post('/login');
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } catch (error) {
+      console.error('Error checking token:', error);
+      setIsLoggedIn(false);
+    } finally {
+      setLoading(false);
+      setIsLoggedIn(true);
+    }
+  };
 
   useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setIsLoggedIn(false); 
-          setLoading(false);
-          return;
-        }
-        
-        const response = await axiosInstance.post('/login');
-        if (response.status === 200) {
-          setIsLoggedIn(true);
-        } else {
-          setIsLoggedIn(false);
-        }
-      } catch (error) {
-        console.error('Error checking token:', error);
-        setIsLoggedIn(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     checkToken();
   }, []);
 
@@ -60,6 +64,10 @@ function NavBar() {
     } catch (error) {
       console.error('Error signing out:', error);
     } finally {
+      const pathsToRedirect = ['/history', '/profile'];
+      if (pathsToRedirect.includes(location.pathname)) {
+        navigate('/');
+      }
       setTimeout(() => {
         setLoading(false);
       }, 2000); 
