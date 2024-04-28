@@ -547,15 +547,6 @@ class HotelService {
         }
     } 
 
-
-
-
-    
-
-
-
-
-
     static async edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
         try {
             const [affectedRows] = await Hotel.update({

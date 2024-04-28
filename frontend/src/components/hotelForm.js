@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import axiosInstance from "../helpers/axios";
 
 function HotelForm({handleNext}) {
     const [formData, setFormData] = useState({
@@ -17,6 +18,30 @@ function HotelForm({handleNext}) {
         checkOutTime: '12:00',
         
     });
+
+    useEffect(()=>{
+        axiosInstance.get('hotel', { headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }})
+          .then((response)=>{
+              console.log(response.data)
+
+              let Hotel = response.HotelDetails.Hotel
+
+              
+
+              setFormData({...formData,})
+  
+              if(response.data){
+                console.log(response.data)
+
+                    
+              } 
+              else{
+                  //  navigate('/manager-reg-1')
+              }
+          })
+    },[])
 
     const [errorMessage, setErrorMessage] = useState('');
 
