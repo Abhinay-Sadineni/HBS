@@ -36,19 +36,34 @@ const router = express.Router();
 
 router.get('/search', async(req , res) =>{
     try{
-        console.log( req.query)
-        const { location ,  no_of_rooms , no_of_guests ,  start_date, end_date} = req.query
-
-        const start_Date = new Date(start_date); 
-        const end_Date = new Date(end_date);
-        const diff_ms = end_Date.getTime() - start_Date.getTime();
-        const diff = diff_ms / (1000 * 3600 * 24) + 1;
-        
-        const aList = await HotelService.calculate_available_rooms(location, no_of_guests, start_date, end_date)
-        const bList = await HotelService.get_booked_rooms(location, no_of_guests, start_date, end_date)
-        const popList = await HotelService.get_pop_hotels(location)
-
-        console.log(popList)
+      console.log(req.query);
+      const { location, no_of_rooms, no_of_guests, start_date, end_date } = req.query;
+      console.log(start_date, end_date);
+      
+      // Convert start_date and end_date to Date objects
+      const startDate = new Date(start_date);
+      const endDate = new Date(end_date);
+      
+      // Offset for IST (Indian Standard Time) in minutes
+      const offsetIST = 330;
+      
+      // Convert UTC to IST
+      const startDateIST = new Date(startDate.getTime() + offsetIST * 60000);
+      const endDateIST = new Date(endDate.getTime() + offsetIST * 60000);
+      
+      // Format as 'YYYY-MM-DD'
+      const formattedStartDate = startDateIST.toISOString().split('T')[0];
+      const formattedEndDate = endDateIST.toISOString().split('T')[0];
+      
+      const diff_ms = endDate.getTime() - startDate.getTime();
+      const diff = diff_ms / (1000 * 3600 * 24) + 1;
+      
+      const aList = await HotelService.calculate_available_rooms(location, no_of_guests, formattedStartDate, formattedEndDate);
+      const bList = await HotelService.get_booked_rooms(location, no_of_guests, formattedStartDate, formattedEndDate);
+      const popList = await HotelService.get_pop_hotels(location);
+      
+      console.log(popList);
+      
         
 
         const hotelList = aList.map(room => {
@@ -107,8 +122,24 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
         const hotel_id = req.params.hotel_id;  
         const {no_of_guests, start_date, end_date} = req.query 
         console.log(no_of_guests, start_date, end_date)  
+      
+        // Convert start_date and end_date to Date objects
+        const startDate = new Date(start_date);
+        const endDate = new Date(end_date);
+        
+        // Offset for IST (Indian Standard Time) in minutes
+        const offsetIST = 330;
+        
+        // Convert UTC to IST
+        const startDateIST = new Date(startDate.getTime() + offsetIST * 60000);
+        const endDateIST = new Date(endDate.getTime() + offsetIST * 60000);
+        
+        // Format as 'YYYY-MM-DD'
+        const formattedStartDate = startDateIST.toISOString().split('T')[0];
+        const formattedEndDate = endDateIST.toISOString().split('T')[0];
+
         const Hotel = await HotelService.get_hotel_info(hotel_id)
-        const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id, no_of_guests, start_date, end_date)
+        const VacantRoomsandRR = await HotelService.get_vacant_rooms_and_rr(hotel_id, no_of_guests, formattedStartDate, formattedEndDate)
         res.json({HotelInfo: Hotel, VacantRoomsandRR: VacantRoomsandRR} );  
     }
 
