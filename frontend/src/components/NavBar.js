@@ -136,7 +136,7 @@ function NavBar() {
 
     {loginPopup && (
   <div className="fixed z-50 top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
-    <div className='bg-white p-8 rounded-lg w-2/5 h-3/5 relative'>
+    <div className='bg-white p-8 rounded-lg w-2/5 relative'>
       <button onClick={() => setLoginPopup(false)} className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"> &#x2715; </button>
       <Login loginPopup = {loginPopup}
               setLoginPopup = {setLoginPopup}
