@@ -2,8 +2,19 @@ const express = require("express");
 const ReservationService = require("../services/ReservationService");
 const auth = require("../middlewares/auth");
 const sequelize = require('../config.js');
+const cron = require('node-cron');
 
 const router = express.Router();
+
+cron.schedule('0 0 * * *', async () => {
+  console.log('Running scheduled update task...');
+  try {
+      await ReservationService.updateCalendar();
+      console.log('Scheduled update task completed successfully.');
+  } catch (error) {
+      console.error('Error in scheduled update task:', error);
+  }
+});
 
 router.post("/reserve", auth, async (req, res) => {
   try {
@@ -143,7 +154,7 @@ router.get("/manager_reservations", auth, async (req, res) => {
     try {
       const user_id = req.user_id
       const message = await ReservationService.get_manager_reservations(user_id);  
-      res.json({message: message})
+      res.json({message})
     }
     catch (error) {
       console.error("Error in confirming or rejecting reservation:", error);
@@ -202,6 +213,38 @@ router.post("/block_rooms", auth, async (req, res) => {
   catch (error) {
     console.error("Error in blocking rooms:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get('/trigger-update', async (req, res) => {
+  try {
+      console.log('Manually triggering update task...');
+      await ReservationService.updateCalendar();
+      res.send('Update task triggered successfully.');
+  } catch (error) {
+      console.error('Error in manual update task:', error);
+      res.status(500).send('Internal server error');
+  }
+});
+
+router.get('/trigger-update', async (req, res) => {
+  try {
+      console.log('Manually triggering update task...');
+      await ReservationService.updateCalendar();
+      res.send('Update task triggered successfully.');
+  } catch (error) {
+      console.error('Error in manual update task:', error);
+      res.status(500).send('Internal server error');
+  }
+});
+
+router.get('/today_reservations', auth, async (req, res) => {
+  try {
+      const manager_id = req.user_id
+      await ReservationService.get_reservations(manager_id);
+  } catch (error) {
+      console.error('Error in getting today reservations:', error);
+      res.status(500).send('Internal server error');
   }
 });
 
