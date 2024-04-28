@@ -224,7 +224,7 @@ class HotelService {
             }
             const RoomTypes = await sequelize.query(
                 `
-                SELECT "room_type_name","room_type_id", "list_of_amenties", "max_guests", "default_price" FROM "RoomType" WHERE "hotel_id" = :hotel_id            
+                SELECT * FROM "RoomType" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -236,7 +236,7 @@ class HotelService {
 
             const Images = await sequelize.query(
                 `
-                SELECT "image" FROM "Image" WHERE "hotel_id" = :hotel_id            
+                SELECT * FROM "Image" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -302,12 +302,7 @@ class HotelService {
             );
 
             return {
-                Hotel: Hotel[0],
-                RoomTypes: RoomTypes,
-                Images: Images,
-                FAQs: FAQs,
-                Ratings: Ratings,
-                Reviews: Reviews
+                Hotel: Hotel[0]
             };
         } catch (error) {
             throw new Error(error.message);
@@ -452,13 +447,26 @@ class HotelService {
         }
     }
 
-    static async add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes) {
+    static async add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out ) {
         try {
             const check_hotel = await Hotel.findAll({ where: { manager_id } });
             if (check_hotel.length > 0) {
                 throw new Error('Manager already has a hotel');
             }
-
+            console.log({
+                manager_id: manager_id,
+                Hotel_name: Hotel_name,
+                Location: Location,
+                register_date: register_date,
+                Description: Description,
+                Address: Address,
+                latitude: latitude,
+                longitude: longitude,
+                list_of_amenities: list_of_amenities.join(","),
+                cancellation_policy: cancellation_policy,
+                check_in: check_in,
+                check_out: check_out
+            })
             const MyHotel = await Hotel.create({
                 manager_id: manager_id,
                 Hotel_name: Hotel_name,
@@ -468,25 +476,30 @@ class HotelService {
                 Address: Address,
                 latitude: latitude,
                 longitude: longitude,
-                list_of_amenities: list_of_amenities,
+                list_of_amenities: list_of_amenities.join(","),
                 cancellation_policy: cancellation_policy,
                 check_in: check_in,
                 check_out: check_out
             });  
             const hotelId = MyHotel.hotel_id;
-            for (let image of images){
-                await Image.create({
-                    image: image,
-                    hotel_id: hotelId
-                }); 
-            }
-            for (let faq of FAQs){
-                await FAQ.create({
-                    Q: faq.Q,
-                    A: faq.A,
-                    hotel_id: hotelId
-                }); 
-            }
+            return {
+                MyHotel
+            };
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    } 
+
+
+
+    static async add_roomTypes(manager_id, RoomTypes) {
+        try {
+            const check_hotel = await Hotel.findAll({ where: { manager_id } });
+
+            const hotelId = check_hotel.hotel_id;
+
+
             for (let room_type of RoomTypes){
                 console.log(room_type.name)
                 await RoomType.create({
@@ -529,6 +542,16 @@ class HotelService {
             throw new Error(error.message);
         }
     } 
+
+
+
+
+    
+
+
+
+
+
     static async edit_hotel(manager_id, Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out) {
         try {
             const [affectedRows] = await Hotel.update({

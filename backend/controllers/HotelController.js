@@ -1,7 +1,17 @@
 const express = require('express');
 const HotelService = require('../services/HotelService');
 const auth = require("../middlewares/auth");
+const multer = require('multer');
+const path = require('path');
 
+const storage = multer.diskStorage({
+  destination: '../uploads/', // Folder where images will be stored
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 const router = express.Router();
 
 
@@ -90,17 +100,17 @@ router.get('/hotel/:hotel_id', async(req , res) =>{
 } )
 
 
-router.post("/add_hotel", auth, async (req, res) => {
+router.post("/add_hotel", auth , async (req, res) => {
     try {
-      const manager_id = req.user_idconst 
-      
+      const manager_id = req.user_id
+      console.log(req.body)
       currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');
       const day = String(currentDate.getDate()).padStart(2, '0'); 
       const register_date = `${year}-${month}-${day}`;
-      const {Hotel_name, Location, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes} = req.body
-      const Hotel = await HotelService.add_hotel(manager_id, Hotel_name, Location, register_date, Description, Address, latitude, longitude, list_of_amenities, cancellation_policy, check_in, check_out, images, FAQs, RoomTypes);  
+      const { name, location, description, address, latitude, longitude, amenities, cancellationpolicy, checkInTime, checkoutTime} = req.body
+      const Hotel = await HotelService.add_hotel(manager_id, name, location, register_date, description, address, latitude, longitude, amenities, cancellationpolicy,  checkInTime, checkoutTime);  
       res.json({message: "Hotel added successfully", Hotel: Hotel})
     }
     catch (error){
@@ -108,6 +118,10 @@ router.post("/add_hotel", auth, async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
 });
+
+
+
+
 
 router.post("/update_hotel", auth, async (req, res) => {
     try {

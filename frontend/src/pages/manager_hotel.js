@@ -111,8 +111,6 @@ function Manager_hotel() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Perform form submission
-        // Add your submission logic here
         console.log(formData)
     };
 
@@ -310,6 +308,15 @@ const addNewFAQ = () => {
                             <p>Check-out Time:</p>
                             <input type="text" name="checkOutTime" placeholder="Check-out Time" value={formData.checkOutTime} onChange={handleInputChange} className="w-full border border-gray-300 rounded-md px-4 py-2" />
                         </div>
+                        <button onClick = {handleNext}className="bg-blue-500 text-white px-4 py-2 rounded-md">Next</button>
+                    </form>
+                </div>
+            </div>
+
+        )}
+        {currentStep ===2 &&(
+            <div className="grid grid-cols-2 gap-8 w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <p>Upload Images:</p>
                             <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="border border-gray-300 rounded-md px-4 py-2" />
@@ -341,13 +348,14 @@ const addNewFAQ = () => {
                                 </div>
                             )}
                         </div>
+                        <button onClick={() => handlePrevious()} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4">Previous</button>
                         <button onClick = {handleNext}className="bg-blue-500 text-white px-4 py-2 rounded-md">Next</button>
                     </form>
                 </div>
-            </div>
+        )
 
-        )}
-        {currentStep === 2 && (
+        }
+        {currentStep === 3 && (
                 <div>
                 <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
                 <h1 className="text-2xl font-bold mb-4">Let us know about your rooms</h1>
