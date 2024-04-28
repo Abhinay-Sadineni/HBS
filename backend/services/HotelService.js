@@ -224,34 +224,10 @@ class HotelService {
                     message: 'No hotels found for the given manager ID'
                 };
             }
-            const RoomTypes = await sequelize.query(
-                `
-                SELECT * FROM "RoomType" WHERE "hotel_id" = :hotel_id            
-                `,
-                {
-                    replacements: {
-                        hotel_id: hotel_id
-                    },
-                    type: Sequelize.QueryTypes.SELECT
-                }
-            );
 
             const Images = await sequelize.query(
                 `
                 SELECT * FROM "Image" WHERE "hotel_id" = :hotel_id            
-                `,
-                {
-                    replacements: {
-                        hotel_id: hotel_id
-                    },
-                    type: Sequelize.QueryTypes.SELECT
-                }
-            );
-
-
-            const FAQs = await sequelize.query(
-                `
-                SELECT "Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -306,9 +282,64 @@ class HotelService {
             return {
                 Hotel: Hotel[0],
                 Images: Images,
-                FAQs: FAQs,
                 Ratings: Ratings,
                 Reviews: Reviews
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    static async get_room_types_faqs(manager_id) {
+        try {
+            const Hotel = await sequelize.query(
+                `
+                SELECT * FROM "Hotel" WHERE "manager_id" = :manager_id            
+                `,
+                {
+                    replacements: {
+                        manager_id: manager_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+            let hotel_id
+            if (Hotel.length > 0) {
+                hotel_id = Hotel[0].hotel_id;
+            }
+            else {
+                return {
+                    message: 'No hotels found for the given manager ID'
+                };
+            }
+            console.log(hotel_id)
+            const RoomTypes = await sequelize.query(
+                `
+                SELECT * FROM "RoomType" WHERE "hotel_id" = :hotel_id            
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
+            const FAQs = await sequelize.query(
+                `
+                SELECT "Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
+                `,
+                {
+                    replacements: {
+                        hotel_id: hotel_id
+                    },
+                    type: Sequelize.QueryTypes.SELECT
+                }
+            );
+
+            return {
+                RoomTypes: RoomTypes,
+                FAQs: FAQs
             };
         } catch (error) {
             throw new Error(error.message);
