@@ -687,6 +687,7 @@ class ReservationService {
     
     static async get_reservations(manager_id){
         try{
+        const today = new Date().toISOString().split('T')[0];
         const TodayReservations = await sequelize.query(
             `SELECT
             "username", "phone_number", "email", "start_date", "end_date"
