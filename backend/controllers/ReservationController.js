@@ -242,7 +242,8 @@ router.get('/trigger-update', async (req, res) => {
 router.get('/today_reservations', auth, async (req, res) => {
   try {
       const manager_id = req.user_id
-      await ReservationService.get_reservations(manager_id);
+      const reservations = await ReservationService.get_reservations(manager_id);
+      res.status(200).json({reservations})
   } catch (error) {
       console.error('Error in getting today reservations:', error);
       res.status(500).send('Internal server error');
