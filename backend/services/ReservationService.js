@@ -692,6 +692,7 @@ class ReservationService {
             `SELECT
             "username", "phone_number", "email", "start_date", "end_date"
             FROM
+            "Reservation"
             LEFT JOIN "GroupRoom" ON "Reservation"."gid" = "GroupRoom"."gid"
             JOIN "Hotel" ON "Hotel"."hotel_id" = "Reservation"."hotel_id"
             JOIN "User" ON "User"."user_id" = "GroupRoom"."user_id"
