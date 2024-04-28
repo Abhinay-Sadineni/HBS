@@ -156,7 +156,8 @@ async function generateRoomTypes() {
         no_of_rooms: Math.floor(Math.random() * 10) + 1,
         list_of_amenties: selectedRoomAmenities.join(', '),
         max_guests: Math.floor(Math.random() * 4) + 1,
-        hotel_id: hotel.hotel_id
+        hotel_id: hotel.hotel_id,
+        default_price: 2000
       };
       roomTypes.push(roomType);
     }

@@ -242,6 +242,20 @@ router.get('/hotel', auth, async(req , res) =>{
 
 } )
 
+router.get('/hotel_room_faqs', auth, async(req , res) =>{
+  try{
+      const manager_id = req.user_id   
+      const Hotel = await HotelService.get_room_types_faqs(manager_id)
+      res.json({HotelDetails: Hotel} );  
+  }
+
+  catch(error){
+      console.error('Error in getting Hotel details:', error);
+      res.status(500).json({success: false, message: "Server error"});
+  }
+
+} )
+
 module.exports = router; 
 
 
