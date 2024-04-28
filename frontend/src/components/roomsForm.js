@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 
 function RoomForm({handlePrevious}) {
 
@@ -79,11 +76,6 @@ function RoomForm({handlePrevious}) {
         });
     };
 
-    const am = [
-        "Wifi", "TV", "Kitchen", "Washing Machine", "Air Conditioning",
-        "Dedicated work space", "Free Parking on Premises", "Pool", "Piano",
-        "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
-    ];
 
     const rooms_am = [
         "TV", "Kitchen", "Washing Machine", "Air Conditioning",
@@ -157,9 +149,6 @@ function RoomForm({handlePrevious}) {
     };
 
 
-    const handleSubmit1 = () => {
-        console.log()
-    }
 
 
     return (
