@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Manager_NavBar from "../components/Manager_navbar";
-// import prices from "./prices.js"
+import axiosInstance from "../helpers/axios";
 
 var prices = {
     "Tue Apr 23 2024": 1000,
@@ -205,6 +205,19 @@ function Manager_calendar() {
     const today = new Date();
     const nextThreeMonths = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
 
+
+    useEffect(()=>{
+        axiosInstance.get('/calender', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        }).then((response) => {
+            if (response.status === 200) {
+                console.log(response.data)
+            }
+        })
+    })
+
     const handleDateChange = (dates) => {
         sethighlightDates(dates);
 
@@ -256,30 +269,24 @@ function Manager_calendar() {
             alert("Please enter a valid Rooms number.");
             return;
         }
-        // const updatedPrices = { ...prices }; // Copy the original prices object
 
-        // selectedDates.forEach(date => {
-        //     updatedPrices[date.toDateString()] = newPrice; // Update the price for each selected date
-        // });
         const isRangeFormat1 = /^\d+-\d+$/.test(newPrice);
         const isRangeFormat2 = /^\d+-\d+$/.test(newRooms);
 
         let updatedPrices = { ...prices };
-        // let pricesChanged = false;
 
         if (!isRangeFormat1) {
             selectedDates.forEach(date => {
                 updatedPrices[date.toDateString()] = newPrice;
             });
-        // pricesChanged = true;
          }
         prices = { ...updatedPrices }
 
 
-       let updatedRooms= { ...availableRooms }; // Copy the original prices object
+       let updatedRooms= { ...availableRooms }; 
        if (!isRangeFormat2) { 
             selectedDates.forEach(date => {
-                updatedRooms[date.toDateString()] = newRooms; // Update the price for each selected date
+                updatedRooms[date.toDateString()] = newRooms; 
             });
         }
         availableRooms = { ...updatedRooms }
