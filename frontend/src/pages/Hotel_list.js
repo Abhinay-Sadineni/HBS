@@ -165,6 +165,10 @@ function HotelList() {
 
   };
 
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
+
   // Sort options including ratings
   const sortOptions = [
     { label: 'Popularity', value: 'popularity' },
@@ -208,6 +212,12 @@ function HotelList() {
         <aside id="default-sidebar" className="fixed border top-[78px] left-0  w-[350px] h-fit transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
           <div className="h-full px-3 py-4 bg-gray-50">
             {/* Heading for filters */}
+            <h2 className="text-l font-sans">Sort by </h2>
+            <select value={sortOption} onChange={handleSortChange}>
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
             <div className="grid grid-cols-2 gap-4 items-center">
               <h2 className="text-3xl font-sans">Filters</h2>
               <button onClick={resetFilters} className="text-red-300">Clear All</button>
