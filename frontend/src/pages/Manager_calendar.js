@@ -29,21 +29,25 @@ function Manager_calendar() {
         }).then((response) => {
             if (response.status === 200) {
                 const calendarData = response.data.Data.calendar;
-                setMainData(calendarData);
-                setCalendarData(calendarData[Object.keys(calendarData)[0]]);
+                const updatedCalendarData = {};
+                Object.entries(calendarData).forEach(([roomTypeId, data]) => {
+                    updatedCalendarData[roomTypeId] = data.map(item => ({ ...item, room_type_id: parseInt(roomTypeId) }));
+                });
+                setCalendarData(updatedCalendarData);
+                console.log("updatedCalendarData", updatedCalendarData);
+                console.log("calendar data is ", calendarData)
+                setMainData(updatedCalendarData);
+                console.log("mainData is ", mainData)
+                setCalendarData(updatedCalendarData[Object.keys(calendarData)[0]]);
+                
             }
         })
     },[] )
 
-    // useEffect(() => {
-    //     console.log("room type filter is ", roomTypeFilter);
-    //     if (roomTypeFilter !== null && roomTypeFilter !== undefined) {
-    //         setCalendarData(mainData[roomTypeFilter]);
-    //     }
-    // }, [roomTypeFilter]);
+    // console.log("mainData is ", mainData)
+    // console.log("calendar data is ", calendarData)
+
     
-    // console.log(mainData[Object.keys(mainData)[0]])
-    // console.log(mainData)
 
     const handleRoomTypeChange = async (event) => {
         const selectedRoomType = event.target.value;
@@ -51,7 +55,6 @@ function Manager_calendar() {
         setRoomTypeFilter(parseInt(selectedRoomType));
         setCalendarData(mainData[selectedRoomType])
         console.log("room type filter is ", roomTypeFilter)
-
         console.log(calendarData)
     };
     
@@ -134,6 +137,8 @@ function Manager_calendar() {
             });
          }
         prices = { ...updatedPrices }
+
+        
 
 
        let updatedRooms= { ...availableRooms }; 
