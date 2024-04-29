@@ -16,11 +16,11 @@ function History() {
     })
     .then((response) => {
       if (response.status === 200) {
-        console.log(response.data.messsage)
-        if(response.data.messsage==="Unauthorized user"){
+        console.log(response.data);
+        console.log(response.data.message)
+        if(response.data.message==='Unauthorized user'){
           navigate("/")
         }
-        console.log(response.data);
         setReservationList(response.data.List);
       } 
     })
