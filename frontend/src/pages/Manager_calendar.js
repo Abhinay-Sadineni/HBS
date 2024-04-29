@@ -193,9 +193,6 @@ var availableRooms = {
     "Mon Jul 22 2024": 10
 };
 
-
-
-
 function Manager_calendar() {
     const [selectedDates, setSelectedDates] = useState([]);
     const [highlightDates, sethighlightDates] = useState([]);
