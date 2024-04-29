@@ -98,37 +98,38 @@ function HotelList() {
   useEffect(() => {
     if (state) {
       console.log(state);
-      axios.get('http://localhost:5000/search', 
-        {params: {
-          location: state.location,
-          no_of_rooms: state.numRooms,
-          no_of_guests: state.numGuests,
-          start_date: state.startDate,
-          end_date: state.endDate
-        }
-      })
-      .then((response) => {
-        const hotelList = response.data.hotelList.map((hotel) => ({
-          id: hotel.hotel_id,
-          name: hotel.Hotel_name,
-          ratings: hotel.average_rating || '5',
-          imgURL: `http://localhost:5000/${hotel.hotel_image}`,
-          location: hotel.Location || 'Unknown',
-          prices:  [hotel.min_price, hotel.max_price],
-          amenities: hotel.list_of_amenities ? hotel.list_of_amenities.split(', ') : ['Unknown'], 
-          popularity: hotel.reservations || '5',
-        }));
-        setHotels(hotelList);
-        const prices = hotelList.map((hotel) => hotel.prices).flat();
-        setLowPrice(Math.min(...prices));
-        setHighPrice(Math.max(...prices));
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error('Error fetching hotels:', error);
-      });
+      axios.get('http://localhost:5000/search',
+        {
+          params: {
+            location: state.location,
+            no_of_rooms: state.numRooms,
+            no_of_guests: state.numGuests,
+            start_date: state.startDate,
+            end_date: state.endDate
+          }
+        })
+        .then((response) => {
+          const hotelList = response.data.hotelList.map((hotel) => ({
+            id: hotel.hotel_id,
+            name: hotel.Hotel_name,
+            ratings: hotel.average_rating || '5',
+            imgURL: `http://localhost:5000/${hotel.hotel_image}`,
+            location: hotel.Location || 'Unknown',
+            prices: [hotel.min_price, hotel.max_price],
+            amenities: hotel.list_of_amenities ? hotel.list_of_amenities.split(', ') : ['Unknown'],
+            popularity: hotel.reservations || '5',
+          }));
+          setHotels(hotelList);
+          const prices = hotelList.map((hotel) => hotel.prices).flat();
+          setLowPrice(Math.min(...prices));
+          setHighPrice(Math.max(...prices));
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error('Error fetching hotels:', error);
+        });
     } else {
-      
+
     }
   }, [state]);
 
@@ -143,12 +144,25 @@ function HotelList() {
     console.log(mergedPrices);
     setLowPrice(Math.min(...mergedPrices))
     setHighPrice(Math.max(...mergedPrices))
-    
+
   };
 
 
   const handleHotelClick = (hotelId) => {
-    navigate(`/hotel/${hotelId}/${state.numGuests}/${state.startDate.toISOString().split('T')[0]}/${state.endDate.toISOString().split('T')[0]}`);
+    const startDateIsoString = state.startDate.toISOString();
+    const endDateIsoString = state.endDate.toISOString();
+
+    const startDate = new Date(startDateIsoString);
+    const endDate = new Date(endDateIsoString);
+
+    startDate.setDate(startDate.getDate() + 1);
+    endDate.setDate(endDate.getDate() + 1);
+
+    const updatedStartDateIsoString = startDate.toISOString().split('T')[0];
+    const updatedEndDateIsoString = endDate.toISOString().split('T')[0];
+
+    navigate(`/hotel/${hotelId}/${state.numGuests}/${updatedStartDateIsoString}/${updatedEndDateIsoString}`);
+
   };
 
   // Sort options including ratings
@@ -172,7 +186,7 @@ function HotelList() {
   }
 
   // Filter hotels based on search query, selected amenities, and price range
-  console.log('sortedHotels',sortedHotels)
+  console.log('sortedHotels', sortedHotels)
   const filteredHotels = sortedHotels.filter((hotel) => {
     const matchesSearch = hotel.name.toLowerCase().includes(searchQuery.toLowerCase());
     console.log(matchesSearch)
@@ -182,12 +196,12 @@ function HotelList() {
     console.log(priceInRange)
     return matchesSearch && hasSelectedAmenities && priceInRange;
   });
-  console.log('filteredHotels',filteredHotels)
+  console.log('filteredHotels', filteredHotels)
 
   return (
     <div className='h-screen'>
       {/* Navbar */}
-      <NavBar props={state}/>
+      <NavBar props={state} />
 
 
       <div className=' z-[-6] flex flex-col'>
@@ -243,13 +257,13 @@ function HotelList() {
 
         <div id='Listings' className=' border top-[78px] right-0 py-2 border-r-2 px-10 overflow-scroll no-scrollbar max-h-[720px] ml-[350px] mt-[78px]'>
           {loading ? (
-            <Loading/>
+            <Loading />
           ) : (
             <div className="grid grid-cols-1 gap-4 ">
               {filteredHotels.length === 0 && (
                 <div className='w-full h-screen flex flex-col items-center justify-center'>
-                    <p className='text-2xl text-gray-500'>No Hotels Found</p>
-                    <p className='text-l text-gray-500'>Try Resetting Filters</p>
+                  <p className='text-2xl text-gray-500'>No Hotels Found</p>
+                  <p className='text-l text-gray-500'>Try Resetting Filters</p>
                 </div>
               )}
               {filteredHotels.map((hotel) => (
