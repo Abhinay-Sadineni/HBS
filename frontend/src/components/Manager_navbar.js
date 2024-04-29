@@ -15,7 +15,7 @@ import { FiAlignJustify } from "react-icons/fi";
 
 function Manager_NavBar() {
   return(
-    <nav className='fixed top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white-800 opacity-100'>
+    <nav className='fixed top-0 left-0 shadow-[rgba(0,0,15,0.5)_2px_2px_2px_0px] w-full bg-white bg-opacity-99'>
         <div className='flex flex-row items-center justify-between'>
           <img src={logo} className='rounded-full px-2 py-2' style={{ height: '75px', width: '75px' }} alt="HBS Logo" />
           <div className='flex items-center justify-between'>
