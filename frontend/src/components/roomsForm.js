@@ -236,7 +236,8 @@ function RoomForm({ handlePrevious }) {
         });
     };
 
-    const addNewRoom = async () => {
+    const addNewRoom = async (e) => {
+        e.preventDefault()
         if (newRoom.roomType && newRoom.availableRooms && newRoom.defaultPrice && newRoom.amenities.length > 0) {
             axiosInstance.post('/add_room_types', {
                 room_types: [{ name: newRoom.roomType, list_of_amenties: newRoom.amenities.join(","), no_of_rooms: newRoom.availableRooms, default_price: 100, max_guests: 1 }]
@@ -258,6 +259,7 @@ function RoomForm({ handlePrevious }) {
                             availableRooms: 0,
                             defaultPrice: 0,
                             amenities: [],
+                            max_of_guests: 1
                         });
                         setNewRoomPopup(false);
                     }
@@ -395,7 +397,15 @@ function RoomForm({ handlePrevious }) {
                         placeholder="Default Price"
                         className="border border-gray-300 rounded-md px-4 py-2"
                     />
-                    <button onClick={addNewRoom} className="bg-blue-500 text-white px-4 py-2 rounded-md">Add Room</button>
+                      <input
+                        type="number"
+                        name="max_of_guests"
+                        value={newRoom.max_of_guests}
+                        onChange={(e) => setNewRoom({ ...newRoom, max_of_guests: e.target.value })}
+                        placeholder="Max guests"
+                        className="border border-gray-300 rounded-md px-4 py-2"
+                    />
+                    <button onClick={(e)=>addNewRoom(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Add Room</button>
                 </div>
 
                 {newRoomPopup && (
