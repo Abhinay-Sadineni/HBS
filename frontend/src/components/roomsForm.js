@@ -118,8 +118,8 @@ function RoomForm({ handlePrevious }) {
 
     const rooms_am = [
         "TV", "Kitchen", "Washing Machine", "Air Conditioning",
-        "Dedicated work space", "Essentials", "Ceiling Fan", "Fridge", "Micro Wave",
-    ];
+       "Dedicated work space", "Essentials", "Ceiling Fan", "Fridge", "Micro Wave", 
+      ];
     const saveRoomChanges = (index) => {
         const updatedRooms = [...formData2.rooms];
 

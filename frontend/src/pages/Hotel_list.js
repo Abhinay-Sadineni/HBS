@@ -8,81 +8,87 @@ import Loading from '../components/Loading';
 
 // Dummy data with prices as an array
 
+// {
+//   id: 1,
+//   name: 'Example Hotel 1',
+//   ratings: '4.5/5',
+//   location: 'City A, Country X',
+//   priceRange: '$$$',
+//   amenities: ['Wifi', 'Parking', 'Pool'],
+//   prices: [250, 350], // Min and Max prices
+//   popularity: 10,// Example popularity
+//   imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+// },
+// {
+//   id: 2,
+//   name: 'Example Hotel 2',
+//   ratings: '4.2/5',
+//   location: 'City B, Country Y',
+//   priceRange: '$$',
+//   amenities: ['Wifi', 'Gym'],
+//   prices: [150, 550], // Min and Max prices
+//   popularity: 5,// Example popularity
+//   imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+// },
+// {
+//   id: 3,
+//   name: 'Example Hotel 3',
+//   ratings: '4.7/5',
+//   location: 'City C, Country Z',
+//   priceRange: '$$$',
+//   amenities: ['Parking', 'Restaurant'],
+//   prices: [350, 450], // Min and Max prices
+//   popularity: 8,// Example popularity
+//   imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720"
+// },
+// {
+//   id: 4,
+//   name: 'Example Hotel 1',
+//   ratings: '4.5/5',
+//   location: 'City A, Country X',
+//   priceRange: '$$$',
+//   amenities: ['Wifi', 'Parking', 'Pool'],
+//   prices: [250, 350], // Min and Max prices
+//   popularity: 10,// Example popularity
+//   imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+// },
+// {
+//   id: 5,
+//   name: 'Example Hotel 2',
+//   ratings: '4.2/5',
+//   location: 'City B, Country Y',
+//   priceRange: '$$',
+//   amenities: ['Wifi', 'Gym'],
+//   prices: [150, 550], // Min and Max prices
+//   popularity: 5,// Example popularity
+//   imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+// },
+// {
+//   id: 6,
+//   name: 'Example Hotel 3',
+//   ratings: '4.7/5',
+//   location: 'City C, Country Z',
+//   priceRange: '$$$',
+//   amenities: ['Parking', 'Restaurant'],
+//   prices: [350, 450], // Min and Max prices
+//   popularity: 8,// Example popularity
+//   imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
+// }
+
 function HotelList() {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [sortOption, setSortOption] = useState('popularity');
-  const [hotels, setHotels] = useState([{
-    id: 1,
-    name: 'Example Hotel 1',
-    ratings: '4.5/5',
-    location: 'City A, Country X',
-    priceRange: '$$$',
-    amenities: ['Wifi', 'Parking', 'Pool'],
-    prices: [250, 350], // Min and Max prices
-    popularity: 10,// Example popularity
-    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
-  },
-  {
-    id: 2,
-    name: 'Example Hotel 2',
-    ratings: '4.2/5',
-    location: 'City B, Country Y',
-    priceRange: '$$',
-    amenities: ['Wifi', 'Gym'],
-    prices: [150, 550], // Min and Max prices
-    popularity: 5,// Example popularity
-    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
-  },
-  {
-    id: 3,
-    name: 'Example Hotel 3',
-    ratings: '4.7/5',
-    location: 'City C, Country Z',
-    priceRange: '$$$',
-    amenities: ['Parking', 'Restaurant'],
-    prices: [350, 450], // Min and Max prices
-    popularity: 8,// Example popularity
-    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720"
-  },
-  {
-    id: 4,
-    name: 'Example Hotel 1',
-    ratings: '4.5/5',
-    location: 'City A, Country X',
-    priceRange: '$$$',
-    amenities: ['Wifi', 'Parking', 'Pool'],
-    prices: [250, 350], // Min and Max prices
-    popularity: 10,// Example popularity
-    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
-  },
-  {
-    id: 5,
-    name: 'Example Hotel 2',
-    ratings: '4.2/5',
-    location: 'City B, Country Y',
-    priceRange: '$$',
-    amenities: ['Wifi', 'Gym'],
-    prices: [150, 550], // Min and Max prices
-    popularity: 5,// Example popularity
-    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
-  },
-  {
-    id: 6,
-    name: 'Example Hotel 3',
-    ratings: '4.7/5',
-    location: 'City C, Country Z',
-    priceRange: '$$$',
-    amenities: ['Parking', 'Restaurant'],
-    prices: [350, 450], // Min and Max prices
-    popularity: 8,// Example popularity
-    imgURL: "https://a0.muscache.com/im/pictures/miso/Hosting-820733145568572294/original/0c68a135-b239-4a95-b3d6-ad89816cd922.jpeg?im_w=720" // Example popularity
-  }]);
+  const [hotels, setHotels] = useState([]);
 
   const [lowPrice, setLowPrice] = useState(Math.min(...hotels.flatMap((hotel) => hotel.prices)));
   const [highPrice, setHighPrice] = useState(Math.max(...hotels.flatMap((hotel) => hotel.prices)));
+  const am = [
+    "Wifi", "Elevator", "External Power Source", "Free Parking on Premises", "Pool", "Piano",
+    "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
+  ];
 
   const [loading, setLoading] = useState(true);
 
@@ -126,6 +132,19 @@ function HotelList() {
     }
   }, [state]);
 
+  console.log(hotels)
+
+
+  const resetFilters = () => {
+
+    const mergedPrices = hotels.reduce((accumulator, currentHotel) => {
+      return accumulator.concat(currentHotel.prices);
+    }, []);
+    console.log(mergedPrices);
+    setLowPrice(Math.min(...mergedPrices))
+    setHighPrice(Math.max(...mergedPrices))
+    
+  };
 
 
   const handleHotelClick = (hotelId) => {
@@ -177,7 +196,7 @@ function HotelList() {
             {/* Heading for filters */}
             <div className="grid grid-cols-2 gap-4 items-center">
               <h2 className="text-3xl font-sans">Filters</h2>
-              <button className="text-red-300">Clear All</button>
+              <button onClick={resetFilters} className="text-red-300">Clear All</button>
             </div>
 
             {/* Price Filter */}
@@ -197,7 +216,7 @@ function HotelList() {
             <div id="Amenties" className="pt-2 px-10 w-100 border-4 my-2">
               <h3 className="mb-4">Amenities:</h3>
               <div className="flex flex-col">
-                {['Wifi', 'Parking', 'Pool', 'Gym', 'Restaurant'].map((amenity, index) => (
+                {am.map((amenity, index) => (
                   <div key={amenity} className="mb-2 flex items-center">
                     <input
                       type="checkbox"
