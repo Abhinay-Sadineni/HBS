@@ -38,6 +38,7 @@ function RoomForm({ handlePrevious }) {
                         max_of_guests: room.max_guests
                     }));
                     const faqs = HotelDetails.FAQs.map(faq => ({
+                        id: faq.faq_id,
                         question: faq.Q,
                         answer: faq.A,
                         editable: false
@@ -86,12 +87,12 @@ function RoomForm({ handlePrevious }) {
                 if (response.status === 200) {
                     console.log(response.data)
                     window.alert(response.data.message)
-                    if(response.data.code == 1){
+                    if (response.data.code == 1) {
                         const updatedRooms = formData2.rooms.filter((room, i) => i !== index);
-                    setFormData2({
-                        ...formData2,
-                        rooms: updatedRooms
-                    });
+                        setFormData2({
+                            ...formData2,
+                            rooms: updatedRooms
+                        });
                     }
                 }
             })
@@ -110,13 +111,32 @@ function RoomForm({ handlePrevious }) {
 
 
 
-    const saveFAQChanges = (index) => {
-        const updatedFAQs = [...formData2.faqs];
-        updatedFAQs[index].editable = false; // Set editable to false
-        setFormData2({
-            ...formData2,
-            faqs: updatedFAQs,
-        });
+    const saveFAQChanges = async (index) => {
+        try {
+            console.log({ faq: { faq_id: formData2.faqs[index].id, Q: formData2.faqs[index].question, A: formData2.faqs[index].answer } })
+            const response = await axiosInstance.put('/update_faqs', {
+                faq:
+                    { faq_id: formData2.faqs[index].id, Q: formData2.faqs[index].question, A: formData2.faqs[index].answer }
+            }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.status === 200) {
+                window.alert(response.data.message.message);
+                const updatedFAQs = [...formData2.faqs];
+                updatedFAQs[index].editable = false;
+                setFormData2({
+                    ...formData2,
+                    faqs: updatedFAQs,
+                });
+            } else {
+                console.error("Error updating FAQ:", response.data.error);
+            }
+        } catch (error) {
+            console.error("Error updating FAQ:", error);
+            window.alert("Error updating FAQ. Please try again."); // Display error message
+        }
     };
 
     const setFAQEditable = (index, editable) => {
@@ -128,13 +148,27 @@ function RoomForm({ handlePrevious }) {
         });
     };
 
-    const handleDeleteFAQ = (index) => {
-        const updatedFAQs = [...formData2.faqs];
-        updatedFAQs.splice(index, 1);
-        setFormData2({
-            ...formData2,
-            faqs: updatedFAQs,
-        });
+    const handleDeleteFAQ = async (index) => {
+        try {
+
+            let faq_id = formData2.faqs[index].id
+            console.log(formData2.faqs[index].id)
+            const response = await axiosInstance.delete(`/delete_faqs/${faq_id}`);
+            if (response.status === 200) {
+                const updatedFAQs = [...formData2.faqs];
+                updatedFAQs.splice(index, 1);
+                setFormData2({
+                    ...formData2,
+                    faqs: updatedFAQs,
+                });
+                window.alert(response.data.message.message)
+                console.log(response.data.message); // Log success message
+            } else {
+                console.error("Error deleting FAQ:", response.data.error);
+            }
+        } catch (error) {
+            console.error("Error deleting FAQ:", error);
+        }
     };
 
     const handleFAQInputChange = (index, e) => {
@@ -147,13 +181,29 @@ function RoomForm({ handlePrevious }) {
         });
     };
 
-    const addNewFAQ = () => {
+    const addNewFAQ = async () => {
         if (newFAQ.question && newFAQ.answer) {
-            setFormData2({
-                ...formData2,
-                faqs: [...formData2.faqs, { question: newFAQ.question, answer: newFAQ.answer, editable: false }],
+            const response = await axiosInstance.post('/add_faqs', { faqs: [{ Q: newFAQ.question, A: newFAQ.answer }] }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
             });
-            setNewFAQ({ question: '', answer: '' });
+
+            if (response.status === 200) {
+                if (response.data.id) {
+                    window.alert(response.data.message)
+                    setFormData2({
+                        ...formData2,
+                        faqs: [...formData2.faqs, { question: newFAQ.question, answer: newFAQ.answer, editable: false }],
+                    });
+                    setNewFAQ({ question: '', answer: '' });
+                }
+
+            }
+            else {
+                window.alert(response.data.error)
+            }
+
         }
     };
 
@@ -195,7 +245,7 @@ function RoomForm({ handlePrevious }) {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             }).then((response) => {
-                console.log('new Room',response)
+                console.log('new Room', response)
                 if (response.status === 200) {
                     {
                         const newRoomWithId = { ...newRoom, id: response.data.id };

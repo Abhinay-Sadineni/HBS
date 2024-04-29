@@ -353,7 +353,7 @@ class HotelService {
 
             const FAQs = await sequelize.query(
                 `
-                SELECT "Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
+                SELECT "faq_id","Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -675,14 +675,18 @@ class HotelService {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
             const hotelId = MyHotel.hotel_id;
-
+            let id;
+            console.log(faq)
             for (let faq of FAQs){
-                await FAQ.create({
+                const faq_in = await FAQ.create({
                     Q: faq.Q,
                     A: faq.A,
                     hotel_id: hotelId
                 }); 
+                id = faq_in.faq_id
             }
+
+            return id
         }
         catch (error) {
             throw new Error(error.message);
