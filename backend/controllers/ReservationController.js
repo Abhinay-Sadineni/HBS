@@ -228,17 +228,6 @@ router.get('/trigger-update', async (req, res) => {
   }
 });
 
-router.get('/trigger-update', async (req, res) => {
-  try {
-      console.log('Manually triggering update task...');
-      await ReservationService.updateCalendar();
-      res.send('Update task triggered successfully.');
-  } catch (error) {
-      console.error('Error in manual update task:', error);
-      res.status(500).send('Internal server error');
-  }
-});
-
 router.get('/today_reservations', auth, async (req, res) => {
   try {
       const manager_id = req.user_id
