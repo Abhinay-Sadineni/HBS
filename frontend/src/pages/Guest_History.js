@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import ReservationCard from '../components/Reservation_card';
 import axiosInstance from '../helpers/axios';
+import { useNavigate } from 'react-router-dom';
 
 function History() {
   const [reservationList, setReservationList] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     axiosInstance.get("/guest_history", {
@@ -14,11 +16,13 @@ function History() {
     })
     .then((response) => {
       if (response.status === 200) {
+        console.log(response.data.messsage)
+        if(response.data.messsage==="Unauthorized user"){
+          navigate("/")
+        }
         console.log(response.data);
         setReservationList(response.data.List);
-      } else {
-        // Handle other status codes if needed
-      }
+      } 
     })
     .catch((error) => {
       console.error("Error fetching reservation history:", error);
