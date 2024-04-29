@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
-import { Link } from 'react-router-dom';
 import axiosInstance from '../helpers/axios';
 
 function Profile() {
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(true);
+  const [formData, setformData] = useState({
     username: '',
     email: 'example@example.com', // Example email
     password: '',
@@ -13,17 +13,50 @@ function Profile() {
     usertype: 'guest',
   });
 
-  
-
   useEffect(() => {
-       axiosInstance.get('/getprofile').then((response) =>{
-        console.log(response.body)
-       })
-    }, []);
+    axiosInstance.get('/profile', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+    
+      
+      const userData = response.data.user;
+      console.log(userData)
+      setformData({
+        username: userData.username,
+        email: userData.email,
+        password: userData.password,
+        phone_number: userData.phone_number,
+        country_code: userData.country_code,
+        usertype: userData.usertype,
+      });
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching user data:', error);
+      setLoading(false);
+    });
+  }, []);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
+    axiosInstance.get('/profile', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+      const userData = response.data;
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching user data:', error);
+      setLoading(false);
+    });
+    setformData({
       ...formData,
       [name]: value
     });
@@ -31,7 +64,7 @@ function Profile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission, e.g., send data to the backend
+    
     console.log(formData);
   };
 

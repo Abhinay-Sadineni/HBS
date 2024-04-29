@@ -63,6 +63,9 @@ function ReserveCard(props) {
     const handleReserve = (e) => {
         e.preventDefault();
         let token = localStorage.getItem('token');
+        if(token === null){
+            Navigate('/login')
+        }
         if (roomTypes) {
             axiosInstance.post('/reserve', {
                 room_types: roomTypes,
