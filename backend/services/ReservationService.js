@@ -336,7 +336,7 @@ class ReservationService {
                 { where: { gid: parseInt(gid) } }
             );
 
-            return { message: "Reservation cancelled successfully" };
+            return "Reservation cancelled successfully";
         } catch (error) {
             throw new Error("Error in cancelling reservation: " + error.message);
         }
