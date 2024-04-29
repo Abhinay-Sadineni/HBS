@@ -281,10 +281,10 @@ router.delete("/delete_faqs", auth, async (req, res) => {
     }
 });
 
-router.delete("/delete_room_types", auth, async (req, res) => {
+router.delete("/delete_room_types/:room_type_id", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
-      const { room_type_id } = req.body;
+      const { room_type_id } = req.params;
       const message= await HotelService.delete_roomTypes(manager_id, room_type_id);  
       res.json({ message: message});
     } catch (error) {
