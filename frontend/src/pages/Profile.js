@@ -16,8 +16,13 @@ function Profile() {
   
 
   useEffect(() => {
-       axiosInstance.get('/getprofile').then((response) =>{
-        console.log(response.body)
+       axiosInstance.get('/getprofile', {
+             headers: {
+                      Authorization: `Bearer ${localStorage.getItem('token')}`
+                   }
+          }).then((response) =>{
+                    
+                    console.log(response.body)
        })
     }, []);
 
