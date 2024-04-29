@@ -97,7 +97,7 @@ function Hotelpage() {
   return (
     <div className="h-screen">
       <NavBar />
-      <div className='fixed border top-[78px] overflow-scroll no-scrollbar max-h-[720px] flex flex-col md:flex-row items-start  justify-between ml-10 mr-10'>
+      <div className='fixed  top-[78px] overflow-scroll no-scrollbar max-h-[720px] flex flex-col md:flex-row items-start  justify-between ml-10 mr-10'>
         <div className="md:w-1/2 md:mr-5">
           <h1 className="text-2xl font-bold mt-8">{hotel.HotelInfo.Hotel.Hotel_name}</h1>
           {/* <h2 className="text-lg font-semibold">Hosted by Manager</h2> */}
@@ -114,10 +114,14 @@ function Hotelpage() {
           <div >
           <h1 className="text-xl font-bold mt-2">Room Types</h1>
               {
-                  hotel.HotelInfo.RoomTypes.map(roomType => (
-                      <div className='border-b border-gray-400 py-2 mb-2'>
+                  hotel.HotelInfo.RoomTypes.map((roomType, index) => (
+                      <div key = {index} className='border-b border-gray-400 py-2 mb-2'>
                           <p className="text-l font-bold">{roomType.room_type_name}</p>
-                          <p>price : {roomType.default_price}</p>
+                          <div className='flex justify-between'>
+                          <p>Default price : {roomType.default_price}</p>
+                          <p>Min price : {hotel.VacantRoomsandRR.VacantRooms[index].min}</p>  
+                          <p>Max price : {hotel.VacantRoomsandRR.VacantRooms[index].max}</p>  
+                          </div>
                           <p>Max Guests per room: {roomType.max_guests}</p>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {
