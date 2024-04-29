@@ -245,8 +245,8 @@ router.post("/add_room_types", auth, async (req, res) => {
     try {
       const manager_id = req.user_id
       const {room_types} = req.body
-      const Hotel = await HotelService.add_roomTypes(manager_id, room_types);  
-      res.json({message: "RoomTypes added successfully", Hotel: Hotel})
+      const { message , id } = await HotelService.add_roomTypes(manager_id, room_types);  
+      res.json({message: "RoomTypes added successfully" , id: id})
     }
     catch (error){
       console.error("Error in adding RoomTypes:", error);
@@ -285,8 +285,8 @@ router.delete("/delete_room_types/:room_type_id", auth, async (req, res) => {
     try {
       const manager_id = req.user_id;
       const { room_type_id } = req.params;
-      const message= await HotelService.delete_roomTypes(manager_id, room_type_id);  
-      res.json({ message: message});
+      const{ message , code} = await HotelService.delete_roomTypes(manager_id, room_type_id);  
+      res.json({ message: message , code :code});
     } catch (error) {
       console.error("Error in deleting RoomTypes:", error);
       res.status(500).json({ error: "Internal server error" });

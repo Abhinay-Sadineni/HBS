@@ -85,12 +85,14 @@ function RoomForm({ handlePrevious }) {
             .then((response) => {
                 if (response.status === 200) {
                     console.log(response.data)
-                    window.alert('RoomType Delete Sucessfully')
-                    const updatedRooms = formData2.rooms.filter((room, i) => i !== index);
+                    window.alert(response.data.message)
+                    if(response.data.code == 1){
+                        const updatedRooms = formData2.rooms.filter((room, i) => i !== index);
                     setFormData2({
                         ...formData2,
                         rooms: updatedRooms
                     });
+                    }
                 }
             })
     };
@@ -193,11 +195,13 @@ function RoomForm({ handlePrevious }) {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             }).then((response) => {
+                console.log('new Room',response)
                 if (response.status === 200) {
                     {
+                        const newRoomWithId = { ...newRoom, id: response.data.id };
                         setFormData2({
                             ...formData2,
-                            rooms: [...formData2.rooms, newRoom],
+                            rooms: [...formData2.rooms, newRoomWithId],
                         });
                         setNewRoom({
                             roomType: '',
@@ -211,6 +215,7 @@ function RoomForm({ handlePrevious }) {
                 window.alert('New RoomType added sucessfully')
             })
                 .catch((error) => {
+
                     console.error(error)
                 })
 
