@@ -125,6 +125,22 @@ class UserService {
             return { success: false, message: "Server error" };
         }
     }
+
+
+    //Get profile
+    static async get_profile(user_id) {
+        try {
+            const user = await User.findOne({ where: { user_id } });
+            if (!user) {
+                return { success: false, message: "User not found" };
+            }
+            return { success: true,  profile : user };
+        }
+        catch (error) {
+            console.error('Error editing user profile:', error);
+            return { success: false, message: "Server error" };
+        }
+    }    
 }
 
 module.exports = UserService;
