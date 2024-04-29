@@ -35,11 +35,12 @@ function NavBar() {
         }
 
 
+
         axiosInstance.post("/login", {headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`
           }}).then((response)=>{
             console.log(response.data)
-            if(response.status ===200){
+            if(response.status === 200){
               setIsLoggedIn(true);
             }
           })
