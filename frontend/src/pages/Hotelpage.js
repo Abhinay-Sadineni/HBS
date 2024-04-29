@@ -113,6 +113,9 @@ function Hotelpage() {
               ))}
             </div>
           </div>
+          <div className="text-xl bm-2 text-gray-600">
+          Cancellation Policy: Can cancel booking before {hotel.HotelInfo.Hotel.cancellation_policy} hours.
+        </div>
           <div >
           <h1 className="text-xl font-bold mt-2">Room Types</h1>
                   
