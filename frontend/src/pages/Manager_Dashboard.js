@@ -2,6 +2,7 @@ import {React, useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Manager_NavBar from '../components/Manager_navbar';
 import axiosInstance from '../helpers/axios';
+import Loading from "../components/Loading";
 
 
 const reservations = [
@@ -117,7 +118,34 @@ function TodayCard(props){
 }
 
 function Manager_Dashboard() {
+    const [todayReservations, setTodayReservations] = useState([]);
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+      setLoading(true); // Set loading to true when the effect starts
+  
+      axiosInstance.get('today_reservations', {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+      })
+      .then((response) => {
+          if (response.data) {
+            console.log(response.data)
+            // setManagerReservations(response.data.message.Reservations);
+            //     console.log(ManagerReservations)
+          }
+      })
+      .catch((error) => {
+          console.error("Error fetching hotel data:", error);
+          // Handle error
+      })
+      .finally(() => {
+          setLoading(false); // Set loading to false when the request is completed (whether success or failure)
+      });
+  }, []);
+
     const [activeFilter, setActiveFilter] = useState('Currently hosting');
+
     const navigate = useNavigate()
 
 

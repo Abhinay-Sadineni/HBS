@@ -36,6 +36,10 @@ function Hotelpage() {
   const [imagePopup, setImagePopup] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+
+
+
+
   useEffect(() => {
     async function fetchData() {
         try {
@@ -45,7 +49,7 @@ function Hotelpage() {
                start_date: start_date,
                end_date: end_date
             }});
-            console.log(response)
+            console.log(response.data)
             setHotel(response.data);
         } catch (error) {
             console.error('Error fetching hotel data:', error);
@@ -82,32 +86,65 @@ function Hotelpage() {
     return <Loading/>;
   }
 
-  const a = Object.values(hotel.VacantRoomsandRR.Ratings[0]).splice(1).map(num => parseInt(num));
+  const a = Object.values(hotel.VacantRoomsandRR.Ratings[0]).map(num => parseInt(num));
+  console.log(a)
+  const rating = a.slice(0,-1)
+  const totalReviews = a[a.length - 1]
+
+  const amenitiesArray =   hotel.HotelInfo.Hotel.list_of_amenities.split(', ');
+
+
+
 
   return (
     <div className="h-screen">
       <NavBar />
-      <div className='fixed border top-[78px] overflow-scroll no-scrollbar max-h-[720px] flex flex-col md:flex-row items-start  justify-between ml-10 mr-10'>
+      <div className='fixed  top-[78px] overflow-scroll no-scrollbar max-h-[720px] flex flex-col md:flex-row items-start  justify-between ml-10 mr-10'>
         <div className="md:w-1/2 md:mr-5">
-          <h1 className="text-xl font-bold mt-8">{hotel.HotelInfo.Hotel.Hotel_name}</h1>
-          <h2 className="text-lg font-semibold">Hosted by Manager</h2>
+          <h1 className="text-2xl font-bold mt-8">{hotel.HotelInfo.Hotel.Hotel_name}</h1>
+          {/* <h2 className="text-lg font-semibold">Hosted by Manager</h2> */}
           <p className="text-sm">{hotel.HotelInfo.Hotel.Description}</p>
 
           <div className="border-t border-b border-gray-400 py-4 mt-4 ">
             <h1 className="text-xl font-bold">What this place offers</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <p>Mountain view</p>
-              <p>Ocean view</p>
-              <p>Kitchen</p>
-              <p>Wifi</p>
-              <p>Dedicated work space</p>
+              {amenitiesArray.map(amenity => (
+                <p>{amenity}</p>
+              ))}
             </div>
           </div>
-          <div className="border-b border-gray-400 py-4 mb-4">
-            
-            <RatingBar ratings = {a} />
-          </div>
+          <div >
+          <h1 className="text-xl font-bold mt-2">Room Types</h1>
+                  
+          {hotel.HotelInfo.RoomTypes.map((roomType) => {
+            const vacantRoom = hotel.VacantRoomsandRR.VacantRooms.find(room => room.room_type_id === roomType.room_type_id);            
+            return (
+              <div key={roomType.room_type_id} className='border-b border-gray-400 py-2 mb-2'>
+                <p className="text-l font-bold">{roomType.room_type_name}</p>
+                <div className='flex justify-between'>
+                  <p>Default price : {roomType.default_price}</p>
+                  {vacantRoom ? (
+                    <div>  
+                      <p>Min price: {vacantRoom.min}</p>  
+                      <p>Max price: {vacantRoom.max}</p> 
+                    </div>
+                  ) : (
+                    <p>Not vacant in the given duration</p>
+                  )}
+                </div>
+                <p>Max Guests per room: {roomType.max_guests}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {roomType.list_of_amenties.split(', ').map(amenity => <p key={amenity}>{amenity}</p>)}
+                </div>
+              </div>
+            );
+          })
+        }
 
+          </div>
+          <div className="border-b border-gray-400 py-4 mb-4">
+            <RatingBar ratings = {rating} />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hotel.VacantRoomsandRR.Reviews.slice(0, 4).map((review, index) => (
               <ReviewCard
@@ -139,6 +176,15 @@ function Hotelpage() {
               </div>
             </div>
           )}
+          <div className="border-y border-gray-400 py-4 mb-4" >
+          <h1 className="text-xl font-bold my-2">FAQS</h1>
+            {hotel.HotelInfo.FAQs.map(faq =>
+            <div className="mb-2">
+                <p className="text-l font-bold">{faq.Q}</p>
+                <p>{faq.A}</p>
+            </div>
+            )}
+          </div>  
 
         </div>
 

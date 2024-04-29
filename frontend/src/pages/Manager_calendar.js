@@ -1,199 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Manager_NavBar from "../components/Manager_navbar";
-// import prices from "./prices.js"
-
-var prices = {
-    "Tue Apr 23 2024": 1000,
-    "Wed Apr 24 2024": 1000,
-    "Thu Apr 25 2024": 1000,
-    "Fri Apr 26 2024": 1000,
-    "Sat Apr 27 2024": 1000,
-    "Sun Apr 28 2024": 1000,
-    "Mon Apr 29 2024": 1000,
-    "Tue Apr 30 2024": 1000,
-    "Wed May 01 2024": 1000,
-    "Thu May 02 2024": 1000,
-    "Fri May 03 2024": 1000,
-    "Sat May 04 2024": 1000,
-    "Sun May 05 2024": 1000,
-    "Mon May 06 2024": 1000,
-    "Tue May 07 2024": 1000,
-    "Wed May 08 2024": 1000,
-    "Thu May 09 2024": 1000,
-    "Fri May 10 2024": 1000,
-    "Sat May 11 2024": 1000,
-    "Sun May 12 2024": 1000,
-    "Mon May 13 2024": 1000,
-    "Tue May 14 2024": 1000,
-    "Wed May 15 2024": 1000,
-    "Thu May 16 2024": 1000,
-    "Fri May 17 2024": 1000,
-    "Sat May 18 2024": 1000,
-    "Sun May 19 2024": 1000,
-    "Mon May 20 2024": 1000,
-    "Tue May 21 2024": 1000,
-    "Wed May 22 2024": 1016,
-    "Thu May 23 2024": 1000,
-    "Fri May 24 2024": 1000,
-    "Sat May 25 2024": 2000,
-    "Sun May 26 2024": 1000,
-    "Mon May 27 2024": 1000,
-    "Tue May 28 2024": 1000,
-    "Wed May 29 2024": 1000,
-    "Thu May 30 2024": 1000,
-    "Fri May 31 2024": 1000,
-    "Sat Jun 01 2024": 1000,
-    "Sun Jun 02 2024": 1000,
-    "Mon Jun 03 2024": 1000,
-    "Tue Jun 04 2024": 1000,
-    "Wed Jun 05 2024": 1000,
-    "Thu Jun 06 2024": 1000,
-    "Fri Jun 07 2024": 1000,
-    "Sat Jun 08 2024": 1000,
-    "Sun Jun 09 2024": 1000,
-    "Mon Jun 10 2024": 1000,
-    "Tue Jun 11 2024": 1000,
-    "Wed Jun 12 2024": 1000,
-    "Thu Jun 13 2024": 1000,
-    "Fri Jun 14 2024": 1000,
-    "Sat Jun 15 2024": 1000,
-    "Sun Jun 16 2024": 1000,
-    "Mon Jun 17 2024": 1000,
-    "Tue Jun 18 2024": 1000,
-    "Wed Jun 19 2024": 1000,
-    "Thu Jun 20 2024": 1000,
-    "Fri Jun 21 2024": 1000,
-    "Sat Jun 22 2024": 1000,
-    "Sun Jun 23 2024": 1000,
-    "Mon Jun 24 2024": 1000,
-    "Tue Jun 25 2024": 1000,
-    "Wed Jun 26 2024": 1000,
-    "Thu Jun 27 2024": 1000,
-    "Fri Jun 28 2024": 1000,
-    "Sat Jun 29 2024": 1000,
-    "Sun Jun 30 2024": 1000,
-    "Mon Jul 01 2024": 1000,
-    "Tue Jul 02 2024": 1000,
-    "Wed Jul 03 2024": 1000,
-    "Thu Jul 04 2024": 1000,
-    "Fri Jul 05 2024": 1000,
-    "Sat Jul 06 2024": 1000,
-    "Sun Jul 07 2024": 1000,
-    "Mon Jul 08 2024": 1000,
-    "Tue Jul 09 2024": 1000,
-    "Wed Jul 10 2024": 1000,
-    "Thu Jul 11 2024": 1000,
-    "Fri Jul 12 2024": 1000,
-    "Sat Jul 13 2024": 1000,
-    "Sun Jul 14 2024": 1000,
-    "Mon Jul 15 2024": 1000,
-    "Tue Jul 16 2024": 1000,
-    "Wed Jul 17 2024": 1000,
-    "Thu Jul 18 2024": 1000,
-    "Fri Jul 19 2024": 1000,
-    "Sat Jul 20 2024": 1000,
-    "Sun Jul 21 2024": 1000,
-    "Mon Jul 22 2024": 1000
-};
-
-//available rooms = total rooms - reservation.
-var availableRooms = {
-    "Tue Apr 23 2024": 10,
-    "Wed Apr 24 2024": 10,
-    "Thu Apr 25 2024": 10,
-    "Fri Apr 26 2024": 10,
-    "Sat Apr 27 2024": 10,
-    "Sun Apr 28 2024": 10,
-    "Mon Apr 29 2024": 10,
-    "Tue Apr 30 2024": 10,
-    "Wed May 01 2024": 10,
-    "Thu May 02 2024": 10,
-    "Fri May 03 2024": 10,
-    "Sat May 04 2024": 10,
-    "Sun May 05 2024": 10,
-    "Mon May 06 2024": 10,
-    "Tue May 07 2024": 10,
-    "Wed May 08 2024": 10,
-    "Thu May 09 2024": 10,
-    "Fri May 10 2024": 10,
-    "Sat May 11 2024": 10,
-    "Sun May 12 2024": 10,
-    "Mon May 13 2024": 10,
-    "Tue May 14 2024": 10,
-    "Wed May 15 2024": 10,
-    "Thu May 16 2024": 10,
-    "Fri May 17 2024": 10,
-    "Sat May 18 2024": 10,
-    "Sun May 19 2024": 10,
-    "Mon May 20 2024": 10,
-    "Tue May 21 2024": 10,
-    "Wed May 22 2024": 10,
-    "Thu May 23 2024": 10,
-    "Fri May 24 2024": 10,
-    "Sat May 25 2024": 10,
-    "Sun May 26 2024": 10,
-    "Mon May 27 2024": 10,
-    "Tue May 28 2024": 10,
-    "Wed May 29 2024": 10,
-    "Thu May 30 2024": 10,
-    "Fri May 31 2024": 10,
-    "Sat Jun 01 2024": 10,
-    "Sun Jun 02 2024": 10,
-    "Mon Jun 03 2024": 10,
-    "Tue Jun 04 2024": 10,
-    "Wed Jun 05 2024": 10,
-    "Thu Jun 06 2024": 10,
-    "Fri Jun 07 2024": 10,
-    "Sat Jun 08 2024": 10,
-    "Sun Jun 09 2024": 10,
-    "Mon Jun 10 2024": 10,
-    "Tue Jun 11 2024": 10,
-    "Wed Jun 12 2024": 10,
-    "Thu Jun 13 2024": 10,
-    "Fri Jun 14 2024": 10,
-    "Sat Jun 15 2024": 10,
-    "Sun Jun 16 2024": 10,
-    "Mon Jun 17 2024": 10,
-    "Tue Jun 18 2024": 10,
-    "Wed Jun 19 2024": 10,
-    "Thu Jun 20 2024": 10,
-    "Fri Jun 21 2024": 10,
-    "Sat Jun 22 2024": 10,
-    "Sun Jun 23 2024": 10,
-    "Mon Jun 24 2024": 10,
-    "Tue Jun 25 2024": 10,
-    "Wed Jun 26 2024": 10,
-    "Thu Jun 27 2024": 10,
-    "Fri Jun 28 2024": 10,
-    "Sat Jun 29 2024": 10,
-    "Sun Jun 30 2024": 10,
-    "Mon Jul 01 2024": 10,
-    "Tue Jul 02 2024": 10,
-    "Wed Jul 03 2024": 10,
-    "Thu Jul 04 2024": 10,
-    "Fri Jul 05 2024": 10,
-    "Sat Jul 06 2024": 10,
-    "Sun Jul 07 2024": 10,
-    "Mon Jul 08 2024": 10,
-    "Tue Jul 09 2024": 10,
-    "Wed Jul 10 2024": 10,
-    "Thu Jul 11 2024": 10,
-    "Fri Jul 12 2024": 10,
-    "Sat Jul 13 2024": 10,
-    "Sun Jul 14 2024": 10,
-    "Mon Jul 15 2024": 10,
-    "Tue Jul 16 2024": 10,
-    "Wed Jul 17 2024": 10,
-    "Thu Jul 18 2024": 10,
-    "Fri Jul 19 2024": 10,
-    "Sat Jul 20 2024": 10,
-    "Sun Jul 21 2024": 10,
-    "Mon Jul 22 2024": 10
-};
-
-
+import axiosInstance from "../helpers/axios";
 
 
 function Manager_calendar() {
@@ -204,6 +13,63 @@ function Manager_calendar() {
     const [newRooms, setNewRooms] = useState(0);
     const today = new Date();
     const nextThreeMonths = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
+    const [calendarData, setCalendarData] = useState([]);
+    const [roomTypeFilter, setRoomTypeFilter] = useState(0);
+    const [mainData, setMainData] = useState([]);
+    var prices = {}
+    var availableRooms = {}
+    // var roomTypeFilter = 0;
+
+
+    useEffect(()=>{
+        axiosInstance.get('/calendar', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        }).then((response) => {
+            if (response.status === 200) {
+                const calendarData = response.data.Data.calendar;
+                setMainData(calendarData);
+                setCalendarData(calendarData[Object.keys(calendarData)[0]]);
+            }
+        })
+    },[] )
+
+    // useEffect(() => {
+    //     console.log("room type filter is ", roomTypeFilter);
+    //     if (roomTypeFilter !== null && roomTypeFilter !== undefined) {
+    //         setCalendarData(mainData[roomTypeFilter]);
+    //     }
+    // }, [roomTypeFilter]);
+    
+    // console.log(mainData[Object.keys(mainData)[0]])
+    // console.log(mainData)
+
+    const handleRoomTypeChange = async (event) => {
+        const selectedRoomType = event.target.value;
+        console.log('at function', selectedRoomType)
+        setRoomTypeFilter(parseInt(selectedRoomType));
+        setCalendarData(mainData[selectedRoomType])
+        console.log("room type filter is ", roomTypeFilter)
+
+        console.log(calendarData)
+    };
+    
+    calendarData.forEach(entry => {
+        const date = new Date(entry.date);
+
+        const year = date.getFullYear();
+        const month = date.toLocaleString('en-us', { month: 'short' });
+        const day = date.getDate();
+        const dayOfWeek = date.toLocaleString('en-us', { weekday: 'short' });
+        const formattedDay = day < 10 ? `0${day}` : day;
+
+        const formattedDate = `${dayOfWeek} ${month} ${formattedDay} ${year}`;
+        prices[formattedDate] = parseFloat(entry.price);
+        availableRooms[formattedDate] = entry.no_of_avail_rooms;
+    });
+    
+    
 
     const handleDateChange = (dates) => {
         sethighlightDates(dates);
@@ -256,30 +122,24 @@ function Manager_calendar() {
             alert("Please enter a valid Rooms number.");
             return;
         }
-        // const updatedPrices = { ...prices }; // Copy the original prices object
 
-        // selectedDates.forEach(date => {
-        //     updatedPrices[date.toDateString()] = newPrice; // Update the price for each selected date
-        // });
         const isRangeFormat1 = /^\d+-\d+$/.test(newPrice);
         const isRangeFormat2 = /^\d+-\d+$/.test(newRooms);
 
         let updatedPrices = { ...prices };
-        // let pricesChanged = false;
 
         if (!isRangeFormat1) {
             selectedDates.forEach(date => {
                 updatedPrices[date.toDateString()] = newPrice;
             });
-        // pricesChanged = true;
          }
         prices = { ...updatedPrices }
 
 
-       let updatedRooms= { ...availableRooms }; // Copy the original prices object
+       let updatedRooms= { ...availableRooms }; 
        if (!isRangeFormat2) { 
             selectedDates.forEach(date => {
-                updatedRooms[date.toDateString()] = newRooms; // Update the price for each selected date
+                updatedRooms[date.toDateString()] = newRooms; 
             });
         }
         availableRooms = { ...updatedRooms }
@@ -312,6 +172,12 @@ function Manager_calendar() {
             <Manager_NavBar />
             <div className="flex flex-1 mt-[100px]">
                 <div className="w-1/2 p-4 border-r border-gray-200">
+                <label htmlFor="roomTypeFilter">Select Room Type:</label>
+                    <select id="roomTypeFilter" value={roomTypeFilter} onChange={(e) => {console.log("at event", e.target.value);handleRoomTypeChange(e)}}>
+                        {Object.keys(mainData).map(key => (
+                            <option key={key} value={key}>{mainData[key][0].room_type_name}</option>
+                        ))}
+                    </select>
                     <h2 className="text-lg font-semibold mb-4">Calendar</h2>
                     <Calendar
                         onChange={handleDateChange}
@@ -368,7 +234,7 @@ function Manager_calendar() {
                             )}
                             {minRooms !== maxRooms && (
                                 <p className="mb-2">
-                                    Available Rooms: {minRooms} - {maxRooms}
+                                    Vacant Rooms: {minRooms} - {maxRooms}
                                 </p>
                             )}
                             {minRooms === maxRooms && (

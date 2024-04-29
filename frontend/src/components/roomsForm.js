@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../helpers/axios";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import axiosInstance from '../helpers/axios'
 
 function RoomForm({ handlePrevious }) {
+
     const [formData2, setFormData2] = useState({
         rooms: [
-            { roomType: 'Single Room', amenities: ['TV', 'Air Conditioning'], availableRooms: 10, defaultPrice: 100 },
-            { roomType: 'Double Room', amenities: ['TV', 'Kitchen'], availableRooms: 5, defaultPrice: 150 },
+            { id: '1', roomType: 'Single Room', amenities: ['TV', 'Air Conditioning'], availableRooms: 10, defaultPrice: 100, max_of_guests: 1 },
+            { id: '2', roomType: 'Double Room', amenities: ['TV', 'Kitchen'], availableRooms: 5, defaultPrice: 150, max_of_guests: 2 },
         ],
         faqs: []
-    })
+    });
     const [amPopup, setAmPopup] = useState(false);
     const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
     const [newFAQ, setNewFAQ] = useState({
         question: '',
         answer: '',
     });
+
 
     const handlefetch = () => {
         axiosInstance.get('/hotel_room_faqs', {
@@ -27,6 +30,7 @@ function RoomForm({ handlePrevious }) {
                     console.log(response.data)
                     const { HotelDetails } = response.data;
                     const roomTypes = HotelDetails.RoomTypes.map(room => ({
+                        id: room.room_type_id,
                         roomType: room.room_type_name,
                         amenities: room.list_of_amenties.split(',').map(item => item.trim()),
                         availableRooms: room.no_of_rooms,
@@ -34,6 +38,7 @@ function RoomForm({ handlePrevious }) {
                         max_of_guests: room.max_guests
                     }));
                     const faqs = HotelDetails.FAQs.map(faq => ({
+                        id: faq.faq_id,
                         question: faq.Q,
                         answer: faq.A,
                         editable: false
@@ -48,26 +53,8 @@ function RoomForm({ handlePrevious }) {
     }, [])
 
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(formData2)
-    };
 
 
-    const addRoomType = () => {
-        axiosInstance.post('/add_room_types', {
-            room_types: [{ name: 'Default Room', list_of_amenties: ["Ceiling Fan", "Essentials"].join(","), no_of_rooms: 1, default_price: 100 ,max_guests: 1 }]
-        }, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        }).then((response) => {
-            if (response.status === 200) {
-                handlefetch()
-            }
-        })
-
-    };
 
     const handleRoomInputChange = (index, e) => {
         const { name, value } = e.target;
@@ -88,69 +75,68 @@ function RoomForm({ handlePrevious }) {
         setAmPopup(false);
     };
 
-    const handleRoomAmenitiesChange = (e) => {
-        const { value } = e.target;
-        const updatedRooms = [...formData2.rooms];
-        const amenity_array = updatedRooms[currentRoomIndex].amenities;
 
-        if (amenity_array.includes(value)) {
-            const index = amenity_array.indexOf(value);
-            amenity_array.splice(index, 1);
-        } else {
-            amenity_array.push(value);
-        }
-
-        updatedRooms[currentRoomIndex].amenities = amenity_array;
-        setFormData2({
-            ...formData2,
-            rooms: updatedRooms
-        });
+    const handleDeleteRoom = async (index) => {
+        const id = formData2.rooms[index].id
+        axiosInstance.delete(`/delete_room_types/${id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log(response.data)
+                    window.alert(response.data.message)
+                    if (response.data.code == 1) {
+                        const updatedRooms = formData2.rooms.filter((room, i) => i !== index);
+                        setFormData2({
+                            ...formData2,
+                            rooms: updatedRooms
+                        });
+                    }
+                }
+            })
     };
 
-    const handleDeleteRoom = (index) => {
-        const updatedRooms = formData2.rooms.filter((room, i) => i !== index);
-        setFormData2({
-            ...formData2,
-            rooms: updatedRooms
-        });
-    };
-
+    const am = [
+        "Wifi", "TV", "Kitchen", "Washing Machine", "Air Conditioning",
+        "Dedicated work space", "Free Parking on Premises", "Pool", "Piano",
+        "Smoke alarm", "Fire Extingusher", "Carbon Monoxide Alarm", "First Aid Kit"
+    ];
 
     const rooms_am = [
         "TV", "Kitchen", "Washing Machine", "Air Conditioning",
         "Dedicated work space", "Essentials", "Ceiling Fan", "Fridge", "Micro Wave",
     ];
-    const saveRoomChanges = (index) => {
-        const updatedRooms = [...formData2.rooms];
-
-        let update_room = updatedRooms[index]
-        console.log(update_room)
-
-        updatedRooms[index].editable = false;
-        setFormData2({
-            ...formData2,
-            rooms: updatedRooms
-        });
-    };
-
-    const setRoomEditable = (index, editable) => {
-        const updatedRooms = [...formData2.rooms];
-        updatedRooms[index].editable = editable;
-        setFormData2({
-            ...formData2,
-            rooms: updatedRooms
-        });
-    };
 
 
 
-    const saveFAQChanges = (index) => {
-        const updatedFAQs = [...formData2.faqs];
-        updatedFAQs[index].editable = false; // Set editable to false
-        setFormData2({
-            ...formData2,
-            faqs: updatedFAQs,
-        });
+    const saveFAQChanges = async (index) => {
+        try {
+            console.log({ faq: { faq_id: formData2.faqs[index].id, Q: formData2.faqs[index].question, A: formData2.faqs[index].answer } })
+            const response = await axiosInstance.put('/update_faqs', {
+                faq:
+                    { faq_id: formData2.faqs[index].id, Q: formData2.faqs[index].question, A: formData2.faqs[index].answer }
+            }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.status === 200) {
+                window.alert(response.data.message.message);
+                const updatedFAQs = [...formData2.faqs];
+                updatedFAQs[index].editable = false;
+                setFormData2({
+                    ...formData2,
+                    faqs: updatedFAQs,
+                });
+            } else {
+                console.error("Error updating FAQ:", response.data.error);
+            }
+        } catch (error) {
+            console.error("Error updating FAQ:", error);
+            window.alert("Error updating FAQ. Please try again."); // Display error message
+        }
     };
 
     const setFAQEditable = (index, editable) => {
@@ -162,54 +148,153 @@ function RoomForm({ handlePrevious }) {
         });
     };
 
-    const handleDeleteFAQ = (index) => {
-        const updatedFAQs = [...formData2.faqs];
-        updatedFAQs.splice(index, 1); // Remove FAQ at the specified index
-        setFormData2({
-            ...formData2,
-            faqs: updatedFAQs,
-        });
+    const handleDeleteFAQ = async (index) => {
+        try {
+
+            let faq_id = formData2.faqs[index].id
+            console.log(formData2.faqs[index].id)
+            const response = await axiosInstance.delete(`/delete_faqs/${faq_id}`);
+            if (response.status === 200) {
+                const updatedFAQs = [...formData2.faqs];
+                updatedFAQs.splice(index, 1);
+                setFormData2({
+                    ...formData2,
+                    faqs: updatedFAQs,
+                });
+                window.alert(response.data.message.message)
+                console.log(response.data.message); // Log success message
+            } else {
+                console.error("Error deleting FAQ:", response.data.error);
+            }
+        } catch (error) {
+            console.error("Error deleting FAQ:", error);
+        }
     };
 
     const handleFAQInputChange = (index, e) => {
         const { name, value } = e.target;
         const updatedFAQs = [...formData2.faqs];
-        updatedFAQs[index][name] = value; // Update answer of the FAQ at the specified index
+        updatedFAQs[index][name] = value;
         setFormData2({
             ...formData2,
             faqs: updatedFAQs,
         });
     };
 
-    const addNewFAQ = () => {
+    const addNewFAQ = async () => {
         if (newFAQ.question && newFAQ.answer) {
-            setFormData2({
-                ...formData2,
-                faqs: [...formData2.faqs, { question: newFAQ.question, answer: newFAQ.answer, editable: false }],
+            const response = await axiosInstance.post('/add_faqs', { faqs: [{ Q: newFAQ.question, A: newFAQ.answer }] }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
             });
-            setNewFAQ({ question: '', answer: '' }); // Reset newFAQ state
+
+            if (response.status === 200) {
+                if (response.data.id) {
+                    window.alert(response.data.message)
+                    setFormData2({
+                        ...formData2,
+                        faqs: [...formData2.faqs, { question: newFAQ.question, answer: newFAQ.answer, editable: false }],
+                    });
+                    setNewFAQ({ question: '', answer: '' });
+                }
+
+            }
+            else {
+                window.alert(response.data.error)
+            }
+
         }
     };
 
+    const [newRoom, setNewRoom] = useState({ roomType: '', availableRooms: 0, defaultPrice: 0, amenities: [], max_of_guests: 1 });
 
+    const [newRoomPopup, setNewRoomPopup] = useState(false);
+
+    const selectNewRoomAmenities = () => {
+        setNewRoomPopup(true);
+    };
+
+    const closeNewRoomPopup = () => {
+        setNewRoomPopup(false);
+    };
+
+    const handleNewRoomAmenitiesChange = (e) => {
+        const { value } = e.target;
+        const updatedAmenities = [...newRoom.amenities];
+
+        if (updatedAmenities.includes(value)) {
+            const index = updatedAmenities.indexOf(value);
+            updatedAmenities.splice(index, 1);
+        } else {
+            updatedAmenities.push(value);
+        }
+
+        setNewRoom({
+            ...newRoom,
+            amenities: updatedAmenities,
+        });
+    };
+
+    const addNewRoom = async () => {
+        if (newRoom.roomType && newRoom.availableRooms && newRoom.defaultPrice && newRoom.amenities.length > 0) {
+            axiosInstance.post('/add_room_types', {
+                room_types: [{ name: newRoom.roomType, list_of_amenties: newRoom.amenities.join(","), no_of_rooms: newRoom.availableRooms, default_price: 100, max_guests: 1 }]
+            }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            }).then((response) => {
+                console.log('new Room', response)
+                if (response.status === 200) {
+                    {
+                        const newRoomWithId = { ...newRoom, id: response.data.id };
+                        setFormData2({
+                            ...formData2,
+                            rooms: [...formData2.rooms, newRoomWithId],
+                        });
+                        setNewRoom({
+                            roomType: '',
+                            availableRooms: 0,
+                            defaultPrice: 0,
+                            amenities: [],
+                        });
+                        setNewRoomPopup(false);
+                    }
+                }
+                window.alert('New RoomType added sucessfully')
+            })
+                .catch((error) => {
+
+                    console.error(error)
+                })
+
+        }
+
+
+    };
+    const handleSubmit1 = () => {
+        console.log()
+    }
 
 
     return (
 
         <div>
-            <div className="w-full max-w-5xl p-8 bg-white rounded-lg shadow-md">
+            <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
                 <h1 className="text-2xl font-bold mb-4">Let us know about your rooms</h1>
 
-                <div className="grid grid-cols-6 gap-48 mb-4">
-                    <div className="col-span-1">Room Type</div>
-                    <div className="col-span-1">Amenities</div>
-                    <div className="col-span-1">Available Rooms</div>
-                    <div className="col-span-1">Default Price</div>
-                    <div className="col-span-1">Max of Guests</div>
+                <div className="grid grid-cols-6 gap-4 mb-4">
+                    <div>Room Type</div>
+                    <div>Amenities</div>
+                    <div>Available Rooms</div>
+                    <div>Default Price</div>
+                    <div>Max Guests</div>
+                    <div></div>
                 </div>
 
                 {formData2.rooms.map((room, index) => (
-                    <div key={index} className="grid grid-cols-5 gap-4 mb-4">
+                    <div key={index} className="grid grid-cols-6 gap-4 mb-4">
                         <input
                             type="text"
                             name="roomType"
@@ -221,10 +306,9 @@ function RoomForm({ handlePrevious }) {
                         <div className="col-span-1">
                             <button
                                 onClick={() => selectAmenities(index)}
-                                className="bg-white-500 border border-gray-500 px-4 py-2 rounded-md"
-                                disabled={!room.editable}
+                                className="bg-white-500  border border-gray-500 px-4 py-2 rounded-md"
                             >
-                                Select Amenities
+                                Show Amenities
                             </button>
                         </div>
                         <input
@@ -252,21 +336,6 @@ function RoomForm({ handlePrevious }) {
                             className="border border-gray-300 rounded-md px-4 py-2 col-span-1"
                         />
                         <div className="flex items-center justify-center space-x-2 col-span-1">
-                            {room.editable ? (
-                                <button
-                                    onClick={() => saveRoomChanges(index)}
-                                    className="bg-green-500 text-white px-4 py-2 rounded-md"
-                                >
-                                    Save
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={() => setRoomEditable(index, true)}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                                >
-                                    Edit
-                                </button>
-                            )}
                             <button onClick={() => handleDeleteRoom(index)} className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
                                 <span className="text-xs">-</span>
                             </button>
@@ -274,11 +343,62 @@ function RoomForm({ handlePrevious }) {
                     </div>
                 ))}
 
-                <button onClick={addRoomType} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4">Add Room Type</button>
                 <button onClick={() => handlePrevious()} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-4">Previous</button>
-                <button onClick={(e) => handleSubmit(e)} className="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
 
                 {amPopup && (
+                    <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+                        <div className="bg-white p-8 rounded-lg">
+                            <h2 className="text-lg font-semibold mb-4">Selected Amenities</h2>
+                            <div>
+                                <ul>
+                                    {formData2.rooms[currentRoomIndex].amenities.map((amenity, index) => (
+                                        <li key={index}>{amenity}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <button onClick={() => closeAmenitiesPopup()} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 ml-4">Close</button>
+                        </div>
+                    </div>
+
+
+                )}
+                <div className="grid grid-cols-5 gap-4 mb-4 mt-2">
+                    <input
+                        type="text"
+                        name="roomType"
+                        value={newRoom.roomType}
+                        onChange={(e) => setNewRoom({ ...newRoom, roomType: e.target.value })}
+                        placeholder="Room Type"
+                        className="border border-gray-300 rounded-md px-4 py-2"
+                    />
+                    <div>
+                        <button
+                            onClick={selectNewRoomAmenities}
+                            className="bg-white-500 border border-gray-500 px-4 py-2 rounded-md"
+                        >
+                            Select Amenities
+                        </button>
+                    </div>
+                    <input
+                        type="number"
+                        name="availableRooms"
+                        value={newRoom.availableRooms}
+                        onChange={(e) => setNewRoom({ ...newRoom, availableRooms: e.target.value })}
+                        placeholder="Available Rooms"
+                        className="border border-gray-300 rounded-md px-4 py-2"
+                    />
+                    <input
+                        type="number"
+                        name="defaultPrice"
+                        value={newRoom.defaultPrice}
+                        onChange={(e) => setNewRoom({ ...newRoom, defaultPrice: e.target.value })}
+                        placeholder="Default Price"
+                        className="border border-gray-300 rounded-md px-4 py-2"
+                    />
+                    <button onClick={addNewRoom} className="bg-blue-500 text-white px-4 py-2 rounded-md">Add Room</button>
+                </div>
+
+                {newRoomPopup && (
                     <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
                         <div className="bg-white p-8 rounded-lg">
                             <h2 className="text-lg font-semibold mb-4">Select Amenities</h2>
@@ -287,22 +407,24 @@ function RoomForm({ handlePrevious }) {
                                     <div key={index}>
                                         <input
                                             type="checkbox"
-                                            name={`amenity_${index}`}
+                                            name={`new_room_amenity_${index}`}
                                             value={amenity}
                                             className="mr-2"
-                                            onChange={handleRoomAmenitiesChange}
-                                            checked={formData2.rooms[currentRoomIndex].amenities.includes(amenity)}
+                                            onChange={handleNewRoomAmenitiesChange}
+                                            checked={newRoom.amenities.includes(amenity)}
                                         />
                                         {amenity}
                                     </div>
                                 ))}
                             </div>
-                            <button onClick={() => closeAmenitiesPopup()} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 ml-4">Close</button>
+                            <button onClick={closeNewRoomPopup} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 ml-4">Close</button>
                         </div>
                     </div>
                 )}
 
             </div>
+
+
             <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-md">
                 <h1 className="text-2xl font-bold mb-4">FAQs</h1>
 

@@ -353,7 +353,7 @@ class HotelService {
 
             const FAQs = await sequelize.query(
                 `
-                SELECT "Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
+                SELECT "faq_id","Q","A" FROM "FAQ" WHERE "hotel_id" = :hotel_id            
                 `,
                 {
                     replacements: {
@@ -566,7 +566,7 @@ class HotelService {
             const currentDate = new Date();
             const endDate = new Date(currentDate);
             endDate.setDate(endDate.getDate() + 90);
-    
+            let room_type_id;
             for (let room_type of RoomTypes) {
                 const createdRoomType = await RoomType.create({
                     room_type_name: room_type.name,
@@ -580,6 +580,7 @@ class HotelService {
                 
     
                 const roomTypeId = createdRoomType.room_type_id;
+                room_type_id = roomTypeId
                 console.log(createdRoomType)
 
 
@@ -601,7 +602,7 @@ class HotelService {
             }
     
             await Calendar.bulkCreate(calendars);
-            return "Added successfully";
+            return  { message: "Added successfully", id: room_type_id } ;
         }
         catch (error) {
             throw new Error(error.message);
@@ -674,14 +675,18 @@ class HotelService {
         try {
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
             const hotelId = MyHotel.hotel_id;
-
+            let id;
+            console.log(faq)
             for (let faq of FAQs){
-                await FAQ.create({
+                const faq_in = await FAQ.create({
                     Q: faq.Q,
                     A: faq.A,
                     hotel_id: hotelId
                 }); 
+                id = faq_in.faq_id
             }
+
+            return id
         }
         catch (error) {
             throw new Error(error.message);
@@ -737,6 +742,7 @@ static async delete_images(manager_id, image_id) {
     static async delete_roomTypes(manager_id, room_type_id) {
         try {
             let message
+            let code
             const MyHotel = await Hotel.findOne({ where: { manager_id: manager_id } });
             const hotelId = MyHotel.hotel_id;
             
@@ -760,15 +766,17 @@ static async delete_images(manager_id, image_id) {
                 }
             );
             console.log("Booked Rooms",bookedRooms)
-            if(bookedRooms){
+            if(bookedRooms[0].count !== '0'){
                 message = "RoomType has upcoming reservations, deletion not possible"
+                code = 0
             }
             else{
                 await RoomType.destroy({ where: { room_type_id: room_type_id, hotel_id: hotelId } });
                 message = "RoomType deleted successfully"
+                code = 1
             }
             return {
-                message
+                message , code
             };
         }
         catch (error) {
