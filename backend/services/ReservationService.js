@@ -479,11 +479,11 @@ class ReservationService {
     }
     static async get_calendar(manager_id) {
         try {
-            const Calendar = await sequelize.query(
+            const calendarData = await sequelize.query(
                 `
                 SELECT date, price, "RoomType"."room_type_id", room_type_name, no_of_avail_rooms
-                FROM "Calendar" JOIN "RoomType"
-                ON "Calendar"."room_type_id" = "RoomType"."room_type_id"
+                FROM "Calendar"
+                JOIN "RoomType" ON "Calendar"."room_type_id" = "RoomType"."room_type_id"
                 JOIN "Hotel" ON "Hotel"."hotel_id" = "RoomType"."hotel_id"
                 WHERE "manager_id" = :manager_id
                 `,
@@ -494,12 +494,28 @@ class ReservationService {
                     type: Sequelize.QueryTypes.SELECT
                 }
             );
+        
+            const calendarByRoomType = {};
+            calendarData.forEach(entry => {
+                const roomTypeId = entry.room_type_id;
+                if (!calendarByRoomType[roomTypeId]) {
+                    calendarByRoomType[roomTypeId] = [];
+                }
+                calendarByRoomType[roomTypeId].push({
+                    date: entry.date,
+                    price: entry.price,
+                    room_type_name: entry.room_type_name,
+                    no_of_avail_rooms: entry.no_of_avail_rooms
+                });
+            });
+        
             return {
-                Calendar
+                calendar: calendarByRoomType
             };
         } catch (error) {
             throw new Error(error.message);
         }
+    
     }  
 
     static async update_rr(gid, user_id, rating, review){
