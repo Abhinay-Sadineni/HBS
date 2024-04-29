@@ -188,16 +188,18 @@ router.post('/reset-password', async (req, res) => {
 });
 
 
-router.get("/profile" , auth ,async(req,res) =>{
+router.get("/profile" , auth , async(req,res) =>{
      try{
          const user_id = req.user_id;
-         const user = await User.findOne({ where: { user : user_id } });
-         console.log(user)
+         console.log(user_id)
+         const user = await User.findOne({ where: { user_id : user_id } });
+         //console.log(user)
          if (!user) {
+            console.log('Not found')
            return res.status(404).json({ error: 'User not found' });
          }
 
-         return res.json({message : "User present" , user: user});
+         return res.status(200).json({message : "User present" , user: user});
      }
      catch(error){
       console.log('Error getting password' , error);
