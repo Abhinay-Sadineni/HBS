@@ -22,6 +22,12 @@ function ReservationCard(props) {
       if (response.status === 200) {
         // If cancellation is successful, update the reservation list
         // setReservationList(prevList => prevList.filter(reservation => reservation[0].gid !== gid));
+        console.log(response);
+        if(response.data.message === "Cancellation not possible, check cancellation policy."){
+          // console.log("hi");
+          alert(response.data.message);
+          return;
+        }
         props.changeStatus(gid);
       } else {
         // Handle other status codes if needed
