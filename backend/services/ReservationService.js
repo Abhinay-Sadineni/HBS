@@ -336,7 +336,7 @@ class ReservationService {
                 { where: { gid: parseInt(gid) } }
             );
 
-            return { message: "Reservation cancelled successfully" };
+            return "Reservation cancelled successfully";
         } catch (error) {
             throw new Error("Error in cancelling reservation: " + error.message);
         }
@@ -458,6 +458,7 @@ class ReservationService {
             const { start_date, check_in, cancellation_policy } = cancellation_policyData[0];
 
             const combinedDateTime = new Date(`${start_date}T${check_in}`);
+            console.log("Date Time", combinedDateTime)
             const now = new Date();
 
             const timeDifference = combinedDateTime.getTime() - now.getTime();
@@ -470,9 +471,7 @@ class ReservationService {
             }
 
             console.log(a);
-            return {
-                a
-            };
+            return a;
         } catch (error) {
             throw new Error(error.message);
         }

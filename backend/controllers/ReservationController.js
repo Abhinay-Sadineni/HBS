@@ -125,6 +125,7 @@ router.post("/cancel", auth, async (req, res) => {
       const user_id = req.user_id
       const { gid } = req.body
       const check_policy = await ReservationService.check_cancellation_policy(gid);
+      console.log("check_policy", check_policy)
       if(!check_policy){
         message = "Cancellation not possible, check cancellation policy."
       }
