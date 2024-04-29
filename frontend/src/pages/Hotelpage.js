@@ -38,6 +38,8 @@ function Hotelpage() {
 
 
 
+
+
   useEffect(() => {
     async function fetchData() {
         try {
@@ -113,25 +115,32 @@ function Hotelpage() {
           </div>
           <div >
           <h1 className="text-xl font-bold mt-2">Room Types</h1>
-              {
-                  hotel.HotelInfo.RoomTypes.map((roomType, index) => (
-                      <div key = {index} className='border-b border-gray-400 py-2 mb-2'>
-                          <p className="text-l font-bold">{roomType.room_type_name}</p>
-                          <div className='flex justify-between'>
-                          <p>Default price : {roomType.default_price}</p>
-                          <p>Min price : {hotel.VacantRoomsandRR.VacantRooms[index].min}</p>  
-                          <p>Max price : {hotel.VacantRoomsandRR.VacantRooms[index].max}</p>  
-                          </div>
-                          <p>Max Guests per room: {roomType.max_guests}</p>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {
-                              // strToArr(roomType.list_of_amenities).map(amenity => <p>{amenity}</p>)
-                              roomType.list_of_amenties.split(', ').map(amenity => <p>{amenity}</p>)
-                          }
-                          </div>
-                      </div>
-                  ))
-              }
+                  
+          {hotel.HotelInfo.RoomTypes.map((roomType) => {
+            const vacantRoom = hotel.VacantRoomsandRR.VacantRooms.find(room => room.room_type_id === roomType.room_type_id);            
+            return (
+              <div key={roomType.room_type_id} className='border-b border-gray-400 py-2 mb-2'>
+                <p className="text-l font-bold">{roomType.room_type_name}</p>
+                <div className='flex justify-between'>
+                  <p>Default price : {roomType.default_price}</p>
+                  {vacantRoom ? (
+                    <div>  
+                      <p>Min price: {vacantRoom.min}</p>  
+                      <p>Max price: {vacantRoom.max}</p> 
+                    </div>
+                  ) : (
+                    <p>Not vacant in the given duration</p>
+                  )}
+                </div>
+                <p>Max Guests per room: {roomType.max_guests}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {roomType.list_of_amenties.split(', ').map(amenity => <p key={amenity}>{amenity}</p>)}
+                </div>
+              </div>
+            );
+          })
+        }
+
           </div>
           <div className="border-b border-gray-400 py-4 mb-4">
             <RatingBar ratings = {rating} />
